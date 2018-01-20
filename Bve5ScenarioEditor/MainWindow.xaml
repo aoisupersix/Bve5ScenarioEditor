@@ -30,10 +30,10 @@
                 </MenuItem>
                 <MenuItem Name="menuItem_Sort" Header="並び替え">
                     <MenuItem Click="Sort_Title" IsCheckable="True" Header="タイトル" />
-                    <MenuItem IsCheckable="True" Header="路線" />
-                    <MenuItem IsCheckable="True" Header="車両" />
-                    <MenuItem IsCheckable="True" Header="作者" />
-                    <MenuItem IsCheckable="True" Header="ファイル" />
+                    <MenuItem Click="Sort_RouteTitle" IsCheckable="True" Header="路線" />
+                    <MenuItem Click="Sort_VehicleTitle" IsCheckable="True" Header="車両" />
+                    <MenuItem Click="Sort_Author" IsCheckable="True" Header="作者" />
+                    <MenuItem Click="Sort_File" IsCheckable="True" Header="ファイル" />
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="ヘルプ(_H)" />

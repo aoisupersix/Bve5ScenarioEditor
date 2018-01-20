@@ -108,16 +108,16 @@ namespace Bve5ScenarioEditor
         /// このシナリオのlistViewItemを作成します。
         /// </summary>
         /// <param name="listView">対象のlistView</param>
-        public void CreateListViewItem(ListView listView)
+        public ListViewItem CreateListViewItem(ListView listView)
         {
             Item = new ListViewItem(Data.Title);
             //シナリオ情報の設定
-            Item.Name = Data.Title;
+            Item.Name = Data.Title ?? "";
 
             //SubItemIndexに合わせてSubItemを代入
             string[] subItems = new string[Enum.GetNames(typeof(SubItemIndex)).Length];
             subItems[(int)SubItemIndex.TITLE] = Data.Title ?? "";
-            subItems[(int)SubItemIndex.ROUTE_TITLE] = Data.RouteTitle;
+            subItems[(int)SubItemIndex.ROUTE_TITLE] = Data.RouteTitle ?? "";
             subItems[(int)SubItemIndex.VEHICLE_TITLE] = Data.VehicleTitle ?? "";
             subItems[(int)SubItemIndex.AUTHOR] = Data.Author ?? "";
             subItems[(int)SubItemIndex.FILE_NAME] = this.File.Name;
@@ -141,11 +141,7 @@ namespace Bve5ScenarioEditor
 
             }
 
-            //グループの追加
-            AddGroup(listView, (int)SubItemIndex.ROUTE_TITLE);
-
-            //リストビューに追加(参照呼び出しなのでreturn不要)
-            listView.Items.Add(Item);
+            return Item;
         }
 
         /// <summary>
@@ -156,7 +152,7 @@ namespace Bve5ScenarioEditor
         /// <param name="sortItemIdx"></param>
         public void AddGroup(ListView listView, int sortItemIdx)
         {
-            if(Item == null)
+            if(Item == null || (int)SubItemIndex.FILE_NAME == sortItemIdx)
                 return;
             
             //グループの追加
