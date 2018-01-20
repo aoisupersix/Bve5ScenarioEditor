@@ -29,7 +29,7 @@
                     <MenuItem Click="Display_Tile" IsCheckable="True" Header="並べて表示" />
                 </MenuItem>
                 <MenuItem Name="menuItem_Sort" Header="並び替え">
-                    <MenuItem IsCheckable="True" Header="タイトル" />
+                    <MenuItem Click="Sort_Title" IsCheckable="True" Header="タイトル" />
                     <MenuItem IsCheckable="True" Header="路線" />
                     <MenuItem IsCheckable="True" Header="車両" />
                     <MenuItem IsCheckable="True" Header="作者" />
@@ -56,8 +56,8 @@
         <WindowsFormsHost Grid.Row="2" Margin="3">
             <wf:ListView x:Name="scenarioSelectListView" ShowGroups="True" View="LargeIcon" Sorting="Ascending" >
                 <wf:ListView.Columns>
-                    <wf:ColumnHeader Text="タイトル" Width="100"/>
-                    <wf:ColumnHeader Text="路線" Width="100"/>
+                    <wf:ColumnHeader x:Name="listViewColumnHeader_Title" Text="タイトル" Width="100"/>
+                    <wf:ColumnHeader x:Name="listViewColumnHeader_Route" Text="路線" Width="100"/>
                     <wf:ColumnHeader Text="車両" Width="100"/>
                     <wf:ColumnHeader Text="作者" Width="100"/>
                     <wf:ColumnHeader Text="ファイル" Width="100"/>

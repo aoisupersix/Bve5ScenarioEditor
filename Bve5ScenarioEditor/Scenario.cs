@@ -11,6 +11,12 @@ namespace Bve5ScenarioEditor
     {
         public FileInfo File { get; private set; }
         public ScenarioData Data { get; set; }
+        public ListViewItem Item { get; private set; }
+
+        public enum SubItemIndex
+        {
+            TITLE, ROUTE_TITLE, VEHICLE_TITLE, AUTHOR, FILE_NAME
+        }
 
         /// <summary>
         /// シナリオのサムネイルを縦横比を固定して返します。
@@ -19,7 +25,7 @@ namespace Bve5ScenarioEditor
         /// <param name="width">サムネイルの横幅</param>
         /// <param name="height">サムネイルの縦幅</param>
         /// <returns>引数に指定した大きさのサムネイル画像</returns>
-        private Image CreateThumbnail(string path, Size imgSize)
+        Image CreateThumbnail(string path, Size imgSize)
         {
             Bitmap originalBitmap = new Bitmap(path);
             //縦横比の計算
@@ -99,21 +105,25 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// シナリオをアイテムに追加したリストビューを返します。
+        /// このシナリオのlistViewItemを作成します。
         /// </summary>
-        /// <param name="listView">追加する対象のリストビュー</param>
-        /// <returns>シナリオを追加したリストビュー</returns>
-        public ListView AddListViewItem(ListView listView)
+        /// <param name="listView">対象のlistView</param>
+        public void CreateListViewItem(ListView listView)
         {
-            ListViewItem item = new ListViewItem(Data.Title);
+            Item = new ListViewItem(Data.Title);
             //シナリオ情報の設定
-            item.Name = Data.Title;
-            item.Text = Data.Title;
-            item.SubItems.Add(Data.RouteTitle);
-            item.SubItems.Add(Data.VehicleTitle);
-            item.SubItems.Add(Data.Author);
-            item.SubItems.Add(this.File.Name);
+            Item.Name = Data.Title;
 
+            //SubItemIndexに合わせてSubItemを代入
+            string[] subItems = new string[Enum.GetNames(typeof(SubItemIndex)).Length];
+            subItems[(int)SubItemIndex.TITLE] = Data.Title ?? "";
+            subItems[(int)SubItemIndex.ROUTE_TITLE] = Data.RouteTitle;
+            subItems[(int)SubItemIndex.VEHICLE_TITLE] = Data.VehicleTitle ?? "";
+            subItems[(int)SubItemIndex.AUTHOR] = Data.Author ?? "";
+            subItems[(int)SubItemIndex.FILE_NAME] = this.File.Name;
+
+            Item.SubItems.AddRange(subItems);
+            Item.SubItems.RemoveAt(0); //なぜかSubItemsが一つ多いのでindex0を削除する。
 
             //画像の追加
             string dirName = this.File.DirectoryName + @"\";
@@ -125,36 +135,50 @@ namespace Bve5ScenarioEditor
                     if (!listView.LargeImageList.Images.ContainsKey(Data.Image))
                         listView.LargeImageList.Images.Add(Data.Image, CreateThumbnail(dirName + Data.Image, listView.LargeImageList.ImageSize));
                     Image img = Image.FromFile(dirName + Data.Image);
-                    item.ImageIndex = listView.LargeImageList.Images.IndexOfKey(Data.Image);
+                    Item.ImageIndex = listView.LargeImageList.Images.IndexOfKey(Data.Image);
                 }
                 catch (Exception) { Console.Error.WriteLine("Scenario: Image not active format."); }
 
             }
 
             //グループの追加
-            if (Data.RouteTitle != null)
+            AddGroup(listView, (int)SubItemIndex.ROUTE_TITLE);
+
+            //リストビューに追加(参照呼び出しなのでreturn不要)
+            listView.Items.Add(Item);
+        }
+
+        /// <summary>
+        /// このシナリオをグループに追加します。
+        /// </summary>
+        /// <param name="listView">対象とするlistView</param>
+        /// <param name="item"></param>
+        /// <param name="sortItemIdx"></param>
+        public void AddGroup(ListView listView, int sortItemIdx)
+        {
+            if(Item == null)
+                return;
+            
+            //グループの追加
+            string groupingText = Item.SubItems[sortItemIdx].Text;
+            if (groupingText != "")
             {
                 int groupIndex = -1;
                 for (int i = 0; i < listView.Groups.Count; i++)
                 {
-                    if (listView.Groups[i].Header.Equals(Data.RouteTitle))
+                    if (listView.Groups[i].Header.Equals(groupingText))
                         groupIndex = i;
                 }
                 if (groupIndex == -1)
                 {
                     //グループがないので登録
-                    ListViewGroup group = new ListViewGroup(Data.RouteTitle, HorizontalAlignment.Left);
+                    ListViewGroup group = new ListViewGroup(groupingText, HorizontalAlignment.Left);
                     listView.Groups.Add(group);
                     groupIndex = listView.Groups.Count - 1;
                 }
 
-                item.Group = listView.Groups[groupIndex];
+                Item.Group = listView.Groups[groupIndex];
             }
-
-            //リストビューに登録
-            listView.Items.Add(item);
-
-            return listView;
         }
     }
 }

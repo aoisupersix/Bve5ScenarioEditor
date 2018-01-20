@@ -25,6 +25,19 @@ namespace Bve5ScenarioEditor
         /// </summary>
         public static System.Drawing.Size ThumbnailSize { get; private set; }
 
+        /// <summary>
+        /// シナリオの再グルーピングを行います。
+        /// </summary>
+        /// <param name="subIdx">グルーピングする項目</param>
+        void ReGroupingFor(Scenario.SubItemIndex subIdx)
+        {
+            scenarioSelectListView.Groups.Clear();
+            foreach(Scenario scenario in Scenarios)
+            {
+                scenario.AddGroup(scenarioSelectListView, (int)subIdx);
+            }
+        }
+
         #region 表示メニューのクリックイベント
 
         /// <summary>
@@ -76,6 +89,11 @@ namespace Bve5ScenarioEditor
             scenarioSelectListView.View = View.Tile;
         }
 
+        void Sort_Title(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         #endregion 表示メニューのクリックイベント
 
         /// <summary>
@@ -99,7 +117,7 @@ namespace Bve5ScenarioEditor
                 if (scenario.Load())
                 {
                     Scenarios.Add(scenario);
-                    scenarioSelectListView = scenario.AddListViewItem(scenarioSelectListView);
+                    scenario.CreateListViewItem(scenarioSelectListView);
                 }
             }
 
