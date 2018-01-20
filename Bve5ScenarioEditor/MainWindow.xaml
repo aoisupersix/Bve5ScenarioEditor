@@ -5,8 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bve5ScenarioEditor"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Bve5ScenarioEditor" Height="640" Width="600">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="0.7*" />
+            <RowDefinition Height="0.3*" />
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="ファイル(_F)" >
+                <MenuItem Header="変更を保存(_S)" InputGestureText="Ctrl+S" />
+                <MenuItem Header="終了(_X)" />
+            </MenuItem>
+            <MenuItem Header="編集(_E)" />
+            <MenuItem Header="オプション(_O)">
+                <MenuItem IsCheckable="True" Header="オプション1" />
+                <MenuItem IsCheckable="True" Header="オプション2" />
+                <MenuItem IsCheckable="True" Header="オプション3" />
+            </MenuItem>
+        </Menu>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="40" />
+            </Grid.ColumnDefinitions>
+            
+            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" IsEditable="True" >
+
+            </ComboBox>
+
+            <Button Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="参照" >
+                
+            </Button>
+            
+        </Grid>
+
+        <ListView HorizontalAlignment="Stretch" Grid.Row="2" VerticalAlignment="Stretch">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>
