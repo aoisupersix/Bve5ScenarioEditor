@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:winform="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:local="clr-namespace:Bve5ScenarioEditor"
         xmlns:wpf="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
         mc:Ignorable="d"
@@ -22,11 +22,21 @@
                 <MenuItem Header="終了(_X)" />
             </MenuItem>
             <MenuItem Header="編集(_E)" />
-            <MenuItem Header="オプション(_O)">
-                <MenuItem IsCheckable="True" Header="オプション1" />
-                <MenuItem IsCheckable="True" Header="オプション2" />
-                <MenuItem IsCheckable="True" Header="オプション3" />
+            <MenuItem Header="表示(_V)">
+                <MenuItem  Name="menuItem_Display" Header="シナリオの表示方法">
+                    <MenuItem Click="Display_Icon" IsCheckable="True" IsChecked="True" Header="アイコン"/>
+                    <MenuItem Click="Display_Details" IsCheckable="True" Header="詳細" />
+                    <MenuItem Click="Display_Tile" IsCheckable="True" Header="並べて表示" />
+                </MenuItem>
+                <MenuItem Name="menuItem_Sort" Header="並び替え">
+                    <MenuItem IsCheckable="True" Header="タイトル" />
+                    <MenuItem IsCheckable="True" Header="路線" />
+                    <MenuItem IsCheckable="True" Header="車両" />
+                    <MenuItem IsCheckable="True" Header="作者" />
+                    <MenuItem IsCheckable="True" Header="ファイル" />
+                </MenuItem>
             </MenuItem>
+            <MenuItem Header="ヘルプ(_H)" />
         </Menu>
 
         <Grid Grid.Row="1">
@@ -44,7 +54,15 @@
         </Grid>
 
         <WindowsFormsHost Grid.Row="2" Margin="3">
-            <winform:ListView x:Name="scenarioSelectListView" />
+            <wf:ListView x:Name="scenarioSelectListView" ShowGroups="True" View="LargeIcon" Sorting="Ascending" >
+                <wf:ListView.Columns>
+                    <wf:ColumnHeader Text="タイトル" Width="100"/>
+                    <wf:ColumnHeader Text="路線" Width="100"/>
+                    <wf:ColumnHeader Text="車両" Width="100"/>
+                    <wf:ColumnHeader Text="作者" Width="100"/>
+                    <wf:ColumnHeader Text="ファイル" Width="100"/>
+                </wf:ListView.Columns>
+            </wf:ListView>
         </WindowsFormsHost>
     </Grid>
 </Window>
