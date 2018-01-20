@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:winform="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:local="clr-namespace:Bve5ScenarioEditor"
+        xmlns:wpf="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
         mc:Ignorable="d"
         Title="Bve5ScenarioEditor" Height="640" Width="600">
     <Grid>
@@ -32,23 +34,17 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="40" />
             </Grid.ColumnDefinitions>
-            
-            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" IsEditable="True" >
 
+            <ComboBox Name="filePathComboBox" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" IsEditable="True" >
             </ComboBox>
 
             <Button Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="参照" >
-                
             </Button>
             
         </Grid>
 
-        <ListView HorizontalAlignment="Stretch" Grid.Row="2" VerticalAlignment="Stretch">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <WindowsFormsHost Grid.Row="2" Margin="3">
+            <winform:ListView x:Name="scenarioSelectListView" />
+        </WindowsFormsHost>
     </Grid>
 </Window>
