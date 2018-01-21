@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 
 namespace Bve5ScenarioEditor
 {
@@ -100,20 +102,100 @@ namespace Bve5ScenarioEditor
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void scenarioSelectListView_SelectedIndexChanged(object sender, EventArgs e)
+        void ScenarioSelectListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("--------------------------------------------------");
-            Console.WriteLine("Selected!");
 
-            foreach (System.Windows.Forms.ListViewItem item in scenarioSelectListView.SelectedItems)
+            if(scenarioSelectListView.SelectedItems.Count == 0)
             {
-                Console.WriteLine("item:{0}", item.Text);
+                //選択したアイテムがないので情報を非表示に
+                thumbnailImage.Visibility = Visibility.Collapsed;
+                scenarioTitleText.Visibility = Visibility.Collapsed;
+                scenarioCommentText.Visibility = Visibility.Collapsed;
+                scenarioRouteTitleText.Visibility = Visibility.Collapsed;
+                scenarioRoutePathText.Visibility = Visibility.Collapsed;
+                scenarioVehicleTitleText.Visibility = Visibility.Collapsed;
+                scenarioVehiclePathText.Visibility = Visibility.Collapsed;
+                scenarioAuthorText.Visibility = Visibility.Collapsed;
+                scenarioFileNameText.Visibility = Visibility.Collapsed;
             }
+            else
+            {
+                //選択したアイテムの共通項目を調べる
+                //ベースとなるアイテムの取得
+                Scenario baseScenario = Scenarios.Find(a => a.Item.Equals(scenarioSelectListView.SelectedItems[0]));
+                int imgIdx = baseScenario.Item.ImageIndex;
+                string title = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.TITLE].Text;
+                string routeTitle = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.ROUTE_TITLE].Text;
+                string routePath = baseScenario.Data.Route.Count == 0 ? "" : baseScenario.Data.Route[0].Value;
+                string vehicleTitle = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.VEHICLE_TITLE].Text;
+                string vehiclePath = baseScenario.Data.Vehicle.Count == 0 ? "" : baseScenario.Data.Vehicle[0].Value;
+                string author = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.AUTHOR].Text;
+                string comment = baseScenario.Data.Comment ?? "";
+                string fileName = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.FILE_NAME].Text;
 
-            TextBlock tblock = new TextBlock();
-            tblock.Text = "動的追加";
+                //サムネイル情報の描画
+                if (imgIdx != -1)
+                {
+                    Bitmap bitmap = (Bitmap)scenarioSelectListView.LargeImageList.Images[scenarioSelectListView.SelectedItems[0].ImageIndex];
+                    using (Stream st = new MemoryStream())
+                    {
+                        bitmap.Save(st, System.Drawing.Imaging.ImageFormat.Png);
+                        st.Seek(0, SeekOrigin.Begin);
+                        thumbnailImage.Source = BitmapFrame.Create(st, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                    }
+                }
+                //情報をTextBlockに設定
+                scenarioTitleText.Text = title;
+                scenarioRouteTitleText.Text = routeTitle;
+                scenarioRoutePathText.Text = routePath;
+                scenarioVehicleTitleText.Text = vehicleTitle;
+                scenarioVehiclePathText.Text = vehiclePath;
+                scenarioAuthorText.Text = author;
+                scenarioCommentText.Text = comment;
+                scenarioFileNameText.Text = fileName;
 
-            scenarioInfoPanel.Children.Add(tblock);
+                //初期設定にすべての情報を表示
+                thumbnailImage.Visibility = Visibility.Visible;
+                scenarioTitleText.Visibility = Visibility.Visible;
+                scenarioCommentText.Visibility = Visibility.Visible;
+                scenarioRouteTitleText.Visibility = Visibility.Visible;
+                scenarioRoutePathText.Visibility = Visibility.Visible;
+                scenarioVehicleTitleText.Visibility = Visibility.Visible;
+                scenarioVehiclePathText.Visibility = Visibility.Visible;
+                scenarioAuthorText.Visibility = Visibility.Visible;
+                scenarioFileNameText.Visibility = Visibility.Visible;
+
+                //ベースと異なる情報は非表示に
+                foreach (System.Windows.Forms.ListViewItem item in scenarioSelectListView.SelectedItems)
+                {
+                    Scenario scenario = Scenarios.Find(a => a.Item.Equals(item));
+
+                    if (item.ImageIndex != imgIdx || imgIdx == -1)
+                        thumbnailImage.Visibility = Visibility.Collapsed;
+                    if (!item.SubItems[(int)Scenario.SubItemIndex.TITLE].Text.Equals(title))
+                        scenarioTitleText.Text = "複数タイトル...";
+                    if (!item.SubItems[(int)Scenario.SubItemIndex.ROUTE_TITLE].Text.Equals(routeTitle))
+                        scenarioRouteTitleText.Text = "複数路線名..."; ;
+                    if (scenario.Data.Route.Count == 0)
+                        scenarioRoutePathText.Visibility = Visibility.Collapsed;
+                    else if(!scenario.Data.Route[0].Value.Equals(routePath))
+                        scenarioRoutePathText.Text = "複数路線ファイル...";
+                    if (!item.SubItems[(int)Scenario.SubItemIndex.VEHICLE_TITLE].Text.Equals(vehicleTitle))
+                        scenarioVehicleTitleText.Text = "複数車両名...";
+                    if (scenario.Data.Vehicle.Count == 0)
+                        scenarioVehiclePathText.Visibility = Visibility.Collapsed;
+                    else if (!scenario.Data.Vehicle[0].Value.Equals(vehiclePath))
+                        scenarioVehiclePathText.Text = "複数車両ファイル...";
+                    if (!item.SubItems[(int)Scenario.SubItemIndex.AUTHOR].Text.Equals(author))
+                        scenarioAuthorText.Text = "複数作者...";
+                    if (scenario.Data.Comment == null || scenario.Data.Comment.Equals(""))
+                        scenarioCommentText.Visibility = Visibility.Collapsed;
+                    else if (!scenario.Data.Comment.Equals(comment))
+                        scenarioCommentText.Text = "複数コメント...";
+                    if (!item.SubItems[(int)Scenario.SubItemIndex.FILE_NAME].Text.Equals(fileName))
+                        scenarioFileNameText.Text = "複数ファイル名...";
+                }
+            }
         }
 
         /// <summary>
@@ -216,6 +298,17 @@ namespace Bve5ScenarioEditor
 
             ThumbnailSize = new System.Drawing.Size(96, 96);
             scenarioSelectListView.View = View.LargeIcon;
+
+            //シナリオ情報を非表示にする
+            thumbnailImage.Visibility = Visibility.Collapsed;
+            scenarioTitleText.Visibility = Visibility.Collapsed;
+            scenarioCommentText.Visibility = Visibility.Collapsed;
+            scenarioRouteTitleText.Visibility = Visibility.Collapsed;
+            scenarioRoutePathText.Visibility = Visibility.Collapsed;
+            scenarioVehicleTitleText.Visibility = Visibility.Collapsed;
+            scenarioVehiclePathText.Visibility = Visibility.Collapsed;
+            scenarioAuthorText.Visibility = Visibility.Collapsed;
+            scenarioFileNameText.Visibility = Visibility.Collapsed;
         }
     }
 }

@@ -55,7 +55,7 @@
         </Grid>
 
         <WindowsFormsHost Grid.Row="2" Margin="3">
-            <wf:ListView x:Name="scenarioSelectListView" ShowGroups="True" View="LargeIcon" Sorting="Ascending" SelectedIndexChanged="scenarioSelectListView_SelectedIndexChanged" >
+            <wf:ListView x:Name="scenarioSelectListView" ShowGroups="True" View="LargeIcon" Sorting="Ascending" SelectedIndexChanged="ScenarioSelectListView_SelectedIndexChanged" >
                 <wf:ListView.Columns>
                     <wf:ColumnHeader x:Name="listViewColumnHeader_Title" Text="タイトル" Width="100"/>
                     <wf:ColumnHeader x:Name="listViewColumnHeader_Route" Text="路線" Width="100"/>
@@ -71,11 +71,16 @@
                 <ColumnDefinition Width="0.2*" />
                 <ColumnDefinition Width="0.8*" />
             </Grid.ColumnDefinitions>
-            <Image Name="thumbnailImage" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Source="Bitmap1.bmp" Margin="5"/>
+            <Image Name="thumbnailImage" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" OpacityMask="White"/>
             <WrapPanel Name="scenarioInfoPanel" Grid.Column="1" Orientation="Vertical">
-                <TextBlock Name="scenarioTitleText" Margin="1" FontSize="13">路線名</TextBlock>
+                <TextBlock Name="scenarioTitleText" Margin="1" FontSize="13">タイトル</TextBlock>
                 <TextBlock Name="scenarioCommentText" Margin="1" FontSize="13">コメント</TextBlock>
-                <TextBlock Name="scenarioRouteTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">TextBlock3</TextBlock>
+                <TextBlock Name="scenarioRouteTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">路線名</TextBlock>
+                <TextBlock Name="scenarioRoutePathText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">路線ファイルパス</TextBlock>
+                <TextBlock Name="scenarioVehicleTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">車両名</TextBlock>
+                <TextBlock Name="scenarioVehiclePathText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">車両ファイルパス</TextBlock>
+                <TextBlock Name="scenarioAuthorText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">作者</TextBlock>
+                <TextBlock Name="scenarioFileNameText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">ファイル名</TextBlock>
             </WrapPanel>
         </Grid>
     </Grid>
