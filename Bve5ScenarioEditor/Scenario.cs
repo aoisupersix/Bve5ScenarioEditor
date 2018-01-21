@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -77,7 +78,7 @@ namespace Bve5ScenarioEditor
                 Console.WriteLine("-----------------------------------------------------------------------");
                 Console.WriteLine("Loading ScenarioFile【{0}】...", this.File.Name);
                 string text = reader.Text;
-                if (c is CharCode.Text)
+                if (c is CharCode.Text && Regex.IsMatch(text, @"BveTs", RegexOptions.IgnoreCase))
                 {
                     //読み込んだファイルがテキスト
                     Console.WriteLine("Encoding: {0}", c.Name);
