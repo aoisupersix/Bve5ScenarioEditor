@@ -50,8 +50,6 @@ namespace Bve5ScenarioEditor
             }
         }
 
-        #region 表示メニューのクリックイベント
-
         /// <summary>
         /// 表示切り替えメニューのアイテムを排他チェックします。
         /// </summary>
@@ -67,6 +65,55 @@ namespace Bve5ScenarioEditor
                 if (checkItem != item)
                     item.IsChecked = false;
             }
+        }
+
+        /// <summary>
+        /// ソートメニューのアイテムを排他チェックします。
+        /// </summary>
+        /// <param name="checkItem">チェックするメニューアイテム</param>
+        void CheckSortMenuItem(object sortMenuItem)
+        {
+            System.Windows.Controls.MenuItem checkItem = (System.Windows.Controls.MenuItem)sortMenuItem;
+            checkItem.IsChecked = true;
+
+            //checkItem以外のMenuItemのチェックを外す
+            foreach (System.Windows.Controls.MenuItem item in menuItem_Sort.Items)
+            {
+                if (checkItem != item)
+                    item.IsChecked = false;
+            }
+        }
+
+        #region EventHandler
+        /// <summary>
+        /// Windowがレンダリングされた後発生するイベントハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Window_ContentRendered(object sender, EventArgs e)
+        {
+            LoadScenarios();
+        }
+
+        /// <summary>
+        /// リストビューの選択されているアイテムが変更された際に発生するイベントハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void scenarioSelectListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("--------------------------------------------------");
+            Console.WriteLine("Selected!");
+
+            foreach (System.Windows.Forms.ListViewItem item in scenarioSelectListView.SelectedItems)
+            {
+                Console.WriteLine("item:{0}", item.Text);
+            }
+
+            TextBlock tblock = new TextBlock();
+            tblock.Text = "動的追加";
+
+            scenarioInfoPanel.Children.Add(tblock);
         }
 
         /// <summary>
@@ -102,23 +149,6 @@ namespace Bve5ScenarioEditor
             scenarioSelectListView.View = View.Tile;
         }
 
-        /// <summary>
-        /// ソートメニューのアイテムを排他チェックします。
-        /// </summary>
-        /// <param name="checkItem">チェックするメニューアイテム</param>
-        void CheckSortMenuItem(object sortMenuItem)
-        {
-            System.Windows.Controls.MenuItem checkItem = (System.Windows.Controls.MenuItem)sortMenuItem;
-            checkItem.IsChecked = true;
-
-            //checkItem以外のMenuItemのチェックを外す
-            foreach (System.Windows.Controls.MenuItem item in menuItem_Sort.Items)
-            {
-                if (checkItem != item)
-                    item.IsChecked = false;
-            }
-        }
-
         void Sort_Title(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
@@ -149,7 +179,7 @@ namespace Bve5ScenarioEditor
             GroupingFor(Scenario.SubItemIndex.FILE_NAME);
         }
 
-        #endregion 表示メニューのクリックイベント
+        #endregion EventHandler
 
         /// <summary>
         /// 現在のディレクトリにあるシナリオファイルを読み込みます。
@@ -166,7 +196,7 @@ namespace Bve5ScenarioEditor
 
             //シナリオの読み込み
             string[] files = Directory.GetFiles(dirPath, "*");
-            foreach(string file in files)
+            foreach (string file in files)
             {
                 Scenario scenario = new Scenario(file);
                 if (scenario.Load())
@@ -186,7 +216,6 @@ namespace Bve5ScenarioEditor
 
             ThumbnailSize = new System.Drawing.Size(96, 96);
             scenarioSelectListView.View = View.LargeIcon;
-            LoadScenarios();
         }
     }
 }
