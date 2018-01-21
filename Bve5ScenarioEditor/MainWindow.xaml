@@ -46,10 +46,10 @@
                 <ColumnDefinition Width="40" />
             </Grid.ColumnDefinitions>
 
-            <ComboBox Name="filePathComboBox" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" IsEditable="True" >
+            <ComboBox Name="filePathComboBox" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" IsEditable="True" SelectionChanged="FilePathComboBox_SelectionChanged" >
             </ComboBox>
 
-            <Button Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="参照" >
+            <Button Grid.Column="1" Click="ReferenceButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="..." >
             </Button>
 
         </Grid>

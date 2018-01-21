@@ -86,6 +86,23 @@ namespace Bve5ScenarioEditor
             }
         }
 
+        /// <summary>
+        /// シナリオ情報をすべて非表示にします。
+        /// </summary>
+        void ClearScenarioInfo()
+        {
+            //シナリオ情報を非表示にする
+            thumbnailImage.Visibility = Visibility.Collapsed;
+            scenarioTitleText.Visibility = Visibility.Collapsed;
+            scenarioCommentText.Visibility = Visibility.Collapsed;
+            scenarioRouteTitleText.Visibility = Visibility.Collapsed;
+            scenarioRoutePathText.Visibility = Visibility.Collapsed;
+            scenarioVehicleTitleText.Visibility = Visibility.Collapsed;
+            scenarioVehiclePathText.Visibility = Visibility.Collapsed;
+            scenarioAuthorText.Visibility = Visibility.Collapsed;
+            scenarioFileNameText.Visibility = Visibility.Collapsed;
+        }
+
         #region EventHandler
         /// <summary>
         /// Windowがレンダリングされた後発生するイベントハンドラ
@@ -94,7 +111,9 @@ namespace Bve5ScenarioEditor
         /// <param name="e"></param>
         void Window_ContentRendered(object sender, EventArgs e)
         {
-            LoadScenarios();
+            //ファイルパスを追加
+            filePathComboBox.Items.Add(dirPath);
+            this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
         }
 
         /// <summary>
@@ -108,15 +127,7 @@ namespace Bve5ScenarioEditor
             if(scenarioSelectListView.SelectedItems.Count == 0)
             {
                 //選択したアイテムがないので情報を非表示に
-                thumbnailImage.Visibility = Visibility.Collapsed;
-                scenarioTitleText.Visibility = Visibility.Collapsed;
-                scenarioCommentText.Visibility = Visibility.Collapsed;
-                scenarioRouteTitleText.Visibility = Visibility.Collapsed;
-                scenarioRoutePathText.Visibility = Visibility.Collapsed;
-                scenarioVehicleTitleText.Visibility = Visibility.Collapsed;
-                scenarioVehiclePathText.Visibility = Visibility.Collapsed;
-                scenarioAuthorText.Visibility = Visibility.Collapsed;
-                scenarioFileNameText.Visibility = Visibility.Collapsed;
+                ClearScenarioInfo();
             }
             else
             {
@@ -199,6 +210,33 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// 参照ボタンをクリックした際に発生するイベントハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void ReferenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new FolderBrowserDialog();
+            if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                dirPath = dlg.SelectedPath;
+                filePathComboBox.Items.Add(dirPath);
+                this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
+            }
+        }
+
+        /// <summary>
+        /// コンボボックスのアイテムを変更した際に発生するイベントハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void FilePathComboBox_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            dirPath = (string)filePathComboBox.SelectedValue;
+            LoadScenarios();
+        }
+
+        /// <summary>
         /// ScenarioSelectListViewの表示方法をアイコンに切り替えます。
         /// </summary>
         /// <param name="sender"></param>
@@ -268,10 +306,10 @@ namespace Bve5ScenarioEditor
         /// </summary>
         void LoadScenarios()
         {
-
-            //とりあえずパスの追加 TODO: あとで修正
-            filePathComboBox.Items.Add(dirPath);
-            this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
+            //シナリオの削除
+            scenarioSelectListView.Items.Clear();
+            Scenarios.Clear();
+            ClearScenarioInfo();
 
             if (Directory.Exists(dirPath))
             {
@@ -309,16 +347,10 @@ namespace Bve5ScenarioEditor
             ThumbnailSize = new System.Drawing.Size(96, 96);
             scenarioSelectListView.View = View.LargeIcon;
 
-            //シナリオ情報を非表示にする
-            thumbnailImage.Visibility = Visibility.Collapsed;
-            scenarioTitleText.Visibility = Visibility.Collapsed;
-            scenarioCommentText.Visibility = Visibility.Collapsed;
-            scenarioRouteTitleText.Visibility = Visibility.Collapsed;
-            scenarioRoutePathText.Visibility = Visibility.Collapsed;
-            scenarioVehicleTitleText.Visibility = Visibility.Collapsed;
-            scenarioVehiclePathText.Visibility = Visibility.Collapsed;
-            scenarioAuthorText.Visibility = Visibility.Collapsed;
-            scenarioFileNameText.Visibility = Visibility.Collapsed;
+            ClearScenarioInfo();
+
+            //Bve標準ディレクトリの取得
+            dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
         }
     }
 }
