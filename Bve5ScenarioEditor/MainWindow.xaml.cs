@@ -268,27 +268,37 @@ namespace Bve5ScenarioEditor
         /// </summary>
         void LoadScenarios()
         {
-            ImageList imgList = new ImageList();
-            imgList.ImageSize = ThumbnailSize;
-            scenarioSelectListView.LargeImageList = imgList;
 
             //とりあえずパスの追加 TODO: あとで修正
             filePathComboBox.Items.Add(dirPath);
             this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
 
-            //シナリオの読み込み
-            string[] files = Directory.GetFiles(dirPath, "*");
-            foreach (string file in files)
+            if (Directory.Exists(dirPath))
             {
-                Scenario scenario = new Scenario(file);
-                if (scenario.Load())
-                {
-                    Scenarios.Add(scenario);
-                    scenarioSelectListView.Items.Add(scenario.CreateListViewItem(scenarioSelectListView));
-                }
-            }
+                //リストビューの準備
+                ImageList imgList = new ImageList();
+                imgList.ImageSize = ThumbnailSize;
+                scenarioSelectListView.LargeImageList = imgList;
 
-            GroupingFor(defaultGroupIdx);
+                //シナリオの読み込み
+                string[] files = Directory.GetFiles(dirPath, "*");
+                foreach (string file in files)
+                {
+                    Scenario scenario = new Scenario(file);
+                    if (scenario.Load())
+                    {
+                        Scenarios.Add(scenario);
+                        scenarioSelectListView.Items.Add(scenario.CreateListViewItem(scenarioSelectListView));
+                    }
+                }
+
+                GroupingFor(defaultGroupIdx);
+            }
+            else
+            {
+                //ディレクトリが存在しない
+                scenarioSelectListView.Clear();
+            }
         }
 
         public MainWindow()
