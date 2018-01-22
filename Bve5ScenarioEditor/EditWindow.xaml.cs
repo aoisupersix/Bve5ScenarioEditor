@@ -84,6 +84,7 @@ namespace Bve5ScenarioEditor
                     vehicleTitleTextBox.Text = vehicleTitle;
                     authorTextBox.Text = author;
                     commentTextBox.Text = comment;
+                    imagePathTextBox.Text = baseScenario.Data.Image;
                 }
 
                 //ベースと異なる情報は非表示に
@@ -162,9 +163,16 @@ namespace Bve5ScenarioEditor
         {
             this.Title = editData.Count > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Count + "シナリオ" : "Edit - " + editData[0].Data.Title;
             ShowScenarioInfo(editData, true);
+            if(editData.Count <= 1)
+            {
+                //ファイル参照タブの有効化
+                //ファイル参照タブは複数シナリオ編集ではサポートしない。
+                fileReferenceTab.IsEnabled = true;
+
+                //TODO ファイル参照タブの情報表示
+            }
 
             this.ShowDialog();
-
             return editData;
         }
     }

@@ -37,7 +37,7 @@
         </Grid>
         <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" />
         <TabControl Grid.Row="2" BorderBrush="{DynamicResource AccentColorBrush}">
-            <TabItem Header="シナリオ情報">
+            <TabItem Name="scenarioInfoTab" Header="シナリオ情報">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
@@ -62,7 +62,7 @@
                     <TextBox Name="commentTextBox" Grid.Row="4" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" AcceptsReturn="True" />
                 </Grid>
             </TabItem>
-            <TabItem Header="ファイル参照">
+            <TabItem Name="fileReferenceTab" Header="ファイル参照" IsEnabled="False">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.1*" />
@@ -76,7 +76,7 @@
                             <ColumnDefinition Width="50" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">サムネイル画像の参照(Image):</TextBlock>
-                        <TextBox Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
+                        <TextBox Name="imagePathTextBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" />
                         <Button Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Content="..." Background="{DynamicResource AccentColorBrush3}" />
                     </Grid>
                     <Grid Grid.Row="1">
