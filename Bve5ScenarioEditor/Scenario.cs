@@ -13,10 +13,24 @@ namespace Bve5ScenarioEditor
     /// </summary>
     public class Scenario
     {
+        /// <summary>
+        /// シナリオファイルの情報
+        /// </summary>
         public FileInfo File { get; private set; }
+
+        /// <summary>
+        /// シナリオ情報
+        /// </summary>
         public ScenarioData Data { get; set; }
+
+        /// <summary>
+        /// リストビューのアイテム
+        /// </summary>
         public ListViewItem Item { get; private set; }
 
+        /// <summary>
+        /// リストビューに追加する各情報のサブアイテムインデックス
+        /// </summary>
         public enum SubItemIndex
         {
             TITLE, ROUTE_TITLE, VEHICLE_TITLE, AUTHOR, FILE_NAME

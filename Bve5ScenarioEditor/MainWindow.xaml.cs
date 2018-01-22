@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
+using Wf = System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -16,14 +15,13 @@ namespace Bve5ScenarioEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-
         /// <summary>
         /// 現在のディレクトリパス
         /// </summary>
         string dirPath;
 
         /// <summary>
-        /// シナリオをグルーピングする項目
+        /// シナリオをグルーピング(ソート)する項目
         /// </summary>
         Scenario.SubItemIndex defaultGroupIdx = Scenario.SubItemIndex.ROUTE_TITLE;
 
@@ -33,8 +31,8 @@ namespace Bve5ScenarioEditor
         ScenarioDataManagement scenarioManager;
 
         //以下コンテキストメニューのアイテム
-        System.Windows.Forms.MenuItem contextMenuItem_Edit = new System.Windows.Forms.MenuItem("シナリオを編集(&E)");
-        System.Windows.Forms.MenuItem contextMenuItem_Delete = new System.Windows.Forms.MenuItem("シナリオを削除(&D)");
+        Wf.MenuItem contextMenuItem_Edit = new Wf.MenuItem("シナリオを編集(&E)");
+        Wf.MenuItem contextMenuItem_Delete = new Wf.MenuItem("シナリオを削除(&D)");
 
         /// <summary>
         /// シナリオに設定されたサムネイルの大きさ
@@ -57,7 +55,7 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// コンテキストメニューの初期化をします。(XAMLデザイナーが仕事してくれないのでコードからアイテムを追加する）
+        /// コンテキストメニューの初期化をします。
         /// </summary>
         void InitializeContextMenu()
         {
@@ -121,7 +119,7 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// シナリオ情報をすべて非表示にします。
+        /// シナリオ情報表示をすべて非表示にします。
         /// </summary>
         void ClearScenarioInfo()
         {
@@ -139,22 +137,23 @@ namespace Bve5ScenarioEditor
 
         #region EventHandler
         /// <summary>
-        /// Windowがレンダリングされた後発生するイベントハンドラ
+        /// Windowがレンダリングされた後、コンボボックスにファイルパスを追加します。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void Window_ContentRendered(object sender, EventArgs e)
         {
             //ファイルパスを追加
             filePathComboBox.Items.Add(dirPath);
             this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
+            //コンボボックスのイベントからシナリオを読み込む
         }
 
         /// <summary>
-        /// リストビューの選択されているアイテムが変更された際に発生するイベントハンドラ
+        /// リストビューの選択されているアイテムが変更された際に、シナリオ情報を更新します。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void ScenarioSelectListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             List<Scenario> scenarios = scenarioManager.SnapShot.Peek();
@@ -212,7 +211,7 @@ namespace Bve5ScenarioEditor
                 scenarioFileNameText.Visibility = Visibility.Visible;
 
                 //ベースと異なる情報は非表示に
-                foreach (System.Windows.Forms.ListViewItem item in scenarioSelectListView.SelectedItems)
+                foreach (Wf.ListViewItem item in scenarioSelectListView.SelectedItems)
                 {
                     Scenario scenario = scenarios.Find(a => a.Item.Equals(item));
 
@@ -245,14 +244,14 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// コンテキストメニューを表示するかどうかを判定します。
+        /// コンテキストメニューが表示される際、どのアイテムを表示するかを決めます。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void ContextMenu_PopUp(object sender, EventArgs e)
         {
-            System.Drawing.Point point = scenarioSelectListView.PointToClient(System.Windows.Forms.Cursor.Position);
-            System.Windows.Forms.ListViewItem item = scenarioSelectListView.HitTest(point).Item;
+            System.Drawing.Point point = scenarioSelectListView.PointToClient(Wf.Cursor.Position);
+            Wf.ListViewItem item = scenarioSelectListView.HitTest(point).Item;
             if (item != null && item.Bounds.Contains(point))
             {
                 //マウスがアイテムの範囲内にあるのでメニューを有効化
@@ -268,14 +267,14 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// 参照ボタンをクリックした際に発生するイベントハンドラ
+        /// 参照ボタンをクリックした際、ディレクトリを選択するダイアログを表示します。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void ReferenceButton_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new FolderBrowserDialog();
-            if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var dlg = new Wf.FolderBrowserDialog();
+            if(dlg.ShowDialog() == Wf.DialogResult.OK)
             {
                 dirPath = dlg.SelectedPath;
                 filePathComboBox.Items.Add(dirPath);
@@ -284,10 +283,10 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// コンボボックスのアイテムを変更した際に発生するイベントハンドラ
+        /// コンボボックスのアイテムが変更された際、シナリオを読み込みます。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void FilePathComboBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
             dirPath = (string)filePathComboBox.SelectedValue;
@@ -295,43 +294,43 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// ScenarioSelectListViewの表示方法をアイコンに切り替えます。
+        /// リストビューの表示方法をアイコンに切り替えます。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void Display_Icon(object sender, RoutedEventArgs e)
         {
             CheckDisplayMenuItem(sender);
-            scenarioSelectListView.View = View.LargeIcon;
+            scenarioSelectListView.View = Wf.View.LargeIcon;
         }
 
         /// <summary>
-        /// ScenarioSelectListViewの表示方法を詳細に切り替えます。
+        /// リストビューの表示方法を詳細に切り替えます。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void Display_Details(object sender, RoutedEventArgs e)
         {
             CheckDisplayMenuItem(sender);
-            scenarioSelectListView.View = View.Details;
+            scenarioSelectListView.View = Wf.View.Details;
         }
 
         /// <summary>
-        /// ScenarioSelectListViewの表示方法を並べて表示に切り替えます。
+        /// リストビューの表示方法を並べて表示に切り替えます。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void Display_Tile(object sender, RoutedEventArgs e)
         {
             CheckDisplayMenuItem(sender);
-            scenarioSelectListView.View = View.Tile;
+            scenarioSelectListView.View = Wf.View.Tile;
         }
 
         /// <summary>
-        /// タイトルでシナリオを並び替え
+        /// タイトルでシナリオを並び替えます。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void Sort_Title(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
@@ -339,10 +338,10 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// 路線名でシナリオを並び替え
+        /// 路線名でシナリオを並び替えます。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void Sort_RouteTitle(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
@@ -350,10 +349,10 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// 車両名でシナリオを並び替え
+        /// 車両名でシナリオを並び替えます。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void Sort_VehicleTitle(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
@@ -361,10 +360,10 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// 作者名でシナリオを並び替え
+        /// 作者名でシナリオを並び替えます。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void Sort_Author(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
@@ -372,10 +371,10 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// ファイル名でシナリオを並び替え
+        /// ファイル名でシナリオを並び替えます。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void Sort_File(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
@@ -407,13 +406,13 @@ namespace Bve5ScenarioEditor
                 float incVal = (float)100 / files.Length;
 
                 //リストビューの準備
-                ImageList imgList = new ImageList();
+                Wf.ImageList imgList = new Wf.ImageList();
                 imgList.ImageSize = ThumbnailSize;
                 scenarioSelectListView.LargeImageList = imgList;
 
                 //シナリオの読み込み
                 List<Scenario> scenarios = new List<Scenario>();
-                List<System.Windows.Forms.ListViewItem> addItems = new List<System.Windows.Forms.ListViewItem>();
+                List<Wf.ListViewItem> addItems = new List<Wf.ListViewItem>();
                 foreach (string file in files)
                 {
                     Scenario scenario = new Scenario(file);
@@ -432,7 +431,7 @@ namespace Bve5ScenarioEditor
 
                 statusProgressBar.Value = 100;
                 statusText.Text = "読み込み完了";
-                Mouse.SetCursor(System.Windows.Input.Cursors.Arrow);
+                Mouse.SetCursor(Cursors.Arrow);
             }
             else
             {
@@ -444,14 +443,17 @@ namespace Bve5ScenarioEditor
             }
         }
 
+        /// <summary>
+        /// 新しいインスタンスを初期化します。
+        /// </summary>
         public MainWindow()
         {
-            System.Windows.Forms.Application.EnableVisualStyles();
+            Wf.Application.EnableVisualStyles();
             InitializeComponent();
             InitializeContextMenu();
 
             ThumbnailSize = new System.Drawing.Size(96, 96);
-            scenarioSelectListView.View = View.LargeIcon;
+            scenarioSelectListView.View = Wf.View.LargeIcon;
 
             ClearScenarioInfo();
 
