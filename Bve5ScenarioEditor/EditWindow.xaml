@@ -12,7 +12,7 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
-        Title="EditWindow" Height="600" Width="600">
+        Title="EditWindow" Height="700" Width="600">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.2*" />
@@ -30,9 +30,7 @@
                 <TextBlock Name="scenarioTitleText" Margin="1" FontSize="13">タイトル</TextBlock>
                 <TextBlock Name="scenarioCommentText" Margin="1" FontSize="13">コメント</TextBlock>
                 <TextBlock Name="scenarioRouteTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">路線名</TextBlock>
-                <TextBlock Name="scenarioRoutePathText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">路線ファイルパス</TextBlock>
                 <TextBlock Name="scenarioVehicleTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">車両名</TextBlock>
-                <TextBlock Name="scenarioVehiclePathText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">車両ファイルパス</TextBlock>
                 <TextBlock Name="scenarioAuthorText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">作者</TextBlock>
                 <TextBlock Name="scenarioFileNameText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">ファイル名</TextBlock>
             </WrapPanel>
