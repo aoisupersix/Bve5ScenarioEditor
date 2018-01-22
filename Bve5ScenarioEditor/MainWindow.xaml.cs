@@ -59,6 +59,8 @@ namespace Bve5ScenarioEditor
         /// </summary>
         void InitializeContextMenu()
         {
+            contextMenuItem_Edit.Click += ShowEditWindow;
+
             contextMenu.MenuItems.Add(contextMenuItem_Edit);
             contextMenu.MenuItems.Add(contextMenuItem_Delete);
         }
@@ -147,6 +149,27 @@ namespace Bve5ScenarioEditor
             filePathComboBox.Items.Add(dirPath);
             this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
             //コンボボックスのイベントからシナリオを読み込む
+        }
+
+        /// <summary>
+        /// シナリオ情報の編集ウインドウを表示します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void ShowEditWindow(object sender, EventArgs e)
+        {
+            if (scenarioSelectListView.SelectedItems.Count > 0)
+            {
+                List<Scenario> scenarios = scenarioManager.SnapShot.Peek();
+                List<Scenario> editData = new List<Scenario>();
+                foreach (Wf.ListViewItem item in scenarioSelectListView.SelectedItems)
+                {
+                    editData.Add(scenarios.Find(a => a.Item.Equals(item)));
+                }
+                EditWindow editWindow = new EditWindow();
+                editWindow.Owner = this;
+                editWindow.ShowWindow(editData);
+            }
         }
 
         /// <summary>

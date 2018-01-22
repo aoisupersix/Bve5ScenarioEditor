@@ -19,10 +19,23 @@ namespace Bve5ScenarioEditor
     /// </summary>
     public partial class EditWindow : Window
     {
-
-        public void ShowWindow(List<Scenario> editData)
+        /// <summary>
+        /// 新しいインスタンスを初期化します。
+        /// </summary>
+        public EditWindow()
         {
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// ウインドウをダイアログとして表示します。
+        /// </summary>
+        /// <param name="editData">編集するシナリオデータ</param>
+        /// <returns>編集後のシナリオデータ</returns>
+        public List<Scenario> ShowWindow(List<Scenario> editData)
+        {
+            this.ShowDialog();
+            return editData;
         }
     }
 }
