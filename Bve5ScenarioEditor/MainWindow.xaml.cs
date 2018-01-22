@@ -5,7 +5,9 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace Bve5ScenarioEditor
 {
@@ -15,22 +17,37 @@ namespace Bve5ScenarioEditor
     public partial class MainWindow : Window
     {
 
-        string dirPath = @"F:\Library\Documents\Bvets\Scenarios"; //TODO
-
         /// <summary>
-        /// 各シナリオ
+        /// 現在のディレクトリパス
         /// </summary>
-        List<Scenario> Scenarios = new List<Scenario>();
+        string dirPath;
 
         /// <summary>
         /// シナリオをグルーピングする項目
         /// </summary>
         Scenario.SubItemIndex defaultGroupIdx = Scenario.SubItemIndex.ROUTE_TITLE;
 
+        ScenarioDataManagement scenarioManager;
+
         /// <summary>
         /// シナリオに設定されたサムネイルの大きさ
         /// </summary>
         public static System.Drawing.Size ThumbnailSize { get; private set; }
+
+        /// <summary>
+        /// 現在メッセージ待ち行列の中にある全てのUIメッセージを処理します。
+        /// </summary>
+        void DoEvents()
+        {
+            DispatcherFrame frame = new DispatcherFrame();
+            var callback = new DispatcherOperationCallback(obj =>
+            {
+                ((DispatcherFrame)obj).Continue = false;
+                return null;
+            });
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, callback, frame);
+            Dispatcher.PushFrame(frame);
+        }
 
         /// <summary>
         /// シナリオのグルーピングとソートを行います。
@@ -39,13 +56,14 @@ namespace Bve5ScenarioEditor
         void GroupingFor(Scenario.SubItemIndex subIdx)
         {
             //ソート
-            Scenarios.Sort((a, b) => string.Compare(a.Item.SubItems[(int)subIdx].Text, b.Item.SubItems[(int)subIdx].Text));
+            List<Scenario> scenarios = scenarioManager.SnapShot.Peek();
+            scenarios.Sort((a, b) => string.Compare(a.Item.SubItems[(int)subIdx].Text, b.Item.SubItems[(int)subIdx].Text));
 
             scenarioSelectListView.Items.Clear();
             scenarioSelectListView.Groups.Clear();
 
             //グルーピング
-            foreach(Scenario scenario in Scenarios)
+            foreach(Scenario scenario in scenarios)
             {
                 scenarioSelectListView.Items.Add(scenario.Item);
                 scenario.AddGroup(scenarioSelectListView, (int)subIdx);
@@ -123,8 +141,9 @@ namespace Bve5ScenarioEditor
         /// <param name="e"></param>
         void ScenarioSelectListView_SelectedIndexChanged(object sender, EventArgs e)
         {
+            List<Scenario> scenarios = scenarioManager.SnapShot.Peek();
 
-            if(scenarioSelectListView.SelectedItems.Count == 0)
+            if (scenarioSelectListView.SelectedItems.Count == 0)
             {
                 //選択したアイテムがないので情報を非表示に
                 ClearScenarioInfo();
@@ -133,7 +152,7 @@ namespace Bve5ScenarioEditor
             {
                 //選択したアイテムの共通項目を調べる
                 //ベースとなるアイテムの取得
-                Scenario baseScenario = Scenarios.Find(a => a.Item.Equals(scenarioSelectListView.SelectedItems[0]));
+                Scenario baseScenario = scenarios.Find(a => a.Item.Equals(scenarioSelectListView.SelectedItems[0]));
                 int imgIdx = baseScenario.Item.ImageIndex;
                 string title = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.TITLE].Text;
                 string routeTitle = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.ROUTE_TITLE].Text;
@@ -179,7 +198,7 @@ namespace Bve5ScenarioEditor
                 //ベースと異なる情報は非表示に
                 foreach (System.Windows.Forms.ListViewItem item in scenarioSelectListView.SelectedItems)
                 {
-                    Scenario scenario = Scenarios.Find(a => a.Item.Equals(item));
+                    Scenario scenario = scenarios.Find(a => a.Item.Equals(item));
 
                     if (item.ImageIndex != imgIdx || imgIdx == -1)
                         thumbnailImage.Visibility = Visibility.Collapsed;
@@ -269,30 +288,55 @@ namespace Bve5ScenarioEditor
             scenarioSelectListView.View = View.Tile;
         }
 
+        /// <summary>
+        /// タイトルでシナリオを並び替え
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Sort_Title(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
             GroupingFor(Scenario.SubItemIndex.TITLE);
         }
 
+        /// <summary>
+        /// 路線名でシナリオを並び替え
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Sort_RouteTitle(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
             GroupingFor(Scenario.SubItemIndex.ROUTE_TITLE);
         }
 
+        /// <summary>
+        /// 車両名でシナリオを並び替え
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Sort_VehicleTitle(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
             GroupingFor(Scenario.SubItemIndex.VEHICLE_TITLE);
         }
 
+        /// <summary>
+        /// 作者名でシナリオを並び替え
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Sort_Author(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
             GroupingFor(Scenario.SubItemIndex.AUTHOR);
         }
 
+        /// <summary>
+        /// ファイル名でシナリオを並び替え
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Sort_File(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
@@ -306,36 +350,58 @@ namespace Bve5ScenarioEditor
         /// </summary>
         void LoadScenarios()
         {
+            statusText.Text = "シナリオの読み込み中...";
+            Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
+            statusProgressBar.Value = 0;
+            DoEvents();
+
             //シナリオの削除
             scenarioSelectListView.Items.Clear();
-            Scenarios.Clear();
+            scenarioManager = new ScenarioDataManagement();
             ClearScenarioInfo();
 
             if (Directory.Exists(dirPath))
             {
+                string[] files = Directory.GetFiles(dirPath, "*");
+
+                //プログレスバーの準備
+                float incVal = (float)100 / files.Length;
+
                 //リストビューの準備
                 ImageList imgList = new ImageList();
                 imgList.ImageSize = ThumbnailSize;
                 scenarioSelectListView.LargeImageList = imgList;
 
                 //シナリオの読み込み
-                string[] files = Directory.GetFiles(dirPath, "*");
+                List<Scenario> scenarios = new List<Scenario>();
+                List<System.Windows.Forms.ListViewItem> addItems = new List<System.Windows.Forms.ListViewItem>();
                 foreach (string file in files)
                 {
                     Scenario scenario = new Scenario(file);
                     if (scenario.Load())
                     {
-                        Scenarios.Add(scenario);
-                        scenarioSelectListView.Items.Add(scenario.CreateListViewItem(scenarioSelectListView));
+                        scenarios.Add(scenario);
+                        addItems.Add(scenario.CreateListViewItem(scenarioSelectListView));
                     }
+                    statusProgressBar.Value += incVal;
+                    DoEvents();
                 }
 
+                scenarioSelectListView.Items.AddRange(addItems.ToArray());
+                scenarioManager.SetNewMemento(scenarios);
                 GroupingFor(defaultGroupIdx);
+
+                statusProgressBar.Value = 100;
+                statusText.Text = "読み込み完了";
+                Mouse.SetCursor(System.Windows.Input.Cursors.Arrow);
             }
             else
             {
                 //ディレクトリが存在しない
                 scenarioSelectListView.Clear();
+
+                statusText.Text = "指定されたディレクトリが存在しません。";
+                statusProgressBar.Value = 0;
             }
         }
 
@@ -351,6 +417,12 @@ namespace Bve5ScenarioEditor
 
             //Bve標準ディレクトリの取得
             dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
+        }
+
+        private void WindowsFormsHost_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var host = (System.Windows.Forms.Integration.WindowsFormsHost)sender;
+            host.ContextMenu.IsOpen = true;
         }
     }
 }

@@ -8,7 +8,10 @@ using Hnx8.ReadJEnc;
 
 namespace Bve5ScenarioEditor
 {
-    class Scenario
+    /// <summary>
+    /// シナリオデータクラス
+    /// </summary>
+    public class Scenario
     {
         public FileInfo File { get; private set; }
         public ScenarioData Data { get; set; }
