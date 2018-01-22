@@ -8,12 +8,14 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
+using MahApps.Metro.Controls;
+
 namespace Bve5ScenarioEditor
 {
     /// <summary>
     /// MainWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         /// <summary>
         /// 現在のディレクトリパス
@@ -59,6 +61,8 @@ namespace Bve5ScenarioEditor
         /// </summary>
         void InitializeContextMenu()
         {
+            contextMenuItem_Edit.Click += ShowEditWindow;
+
             contextMenu.MenuItems.Add(contextMenuItem_Edit);
             contextMenu.MenuItems.Add(contextMenuItem_Delete);
         }
@@ -150,6 +154,30 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// シナリオ情報の編集ウインドウを表示します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void ShowEditWindow(object sender, EventArgs e)
+        {
+            if (scenarioSelectListView.SelectedItems.Count > 0)
+            {
+                List<Scenario> scenarios = scenarioManager.SnapShot.Peek();
+                List<Scenario> editData = new List<Scenario>();
+                foreach (Wf.ListViewItem item in scenarioSelectListView.SelectedItems)
+                {
+                    editData.Add(scenarios.Find(a => a.Item.Equals(item)));
+                }
+                EditWindow editWindow = new EditWindow();
+                editWindow.Owner = this;
+                editData = editWindow.ShowWindow(editData);
+
+                //TODO
+
+            }
+        }
+
+        /// <summary>
         /// リストビューの選択されているアイテムが変更された際に、シナリオ情報を更新します。
         /// </summary>
         /// <param name="sender">イベントのソース</param>
@@ -157,6 +185,7 @@ namespace Bve5ScenarioEditor
         void ScenarioSelectListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             List<Scenario> scenarios = scenarioManager.SnapShot.Peek();
+            statusText.Text = "シナリオを" + scenarioSelectListView.SelectedItems.Count + "個選択中。";
 
             if (scenarioSelectListView.SelectedItems.Count == 0)
             {
