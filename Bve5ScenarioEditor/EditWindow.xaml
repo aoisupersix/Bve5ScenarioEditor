@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bve5ScenarioEditor"
         mc:Ignorable="d"
-        Title="EditWindow" Height="500" Width="500">
+        Title="EditWindow" Height="600" Width="600">
     <Grid>
         
     </Grid>

@@ -1,5 +1,6 @@
-﻿<Window x:Class="Bve5ScenarioEditor.MainWindow"
+﻿<Controls:MetroWindow x:Class="Bve5ScenarioEditor.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,11 +12,11 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
-        Title="Bve5ScenarioEditor" Height="640" Width="600" ContentRendered="Window_ContentRendered">
+        Title="Bve5 Scenario Editor" Height="640" Width="600" ContentRendered="Window_ContentRendered">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="432*" />
             <RowDefinition Height="auto" MinHeight="4" />
             <RowDefinition Height="125*" />
@@ -53,7 +54,7 @@
             <ComboBox Name="filePathComboBox" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" IsEditable="True" SelectionChanged="FilePathComboBox_SelectionChanged" >
             </ComboBox>
 
-            <Button Grid.Column="1" Click="ReferenceButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="..." >
+            <Button Grid.Column="1" Click="ReferenceButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="..." Background="{DynamicResource AccentColorBrush3}" >
             </Button>
 
         </Grid>
@@ -94,11 +95,11 @@
         </Grid>
         <StatusBar Grid.Row="5">
             <StatusBarItem>
-                <TextBlock Name="statusText" Foreground="#FF4B4B4B" Text="ステータス" />
+                <TextBlock Name="statusText" Foreground="{DynamicResource IdealForegroundColorBrush}" Text="ステータス" />
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
                 <ProgressBar Name="statusProgressBar" Width="150"/>
             </StatusBarItem>
         </StatusBar>
     </Grid>
-</Window>
+</Controls:MetroWindow>

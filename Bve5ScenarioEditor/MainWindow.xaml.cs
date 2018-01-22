@@ -8,12 +8,14 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
+using MahApps.Metro.Controls;
+
 namespace Bve5ScenarioEditor
 {
     /// <summary>
     /// MainWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         /// <summary>
         /// 現在のディレクトリパス
@@ -180,6 +182,7 @@ namespace Bve5ScenarioEditor
         void ScenarioSelectListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             List<Scenario> scenarios = scenarioManager.SnapShot.Peek();
+            statusText.Text = "シナリオを" + scenarioSelectListView.SelectedItems.Count + "個選択中。";
 
             if (scenarioSelectListView.SelectedItems.Count == 0)
             {
