@@ -12,12 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using MahApps.Metro.Controls;
+
+
 namespace Bve5ScenarioEditor
 {
     /// <summary>
     /// EditWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class EditWindow : Window
+    public partial class EditWindow : MetroWindow
     {
         /// <summary>
         /// 新しいインスタンスを初期化します。
@@ -34,6 +37,7 @@ namespace Bve5ScenarioEditor
         /// <returns>編集後のシナリオデータ</returns>
         public List<Scenario> ShowWindow(List<Scenario> editData)
         {
+            this.Title = editData.Count > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Count + "シナリオ" : "Edit - " + editData[0].Data.Title;
             this.ShowDialog();
             return editData;
         }
