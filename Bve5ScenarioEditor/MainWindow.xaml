@@ -4,21 +4,25 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-        xmlns:local="clr-namespace:Bve5ScenarioEditor"
-        xmlns:wpf="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
         mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
         Title="Bve5ScenarioEditor" Height="640" Width="600" ContentRendered="Window_ContentRendered">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="432*" />
             <RowDefinition Height="auto" MinHeight="4" />
             <RowDefinition Height="125*" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0">
+        <Menu Grid.Row="0" FontSize="12" FontFamily="{DynamicResource MaterialDesignFont}" >
             <MenuItem Header="ファイル(_F)" >
                 <MenuItem Header="変更を保存(_S)" InputGestureText="Ctrl+S" />
                 <MenuItem Header="終了(_X)" />
@@ -44,7 +48,7 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
             <ComboBox Name="filePathComboBox" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" IsEditable="True" SelectionChanged="FilePathComboBox_SelectionChanged" >
             </ComboBox>
@@ -54,11 +58,6 @@
 
         </Grid>
         <WindowsFormsHost Grid.Row="2" Margin="3">
-            <WindowsFormsHost.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="abc1" />
-                </ContextMenu>
-            </WindowsFormsHost.ContextMenu>
             <wf:ListView x:Name="scenarioSelectListView" ShowGroups="True" View="LargeIcon" Sorting="Ascending" SelectedIndexChanged="ScenarioSelectListView_SelectedIndexChanged" >
                 <wf:ListView.ContextMenu>
                     <wf:ContextMenu x:Name="contextMenu" Popup="ContextMenu_PopUp">
