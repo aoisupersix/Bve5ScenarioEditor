@@ -51,15 +51,15 @@
                         <ColumnDefinition Width="0.8*" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">タイトル(Title):</TextBlock>
-                    <TextBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
+                    <TextBox Name="titleTextBox" Grid.Row="0" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
                     <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">路線名(RouteTitle):</TextBlock>
-                    <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
+                    <TextBox Name="routeTitleTextBox" Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
                     <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">車両名(VehicleTitle):</TextBlock>
-                    <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
+                    <TextBox Name="vehicleTitleTextBox" Grid.Row="2" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
                     <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">作者名(Author):</TextBlock>
-                    <TextBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
+                    <TextBox Name="authorTextBox" Grid.Row="3" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
                     <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">コメント(Comment):</TextBlock>
-                    <TextBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" AcceptsReturn="True" />
+                    <TextBox Name="commentTextBox" Grid.Row="4" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" AcceptsReturn="True" />
                 </Grid>
             </TabItem>
             <TabItem Header="ファイル参照">
