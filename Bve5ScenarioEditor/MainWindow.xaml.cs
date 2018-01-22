@@ -27,7 +27,14 @@ namespace Bve5ScenarioEditor
         /// </summary>
         Scenario.SubItemIndex defaultGroupIdx = Scenario.SubItemIndex.ROUTE_TITLE;
 
+        /// <summary>
+        /// シナリオ情報の管理クラス
+        /// </summary>
         ScenarioDataManagement scenarioManager;
+
+        //以下コンテキストメニューのアイテム
+        System.Windows.Forms.MenuItem contextMenuItem_Edit = new System.Windows.Forms.MenuItem("シナリオを編集(&E)");
+        System.Windows.Forms.MenuItem contextMenuItem_Delete = new System.Windows.Forms.MenuItem("シナリオを削除(&D)");
 
         /// <summary>
         /// シナリオに設定されたサムネイルの大きさ
@@ -47,6 +54,15 @@ namespace Bve5ScenarioEditor
             });
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, callback, frame);
             Dispatcher.PushFrame(frame);
+        }
+
+        /// <summary>
+        /// コンテキストメニューの初期化をします。(XAMLデザイナーが仕事してくれないのでコードからアイテムを追加する）
+        /// </summary>
+        void InitializeContextMenu()
+        {
+            contextMenu.MenuItems.Add(contextMenuItem_Edit);
+            contextMenu.MenuItems.Add(contextMenuItem_Delete);
         }
 
         /// <summary>
@@ -225,6 +241,29 @@ namespace Bve5ScenarioEditor
                     if (!item.SubItems[(int)Scenario.SubItemIndex.FILE_NAME].Text.Equals(fileName))
                         scenarioFileNameText.Text = "複数ファイル名...";
                 }
+            }
+        }
+
+        /// <summary>
+        /// コンテキストメニューを表示するかどうかを判定します。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void ContextMenu_PopUp(object sender, EventArgs e)
+        {
+            System.Drawing.Point point = scenarioSelectListView.PointToClient(System.Windows.Forms.Cursor.Position);
+            System.Windows.Forms.ListViewItem item = scenarioSelectListView.HitTest(point).Item;
+            if (item != null && item.Bounds.Contains(point))
+            {
+                //マウスがアイテムの範囲内にあるのでメニューを有効化
+                contextMenuItem_Edit.Visible = true;
+                contextMenuItem_Delete.Visible = true;
+            }
+            else
+            {
+                //メニューを無効化
+                contextMenuItem_Edit.Visible = false;
+                contextMenuItem_Delete.Visible = false;
             }
         }
 
@@ -409,6 +448,7 @@ namespace Bve5ScenarioEditor
         {
             System.Windows.Forms.Application.EnableVisualStyles();
             InitializeComponent();
+            InitializeContextMenu();
 
             ThumbnailSize = new System.Drawing.Size(96, 96);
             scenarioSelectListView.View = View.LargeIcon;
@@ -417,12 +457,6 @@ namespace Bve5ScenarioEditor
 
             //Bve標準ディレクトリの取得
             dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
-        }
-
-        private void WindowsFormsHost_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var host = (System.Windows.Forms.Integration.WindowsFormsHost)sender;
-            host.ContextMenu.IsOpen = true;
         }
     }
 }
