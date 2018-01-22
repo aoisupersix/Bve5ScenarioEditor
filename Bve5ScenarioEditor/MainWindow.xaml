@@ -15,6 +15,7 @@
             <RowDefinition Height="432*" />
             <RowDefinition Height="auto" MinHeight="4" />
             <RowDefinition Height="125*" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0">
@@ -45,7 +46,6 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="40" />
             </Grid.ColumnDefinitions>
-
             <ComboBox Name="filePathComboBox" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" IsEditable="True" SelectionChanged="FilePathComboBox_SelectionChanged" >
             </ComboBox>
 
@@ -53,9 +53,19 @@
             </Button>
 
         </Grid>
-
         <WindowsFormsHost Grid.Row="2" Margin="3">
+            <WindowsFormsHost.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="abc1" />
+                </ContextMenu>
+            </WindowsFormsHost.ContextMenu>
             <wf:ListView x:Name="scenarioSelectListView" ShowGroups="True" View="LargeIcon" Sorting="Ascending" SelectedIndexChanged="ScenarioSelectListView_SelectedIndexChanged" >
+                <wf:ListView.ContextMenu>
+                    <wf:ContextMenu x:Name="contextMenu" Popup="ContextMenu_PopUp">
+                        <wf:ContextMenu.MenuItems>
+                        </wf:ContextMenu.MenuItems>
+                    </wf:ContextMenu>
+                </wf:ListView.ContextMenu>
                 <wf:ListView.Columns>
                     <wf:ColumnHeader x:Name="listViewColumnHeader_Title" Text="タイトル" Width="100"/>
                     <wf:ColumnHeader x:Name="listViewColumnHeader_Route" Text="路線" Width="100"/>
@@ -83,5 +93,13 @@
                 <TextBlock Name="scenarioFileNameText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">ファイル名</TextBlock>
             </WrapPanel>
         </Grid>
+        <StatusBar Grid.Row="5">
+            <StatusBarItem>
+                <TextBlock Name="statusText" Foreground="#FF4B4B4B" Text="ステータス" />
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <ProgressBar Name="statusProgressBar" Width="150"/>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>
