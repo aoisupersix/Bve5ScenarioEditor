@@ -18,6 +18,20 @@
             <Setter Property="BorderBrush" Value="{StaticResource AccentColorBrush2}"/>
             <Setter Property="BorderThickness" Value="1,1,1,1"/>
         </Style>
+
+        <local:BooleanVisiblityConverter x:Key="booleanConverter" />
+        <Style x:Key="unselectedListViewStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Visibility"
+              Value="{Binding Path=IsSelected, RelativeSource={RelativeSource FindAncestor,
+                AncestorType={x:Type ListViewItem}}, Converter={StaticResource booleanConverter},
+                  ConverterParameter=False}" />
+        </Style>
+        <Style x:Key="selectedListViewStyle" TargetType="{x:Type FrameworkElement}">
+            <Setter Property="Visibility"
+              Value="{Binding Path=IsSelected, RelativeSource={RelativeSource FindAncestor,
+                AncestorType={x:Type ListViewItem}}, Converter={StaticResource booleanConverter},
+                  ConverterParameter=True}" />
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -85,7 +99,7 @@
                         <TextBox Name="imagePathTextBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" />
                         <Button Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Content="..." Background="{DynamicResource AccentColorBrush3}" />
                     </Grid>
-                    <Grid Grid.Row="1">
+                    <Grid Grid.Row="1" Margin="2,5,2,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0.3*" MinWidth="150" />
                             <ColumnDefinition Width="0.8*" />
@@ -101,9 +115,25 @@
                             <ListView Name="routeListView" ItemsSource="{Binding}" >
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="ファイルパス" DisplayMemberBinding="{Binding FilePath}" Width="250" />
-                                        <GridViewColumn Header="重み" DisplayMemberBinding="{Binding Weight}" Width="80" />
-                                        <GridViewColumn Header="選択確率" DisplayMemberBinding="{Binding Probability}" Width="80" />
+                                        <GridViewColumn Header="ファイルパス" Width="300">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <TextBlock Text="{Binding FilePath}" Style="{StaticResource unselectedListViewStyle}"/>
+                                                        <Grid Style="{StaticResource selectedListViewStyle}">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="1*" />
+                                                                <ColumnDefinition Width="40" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBox Grid.Column="0" Text="{Binding FilePath}" />
+                                                            <Button Grid.Column="1" FontSize="10" Content="..." />
+                                                        </Grid>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="重み" DisplayMemberBinding="{Binding Weight}" />
+                                        <GridViewColumn Header="選択確率" DisplayMemberBinding="{Binding Probability}" />
                                     </GridView>
                                 </ListView.View>
                             </ListView>

@@ -142,13 +142,14 @@ namespace Bve5ScenarioEditor
         void ShowFileReferenceInfo(List<Scenario> scenarios)
         {
             Scenario scenario = scenarios[0];
+            double weightSum = scenario.Data.Route.Select(x => x.Weight).Sum();
             foreach(var filePath in scenario.Data.Route)
             {
                 routePathList.Add(new FilePathReferenceItem
                 {
                     FilePath = filePath.Value,
                     Weight = filePath.Weight.ToString(),
-                    Probability = "100%"
+                    Probability = Math.Round(filePath.Weight / weightSum, 2) * 100 + "%"
                 });
             }
         }
