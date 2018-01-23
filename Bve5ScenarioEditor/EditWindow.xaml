@@ -97,7 +97,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">サムネイル画像の参照(Image):</TextBlock>
                         <TextBox Name="imagePathTextBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" />
-                        <Button Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Content="..." Background="{DynamicResource AccentColorBrush3}" />
+                        <Button Click="ImageReferenceButton_Click" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Content="..." Background="{DynamicResource AccentColorBrush3}" />
                     </Grid>
                     <Grid Grid.Row="1" Margin="2,5,2,0">
                         <Grid.ColumnDefinitions>
@@ -112,7 +112,7 @@
                             <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom">マップファイルの参照(Route):</TextBlock>
                         </Grid>
                         <Border Grid.Column="1" BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}" >
-                            <ListView Name="routeListView" ItemsSource="{Binding}" >
+                            <ListView Name="routeListView" ItemsSource="{Binding}" SelectionMode="Single" >
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="ファイルパス" Width="300">
@@ -126,7 +126,7 @@
                                                                 <ColumnDefinition Width="40" />
                                                             </Grid.ColumnDefinitions>
                                                             <TextBox Grid.Column="0" Text="{Binding FilePath}" />
-                                                            <Button Grid.Column="1" FontSize="10" Content="..." />
+                                                            <Button Grid.Column="1" Click="FileReferenceButton_Click" FontSize="10" Content="..." />
                                                         </Grid>
                                                     </Grid>
                                                 </DataTemplate>

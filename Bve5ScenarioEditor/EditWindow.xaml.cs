@@ -170,7 +170,37 @@ namespace Bve5ScenarioEditor
         }
 
         #region EventHandler
+        void FileReferenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
 
+            var dlg = new Wf.OpenFileDialog();
+            if (Directory.Exists(dirPath))
+                dlg.InitialDirectory = dirPath;
+            dlg.Title = "ファイルを選択";
+            dlg.Filter = "全てのファイル(*.*)|*.*|テキストファイル(*.txt)|*.txt";
+            if (dlg.ShowDialog() == Wf.DialogResult.OK)
+            {
+                MessageBox.Show(dlg.FileName);
+                //TODO
+            }
+        }
+
+        void ImageReferenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
+
+            var dlg = new Wf.OpenFileDialog();
+            if (Directory.Exists(dirPath))
+                dlg.InitialDirectory = dirPath;
+            dlg.Title = "ファイルを選択";
+            dlg.Filter = "画像ファイル(*.png,*.jpg,*.bmp,*.gif)|*.png;*.jpg;*.bmp;*.gif|すべてのファイル(*.*)|*.*";
+            if (dlg.ShowDialog() == Wf.DialogResult.OK)
+            {
+                MessageBox.Show(dlg.FileName);
+                //TODO
+            }
+        }
         #endregion EventHandler
 
         /// <summary>
@@ -189,6 +219,7 @@ namespace Bve5ScenarioEditor
         public List<Scenario> ShowWindow(List<Scenario> editData)
         {
             this.Title = editData.Count > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Count + "シナリオ" : "Edit - " + editData[0].Data.Title;
+            this.editData = editData;
             ShowScenarioInfo(editData, true);
             if(editData.Count <= 1)
             {
