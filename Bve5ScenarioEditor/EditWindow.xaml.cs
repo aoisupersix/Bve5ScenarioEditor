@@ -139,6 +139,10 @@ namespace Bve5ScenarioEditor
             }
         }
 
+        /// <summary>
+        /// ファイル参照情報をUIに表示します。
+        /// </summary>
+        /// <param name="scenarios">表示するシナリオデータ(一つ)</param>
         void ShowFileReferenceInfo(List<Scenario> scenarios)
         {
             Scenario scenario = scenarios[0];
@@ -151,6 +155,26 @@ namespace Bve5ScenarioEditor
                     Weight = filePath.Weight.ToString(),
                     Probability = Math.Round(filePath.Weight / weightSum, 2) * 100 + "%"
                 });
+            }
+        }
+
+        /// <summary>
+        /// シナリオ情報の表示を更新します。
+        /// </summary>
+        void UpdateScenarioInfo()
+        {
+            this.Title = editData.Count > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Count + "シナリオ" : "Edit - " + editData[0].Data.Title;
+            if(editData.Any(x => x.DidEdit))
+                this.Title += "*";
+            ShowScenarioInfo(editData, false);
+            if (editData.Count <= 1)
+            {
+
+                //ファイル参照タブの情報表示
+                routePathList = new ObservableCollection<FilePathReferenceItem>();
+                routeListView.DataContext = routePathList;
+
+                ShowFileReferenceInfo(editData);
             }
         }
 
@@ -169,7 +193,28 @@ namespace Bve5ScenarioEditor
             scenarioFileNameText.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// 絶対パスから相対パスを取得します。
+        /// </summary>
+        /// <param name="nowDirectoryPath">現在のディレクトリパス</param>
+        /// <param name="absolutePath">目的ファイルの絶対パス</param>
+        /// <returns></returns>
+        string GetRelativeFilePath(string nowDirectoryPath, string absolutePath)
+        {
+            Uri nowUri = new Uri(nowDirectoryPath);
+            Uri absoluteUri = new Uri(absolutePath);
+            Uri relativeUri = nowUri.MakeRelativeUri(absoluteUri);
+
+            return relativeUri.ToString().Replace("/", @"\");
+        }
+
         #region EventHandler
+
+        /// <summary>
+        /// ファイル参照を更新します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void FileReferenceButton_Click(object sender, RoutedEventArgs e)
         {
             string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
@@ -181,11 +226,36 @@ namespace Bve5ScenarioEditor
             dlg.Filter = "全てのファイル(*.*)|*.*|テキストファイル(*.txt)|*.txt";
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
-                MessageBox.Show(dlg.FileName);
-                //TODO
+                //シナリオ情報を更新
+                string val = GetRelativeFilePath(editData[0].File.DirectoryName + @"\", dlg.FileName);
+                var button = (Button)sender;
+                if (button.Name.Equals("routeReferenceButton"))
+                {
+                    //路線ファイル更新
+                    int idx = routeListView.SelectedIndex;
+                    if (!editData[0].Data.Route[idx].Value.Equals(val))
+                    {
+                        editData[0].DidEdit = true;
+                        editData[0].Data.Route[idx] = 
+                            new Bve5_Parsing.ScenarioGrammar.FilePath {
+                                Value = val,
+                                Weight = editData[0].Data.Route[idx].Weight
+                            };
+                        UpdateScenarioInfo();
+                    }
+                }
+                else
+                {
+
+                }
             }
         }
 
+        /// <summary>
+        /// シナリオの画像ファイル参照を更新します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void ImageReferenceButton_Click(object sender, RoutedEventArgs e)
         {
             string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
@@ -197,8 +267,13 @@ namespace Bve5ScenarioEditor
             dlg.Filter = "画像ファイル(*.png,*.jpg,*.bmp,*.gif)|*.png;*.jpg;*.bmp;*.gif|すべてのファイル(*.*)|*.*";
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
-                MessageBox.Show(dlg.FileName);
-                //TODO
+                string path = GetRelativeFilePath(editData[0].File.DirectoryName + @"\", dlg.FileName);
+                if (!editData[0].Data.Image.Equals(path))
+                {
+                    editData[0].DidEdit = true;
+                    editData[0].Data.Image = path;
+                    UpdateScenarioInfo();
+                }
             }
         }
         #endregion EventHandler

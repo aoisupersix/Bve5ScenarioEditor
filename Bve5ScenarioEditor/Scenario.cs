@@ -14,6 +14,16 @@ namespace Bve5ScenarioEditor
     public class Scenario
     {
         /// <summary>
+        /// シナリオを編集したかどうか
+        /// </summary>
+        public bool DidEdit { get; set; }
+
+        /// <summary>
+        /// シナリオを削除したかどうか
+        /// </summary>
+        public bool DidDelete { get; set; }
+
+        /// <summary>
         /// シナリオファイルの情報
         /// </summary>
         public FileInfo File { get; private set; }
