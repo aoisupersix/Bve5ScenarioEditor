@@ -13,6 +13,12 @@
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
         Title="EditWindow" Height="700" Width="600">
+    <Window.Resources>
+        <Style x:Key="ListViewItemStyle1" TargetType="ListViewItem">
+            <Setter Property="BorderBrush" Value="{StaticResource AccentColorBrush2}"/>
+            <Setter Property="BorderThickness" Value="1,1,1,1"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.2*" />
@@ -91,14 +97,17 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom">マップファイルの参照(Route):</TextBlock>
                         </Grid>
-                        <ListView Grid.Column="1" BorderBrush="{DynamicResource AccentColorBrush2}" >
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="ファイルパス" Width="auto" />
-                                    <GridViewColumn Header="重み付け係数" Width="90"/>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
+                        <Border Grid.Column="1" BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}" >
+                            <ListView Name="routeListView" ItemsSource="{Binding}" >
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="ファイルパス" DisplayMemberBinding="{Binding FilePath}" Width="250" />
+                                        <GridViewColumn Header="重み" DisplayMemberBinding="{Binding Weight}" Width="80" />
+                                        <GridViewColumn Header="選択確率" DisplayMemberBinding="{Binding Probability}" Width="80" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </Border>
                     </Grid>
                 </Grid>
             </TabItem>

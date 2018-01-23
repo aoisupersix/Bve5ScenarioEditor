@@ -13,10 +13,9 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Collections.ObjectModel;
 
 using MahApps.Metro.Controls;
-
 
 namespace Bve5ScenarioEditor
 {
@@ -25,6 +24,15 @@ namespace Bve5ScenarioEditor
     /// </summary>
     public partial class EditWindow : MetroWindow
     {
+        /// <summary>
+        /// 路線ファイル参照リストボックスのアイテムリスト
+        /// </summary>
+        ObservableCollection<FilePathReferenceItem> routePathList;
+
+        /// <summary>
+        /// 車両ファイル参照リストボックスのアイテムリスト
+        /// </summary>
+        ObservableCollection<FilePathReferenceItem> vehiclePathList;
 
         List<Scenario> editData;
 
@@ -131,6 +139,20 @@ namespace Bve5ScenarioEditor
             }
         }
 
+        void ShowFileReferenceInfo(List<Scenario> scenarios)
+        {
+            Scenario scenario = scenarios[0];
+            foreach(var filePath in scenario.Data.Route)
+            {
+                routePathList.Add(new FilePathReferenceItem
+                {
+                    FilePath = filePath.Value,
+                    Weight = filePath.Weight.ToString(),
+                    Probability = "100%"
+                });
+            }
+        }
+
         /// <summary>
         /// シナリオ情報表示をすべて非表示にします。
         /// </summary>
@@ -145,6 +167,10 @@ namespace Bve5ScenarioEditor
             scenarioAuthorText.Visibility = Visibility.Collapsed;
             scenarioFileNameText.Visibility = Visibility.Collapsed;
         }
+
+        #region EventHandler
+
+        #endregion EventHandler
 
         /// <summary>
         /// 新しいインスタンスを初期化します。
@@ -169,11 +195,26 @@ namespace Bve5ScenarioEditor
                 //ファイル参照タブは複数シナリオ編集ではサポートしない。
                 fileReferenceTab.IsEnabled = true;
 
-                //TODO ファイル参照タブの情報表示
+                //ファイル参照タブの情報表示
+                routePathList = new ObservableCollection<FilePathReferenceItem>();
+                routeListView.DataContext = routePathList;
+
+                ShowFileReferenceInfo(editData);
             }
 
             this.ShowDialog();
             return editData;
         }
+    }
+
+    /// <summary>
+    /// ファイル参照のリストビューアイテム
+    /// </summary>
+    class FilePathReferenceItem
+    {
+        public string FilePath { get; set; }
+        public string Weight { get; set; }
+        public string Probability { get; set; }
+
     }
 }
