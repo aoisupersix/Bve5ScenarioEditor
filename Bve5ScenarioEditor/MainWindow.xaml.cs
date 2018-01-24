@@ -25,7 +25,7 @@ namespace Bve5ScenarioEditor
         /// <summary>
         /// シナリオをグルーピング(ソート)する項目
         /// </summary>
-        Scenario.SubItemIndex defaultGroupIdx = Scenario.SubItemIndex.ROUTE_TITLE;
+        Scenario.SubItemIndex groupIdx = Scenario.SubItemIndex.ROUTE_TITLE;
 
         /// <summary>
         /// シナリオ情報の管理クラス
@@ -74,7 +74,7 @@ namespace Bve5ScenarioEditor
         void GroupingFor(Scenario.SubItemIndex subIdx)
         {
             //ソート
-            List<Scenario> scenarios = scenarioManager.SnapShot.Peek();
+            List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
             scenarios.Sort((a, b) => string.Compare(a.Item.SubItems[(int)subIdx].Text, b.Item.SubItems[(int)subIdx].Text));
 
             scenarioSelectListView.Items.Clear();
@@ -162,7 +162,7 @@ namespace Bve5ScenarioEditor
         {
             if (scenarioSelectListView.SelectedItems.Count > 0)
             {
-                List<Scenario> scenarios = scenarioManager.SnapShot.Peek();
+                List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
                 List<Scenario> editData = new List<Scenario>();
                 foreach (Wf.ListViewItem item in scenarioSelectListView.SelectedItems)
                 {
@@ -171,10 +171,14 @@ namespace Bve5ScenarioEditor
                 EditWindow editWindow = new EditWindow();
                 editWindow.Owner = this;
                 Scenario[] returnData = editWindow.ShowWindow(editData.ToArray());
-                editData.Clear();
-                editData.AddRange(returnData);
-                //TODO
-
+                foreach(var ret in returnData)
+                {
+                    ret.CreateListViewItem(scenarioSelectListView);
+                    int idx = scenarios.FindIndex(x => x.File.Equals(ret.File));
+                    scenarios[idx] = ret;
+                }
+                scenarioManager.SetNewMemento(scenarios);
+                GroupingFor(groupIdx);
             }
         }
 
@@ -185,7 +189,7 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void ScenarioSelectListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            List<Scenario> scenarios = scenarioManager.SnapShot.Peek();
+            List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
             statusText.Text = "シナリオを" + scenarioSelectListView.SelectedItems.Count + "個選択中。";
 
             if (scenarioSelectListView.SelectedItems.Count == 0)
@@ -364,7 +368,8 @@ namespace Bve5ScenarioEditor
         void Sort_Title(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
-            GroupingFor(Scenario.SubItemIndex.TITLE);
+            groupIdx = Scenario.SubItemIndex.TITLE;
+            GroupingFor(groupIdx);
         }
 
         /// <summary>
@@ -375,7 +380,8 @@ namespace Bve5ScenarioEditor
         void Sort_RouteTitle(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
-            GroupingFor(Scenario.SubItemIndex.ROUTE_TITLE);
+            groupIdx = Scenario.SubItemIndex.ROUTE_TITLE;
+            GroupingFor(groupIdx);
         }
 
         /// <summary>
@@ -386,7 +392,8 @@ namespace Bve5ScenarioEditor
         void Sort_VehicleTitle(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
-            GroupingFor(Scenario.SubItemIndex.VEHICLE_TITLE);
+            groupIdx = Scenario.SubItemIndex.VEHICLE_TITLE;
+            GroupingFor(groupIdx);
         }
 
         /// <summary>
@@ -397,7 +404,8 @@ namespace Bve5ScenarioEditor
         void Sort_Author(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
-            GroupingFor(Scenario.SubItemIndex.AUTHOR);
+            groupIdx = Scenario.SubItemIndex.AUTHOR;
+            GroupingFor(groupIdx);
         }
 
         /// <summary>
@@ -408,7 +416,8 @@ namespace Bve5ScenarioEditor
         void Sort_File(object sender, RoutedEventArgs e)
         {
             CheckSortMenuItem(sender);
-            GroupingFor(Scenario.SubItemIndex.FILE_NAME);
+            groupIdx = Scenario.SubItemIndex.FILE_NAME;
+            GroupingFor(groupIdx);
         }
 
         #endregion EventHandler
@@ -457,7 +466,7 @@ namespace Bve5ScenarioEditor
 
                 scenarioSelectListView.Items.AddRange(addItems.ToArray());
                 scenarioManager.SetNewMemento(scenarios);
-                GroupingFor(defaultGroupIdx);
+                GroupingFor(groupIdx);
 
                 statusProgressBar.Value = 100;
                 statusText.Text = "読み込み完了";

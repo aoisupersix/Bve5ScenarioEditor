@@ -34,7 +34,12 @@ namespace Bve5ScenarioEditor
         /// </summary>
         ObservableCollection<FilePathReferenceItem> vehiclePathList;
 
+        /// <summary>
+        /// 編集するシナリオデータ
+        /// </summary>
         Scenario[] editData;
+
+        bool isEditApply = false;
 
         /// <summary>
         /// シナリオ情報を表示します。
@@ -145,36 +150,36 @@ namespace Bve5ScenarioEditor
         /// <param name="scenarios">表示するシナリオデータ</param>
         void ShowFileReferenceInfo(Scenario[] scenarios)
         {
-            Scenario scenario = scenarios[0];
-            double weightSum = scenario.Data.Route.Select(x => x.Weight).Sum();
-            foreach(var filePath in scenario.Data.Route)
+            if(scenarios.Length == 1)
             {
-                routePathList.Add(new FilePathReferenceItem
+                Scenario scenario = scenarios[0];
+                double weightSum = scenario.Data.Route.Select(x => x.Weight).Sum();
+                foreach (var filePath in scenario.Data.Route)
                 {
-                    FilePath = filePath.Value,
-                    Weight = filePath.Weight.ToString(),
-                    Probability = Math.Round(filePath.Weight / weightSum, 2) * 100 + "%"
-                });
+                    routePathList.Add(new FilePathReferenceItem
+                    {
+                        FilePath = filePath.Value,
+                        Weight = filePath.Weight.ToString(),
+                        Probability = Math.Round(filePath.Weight / weightSum, 2) * 100 + "%"
+                    });
+                }
             }
         }
 
         /// <summary>
         /// シナリオ情報の表示を更新します。
         /// </summary>
-        void UpdateScenarioInfo()
+        void UpdateScenarioInfo(bool isUpdateEditView)
         {
             this.Title = editData.Length > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Length + "シナリオ" : "Edit - " + editData[0].Data.Title;
             if(editData.Any(x => x.DidEdit))
                 this.Title += "*";
-            ShowScenarioInfo(editData, false);
-            if (editData.Length <= 1)
-            {
-                //ファイル参照タブの情報表示
-                routePathList = new ObservableCollection<FilePathReferenceItem>();
-                routeListView.DataContext = routePathList;
+            ShowScenarioInfo(editData, isUpdateEditView);
+            //ファイル参照タブの情報表示
+            routePathList = new ObservableCollection<FilePathReferenceItem>();
+            routeListView.DataContext = routePathList;
 
-                ShowFileReferenceInfo(editData);
-            }
+            ShowFileReferenceInfo(editData);
         }
 
         /// <summary>
@@ -229,7 +234,7 @@ namespace Bve5ScenarioEditor
                             Weight = 1
                         });
                 }
-                UpdateScenarioInfo();
+                UpdateScenarioInfo(false);
             }
         }
 
@@ -255,7 +260,7 @@ namespace Bve5ScenarioEditor
                     data.Data.Route.Remove(delPath);
                 }
                 routePathList.Remove(deleteItem);
-                UpdateScenarioInfo();
+                UpdateScenarioInfo(false);
             }
         }
 
@@ -290,7 +295,7 @@ namespace Bve5ScenarioEditor
                                 Value = val,
                                 Weight = editData[0].Data.Route[idx].Weight
                             };
-                        UpdateScenarioInfo();
+                        UpdateScenarioInfo(false);
                     }
                 }
                 else
@@ -321,9 +326,30 @@ namespace Bve5ScenarioEditor
                 {
                     editData[0].DidEdit = true;
                     editData[0].Data.Image = path;
-                    UpdateScenarioInfo();
+                    UpdateScenarioInfo(false);
                 }
             }
+        }
+
+        /// <summary>
+        /// OKボタンを押した際に編集を適応してウインドウを閉じます。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void OkButton_Click(object sender, RoutedEventArgs e)
+        {
+            isEditApply = true;
+            this.Close();
+        }
+
+        /// <summary>
+        /// キャンセルボタンを押した際にウインドウを閉じます。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
         #endregion EventHandler
 
@@ -340,26 +366,20 @@ namespace Bve5ScenarioEditor
         /// </summary>
         /// <param name="editData">編集するシナリオデータ</param>
         /// <returns>編集後のシナリオデータ</returns>
-        public Scenario[] ShowWindow(Scenario[] editData)
+        public Scenario[] ShowWindow(Scenario[] scenarioData)
         {
-            this.Title = editData.Length > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Length + "シナリオ" : "Edit - " + editData[0].Data.Title;
-            this.editData = editData;
-            ShowScenarioInfo(editData, true);
-            if(editData.Length <= 1)
+            editData = new Scenario[scenarioData.Length];
+            for(int i = 0; i < editData.Length; i++)
             {
-                //ファイル参照タブの有効化
-                //ファイル参照タブは複数シナリオ編集ではサポートしない。
-                fileReferenceTab.IsEnabled = true;
-
-                //ファイル参照タブの情報表示
-                routePathList = new ObservableCollection<FilePathReferenceItem>();
-                routeListView.DataContext = routePathList;
-
-                ShowFileReferenceInfo(editData);
+                editData[i] = scenarioData[i].Copy();
             }
+            UpdateScenarioInfo(true);
 
             this.ShowDialog();
-            return editData;
+            if (isEditApply)
+                return this.editData;
+            else
+                return scenarioData;
         }
     }
 

@@ -92,6 +92,30 @@ namespace Bve5ScenarioEditor
             File = new FileInfo(path);
         }
 
+        public Scenario Copy()
+        {
+            Scenario copy = new Scenario(this.File.FullName);
+            copy.DidEdit = this.DidEdit;
+            copy.DidDelete = this.DidDelete;
+            copy.File = this.File;
+            copy.Data = new ScenarioData()
+            {
+                Version = this.Data.Version,
+                Encoding = this.Data.Encoding,
+                Image = this.Data.Image,
+                Title = this.Data.Title,
+                Route = new System.Collections.Generic.List<FilePath>(this.Data.Route),
+                Vehicle = new System.Collections.Generic.List<FilePath>(this.Data.Vehicle),
+                RouteTitle = this.Data.RouteTitle,
+                VehicleTitle = this.Data.VehicleTitle,
+                Author = this.Data.Author,
+                Comment = this.Data.Comment
+            };
+            copy.Item = this.Item;
+
+            return copy;
+        }
+
         /// <summary>
         /// シナリオファイルを読み込んで解析します。
         /// </summary>

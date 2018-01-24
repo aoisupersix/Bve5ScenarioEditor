@@ -83,7 +83,7 @@
                     <TextBox Name="commentTextBox" Grid.Row="4" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" AcceptsReturn="True" />
                 </Grid>
             </TabItem>
-            <TabItem Name="fileReferenceTab" Header="ファイル参照" IsEnabled="False">
+            <TabItem Name="fileReferenceTab" Header="ファイル参照">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.1*" />
@@ -154,8 +154,8 @@
                 <ColumnDefinition Width="100*" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Content="OK" Background="{DynamicResource AccentColorBrush3}" Margin="5,0" FontSize="14" FontFamily="Yu Gothic UI" MinWidth="70" FontWeight="Normal" />
-            <Button Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Content="キャンセル" Background="{DynamicResource AccentColorBrush3}" Margin="5,0" FontSize="14" FontFamily="Yu Gothic UI" MinWidth="70" FontWeight="Normal" />
+            <Button Click="OkButton_Click" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Content="OK" Background="{DynamicResource AccentColorBrush3}" Margin="5,0" FontSize="14" FontFamily="Yu Gothic UI" MinWidth="70" FontWeight="Normal" />
+            <Button Click="CancelButton_Click" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Content="キャンセル" Background="{DynamicResource AccentColorBrush3}" Margin="5,0" FontSize="14" FontFamily="Yu Gothic UI" MinWidth="70" FontWeight="Normal" />
         </Grid>
     </Grid>
 </Controls:MetroWindow>
