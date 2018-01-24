@@ -32,6 +32,7 @@
                 AncestorType={x:Type ListViewItem}}, Converter={StaticResource booleanConverter},
                   ConverterParameter=True}" />
         </Style>
+
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>

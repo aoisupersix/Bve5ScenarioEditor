@@ -34,16 +34,16 @@ namespace Bve5ScenarioEditor
         /// </summary>
         ObservableCollection<FilePathReferenceItem> vehiclePathList;
 
-        List<Scenario> editData;
+        Scenario[] editData;
 
         /// <summary>
         /// シナリオ情報を表示します。
         /// </summary>
         /// <param name="showData">表示するシナリオ</param>
         /// <param name="isShowEditView">編集画面のUIも表示させるかどうか(初回のみtrueにする)</param>
-        void ShowScenarioInfo(List<Scenario> showData, bool isShowEditView)
+        void ShowScenarioInfo(Scenario[] showData, bool isShowEditView)
         {
-            if (showData.Count > 0)
+            if (showData.Length > 0)
             {
                 //選択したアイテムの共通項目を調べる
                 //ベースとなるアイテムの取得
@@ -142,8 +142,8 @@ namespace Bve5ScenarioEditor
         /// <summary>
         /// ファイル参照情報をUIに表示します。
         /// </summary>
-        /// <param name="scenarios">表示するシナリオデータ(一つ)</param>
-        void ShowFileReferenceInfo(List<Scenario> scenarios)
+        /// <param name="scenarios">表示するシナリオデータ</param>
+        void ShowFileReferenceInfo(Scenario[] scenarios)
         {
             Scenario scenario = scenarios[0];
             double weightSum = scenario.Data.Route.Select(x => x.Weight).Sum();
@@ -163,13 +163,12 @@ namespace Bve5ScenarioEditor
         /// </summary>
         void UpdateScenarioInfo()
         {
-            this.Title = editData.Count > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Count + "シナリオ" : "Edit - " + editData[0].Data.Title;
+            this.Title = editData.Length > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Length + "シナリオ" : "Edit - " + editData[0].Data.Title;
             if(editData.Any(x => x.DidEdit))
                 this.Title += "*";
             ShowScenarioInfo(editData, false);
-            if (editData.Count <= 1)
+            if (editData.Length <= 1)
             {
-
                 //ファイル参照タブの情報表示
                 routePathList = new ObservableCollection<FilePathReferenceItem>();
                 routeListView.DataContext = routePathList;
@@ -268,7 +267,7 @@ namespace Bve5ScenarioEditor
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
                 string path = GetRelativeFilePath(editData[0].File.DirectoryName + @"\", dlg.FileName);
-                if (!editData[0].Data.Image.Equals(path))
+                if (!editData.All(x => x.Data.Image.Equals(path)))
                 {
                     editData[0].DidEdit = true;
                     editData[0].Data.Image = path;
@@ -291,12 +290,12 @@ namespace Bve5ScenarioEditor
         /// </summary>
         /// <param name="editData">編集するシナリオデータ</param>
         /// <returns>編集後のシナリオデータ</returns>
-        public List<Scenario> ShowWindow(List<Scenario> editData)
+        public Scenario[] ShowWindow(Scenario[] editData)
         {
-            this.Title = editData.Count > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Count + "シナリオ" : "Edit - " + editData[0].Data.Title;
+            this.Title = editData.Length > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Length + "シナリオ" : "Edit - " + editData[0].Data.Title;
             this.editData = editData;
             ShowScenarioInfo(editData, true);
-            if(editData.Count <= 1)
+            if(editData.Length <= 1)
             {
                 //ファイル参照タブの有効化
                 //ファイル参照タブは複数シナリオ編集ではサポートしない。

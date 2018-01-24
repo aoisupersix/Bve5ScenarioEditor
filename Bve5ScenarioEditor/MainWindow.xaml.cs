@@ -170,8 +170,9 @@ namespace Bve5ScenarioEditor
                 }
                 EditWindow editWindow = new EditWindow();
                 editWindow.Owner = this;
-                editData = editWindow.ShowWindow(editData);
-
+                Scenario[] returnData = editWindow.ShowWindow(editData.ToArray());
+                editData.Clear();
+                editData.AddRange(returnData);
                 //TODO
 
             }
