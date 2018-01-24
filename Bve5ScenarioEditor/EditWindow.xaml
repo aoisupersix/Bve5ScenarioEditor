@@ -32,15 +32,6 @@
                 AncestorType={x:Type ListViewItem}}, Converter={StaticResource booleanConverter},
                   ConverterParameter=True}" />
         </Style>
-        <Style TargetType="TextBox">
-            <Style.Triggers>
-                <Trigger Property="Validation.HasError" Value="True">
-                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-                    <Setter Property="Background" Value="#ffeeff" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -112,7 +103,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">サムネイル画像の参照(Image):</TextBlock>
                         <TextBox Name="imagePathTextBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" />
-                        <Button Click="ImageReferenceButton_Click" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Content="..." Background="{DynamicResource AccentColorBrush3}" />
+                        <Button Click="ImageReferenceButton_Click" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Content="..." Background="{DynamicResource AccentColorBrush3}" Foreground="{DynamicResource IdealForegroundColorBrush}" />
                     </Grid>
                     <Grid Grid.Row="2" Margin="2,5,2,0">
                         <Grid.ColumnDefinitions>
@@ -126,8 +117,8 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom">マップファイルの参照(Route):</TextBlock>
                             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" >
-                                <Button Name="routeAddButton" Click="FileReferenceAddButton_Click" Content="追加" Margin="2" Background="{DynamicResource AccentColorBrush4}"/>
-                                <Button Name="routeDeleteButton" Click="FileReferenceDeleteButton_Click" Content="削除" Margin="2" Background="{DynamicResource AccentColorBrush4}"/>
+                                <Button Name="routeAddButton" Click="FileReferenceAddButton_Click" Content="追加" Margin="2" Style="{DynamicResource MaterialDesignRaisedButton}"/>
+                                <Button Name="routeDeleteButton" Click="FileReferenceDeleteButton_Click" Content="削除" Margin="2" Style="{DynamicResource MaterialDesignRaisedButton}"/>
                             </StackPanel>
                         </Grid>
                         <Border Grid.Column="1" BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}" >
@@ -144,8 +135,8 @@
                                                                 <ColumnDefinition Width="1*" />
                                                                 <ColumnDefinition Width="40" />
                                                             </Grid.ColumnDefinitions>
-                                                            <TextBox Grid.Column="0" Text="{Binding FilePath}" />
-                                                            <Button Grid.Column="1" Name="routeReferenceButton" Click="FileReferenceButton_Click" FontSize="10" Content="..." />
+                                                            <TextBox Grid.Column="0" Text="{Binding FilePath}" Controls:TextBoxHelper.Watermark="路線ファイルパス" Controls:TextBoxHelper.AutoWatermark="True" />
+                                                            <Button Grid.Column="1" Name="routeReferenceButton" Click="FileReferenceButton_Click" FontSize="10" Content="..."  Style="{DynamicResource MaterialDesignRaisedButton}" Background="{DynamicResource AccentSelectedColorBrush}" Foreground="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" />
                                                         </Grid>
                                                     </Grid>
                                                 </DataTemplate>
@@ -156,12 +147,11 @@
                                                 <DataTemplate>
                                                     <Grid>
                                                         <TextBlock Text="{Binding Weight}" Style="{StaticResource unselectedListViewStyle}"/>
-                                                        <TextBox Text="{Binding Weight}"  Style="{StaticResource selectedListViewStyle}" />
+                                                        <TextBox Text="{Binding Weight, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"  Style="{StaticResource selectedListViewStyle}" PreviewTextInput="WeightTextBox_PreviewTextInput" />
                                                     </Grid>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
-
                                         <GridViewColumn Header="選択確率" DisplayMemberBinding="{Binding Probability}" />
                                     </GridView>
                                 </ListView.View>
@@ -176,8 +166,18 @@
                 <ColumnDefinition Width="100*" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <Button Click="OkButton_Click" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Content="OK" Background="{DynamicResource AccentColorBrush3}" Margin="5,0" FontSize="14" FontFamily="Yu Gothic UI" MinWidth="70" FontWeight="Normal" />
-            <Button Click="CancelButton_Click" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Content="キャンセル" Background="{DynamicResource AccentColorBrush3}" Margin="5,0" FontSize="14" FontFamily="Yu Gothic UI" MinWidth="70" FontWeight="Normal" />
+            <Button Click="OkButton_Click" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Content="OK" Background="{DynamicResource AccentColorBrush3}" Margin="5,0" FontSize="14" FontFamily="Yu Gothic UI" MinWidth="70" FontWeight="Normal">
+                <Button.Style >
+                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                        <Style.Triggers>
+                            <Trigger Property="Validation.HasError" Value="True">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Style="{DynamicResource MaterialDesignRaisedButton}" Click="CancelButton_Click" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Content="キャンセル" Background="{DynamicResource AccentColorBrush3}" Margin="5,0" FontSize="14" FontFamily="Yu Gothic UI" MinWidth="70" FontWeight="Normal" />
         </Grid>
     </Grid>
 </Controls:MetroWindow>

@@ -102,6 +102,7 @@
     <Compile Include="EditWindow.xaml.cs">
       <DependentUpon>EditWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FilePathReferenceDataSource.cs" />
     <Compile Include="Scenario.cs" />
     <Compile Include="ScenarioDataManagement.cs" />
     <Page Include="EditWindow.xaml">

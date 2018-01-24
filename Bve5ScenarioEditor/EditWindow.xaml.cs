@@ -16,6 +16,8 @@ using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
 
 using MahApps.Metro.Controls;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace Bve5ScenarioEditor
 {
@@ -27,12 +29,12 @@ namespace Bve5ScenarioEditor
         /// <summary>
         /// 路線ファイル参照リストボックスのアイテムリスト
         /// </summary>
-        ObservableCollection<FilePathReferenceItem> routePathList;
+        ObservableCollection<FilePathReferenceDataSource> routePathList;
 
         /// <summary>
         /// 車両ファイル参照リストボックスのアイテムリスト
         /// </summary>
-        ObservableCollection<FilePathReferenceItem> vehiclePathList;
+        ObservableCollection<FilePathReferenceDataSource> vehiclePathList;
 
         /// <summary>
         /// 編集するシナリオデータ
@@ -156,7 +158,7 @@ namespace Bve5ScenarioEditor
                 double weightSum = scenario.Data.Route.Select(x => x.Weight).Sum();
                 foreach (var filePath in scenario.Data.Route)
                 {
-                    routePathList.Add(new FilePathReferenceItem
+                    routePathList.Add(new FilePathReferenceDataSource
                     {
                         FilePath = filePath.Value,
                         Weight = filePath.Weight.ToString(),
@@ -176,7 +178,7 @@ namespace Bve5ScenarioEditor
                 this.Title += "*";
             ShowScenarioInfo(editData, isUpdateEditView);
             //ファイル参照タブの情報表示
-            routePathList = new ObservableCollection<FilePathReferenceItem>();
+            routePathList = new ObservableCollection<FilePathReferenceDataSource>();
             routeListView.DataContext = routePathList;
 
             ShowFileReferenceInfo(editData);
@@ -215,6 +217,16 @@ namespace Bve5ScenarioEditor
         #region EventHandler
 
         /// <summary>
+        /// 重み付け係数のテキストボックス入力受付を数字のみに制限します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void WeightTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !new Regex(@"[0-9\.]").IsMatch(e.Text);
+        }
+
+        /// <summary>
         /// ファイル参照を追加します。
         /// </summary>
         /// <param name="sender">イベントのソース</param>
@@ -230,7 +242,7 @@ namespace Bve5ScenarioEditor
                     data.Data.Route.Add(
                         new Bve5_Parsing.ScenarioGrammar.FilePath
                         {
-                            Value = "newRoute",
+                            Value = "new route",
                             Weight = 1
                         });
                 }
@@ -253,7 +265,7 @@ namespace Bve5ScenarioEditor
                     return;
 
                 //対応する路線ファイル参照を削除
-                var deleteItem = (FilePathReferenceItem)routeListView.SelectedItem;
+                var deleteItem = (FilePathReferenceDataSource)routeListView.SelectedItem;
                 foreach (var data in editData)
                 {
                     var delPath = data.Data.Route.Find(x => x.Value.Equals(deleteItem.FilePath) && x.Weight.ToString().Equals(deleteItem.Weight));
@@ -374,23 +386,13 @@ namespace Bve5ScenarioEditor
                 editData[i] = scenarioData[i].Copy();
             }
             UpdateScenarioInfo(true);
-
+            this.DataContext = new FilePathReferenceDataSource();
             this.ShowDialog();
+
             if (isEditApply)
                 return this.editData;
             else
                 return scenarioData;
         }
-    }
-
-    /// <summary>
-    /// ファイル参照のリストビューアイテム
-    /// </summary>
-    class FilePathReferenceItem
-    {
-        public string FilePath { get; set; }
-        public string Weight { get; set; }
-        public string Probability { get; set; }
-
     }
 }
