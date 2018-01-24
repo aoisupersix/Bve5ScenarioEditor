@@ -87,10 +87,12 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.1*" />
+                        <RowDefinition Height="0.1*" />
                         <RowDefinition Height="0.5*" />
                         <RowDefinition Height="0.5*" />
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
+                    <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="※複数シナリオを編集している場合、参照ファイルパスは表示されませんが、一括編集は可能です。"/>
+                    <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0.3*" MinWidth="170" />
                             <ColumnDefinition Width="0.7*" />
@@ -100,7 +102,7 @@
                         <TextBox Name="imagePathTextBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" />
                         <Button Click="ImageReferenceButton_Click" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Content="..." Background="{DynamicResource AccentColorBrush3}" />
                     </Grid>
-                    <Grid Grid.Row="1" Margin="2,5,2,0">
+                    <Grid Grid.Row="2" Margin="2,5,2,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0.3*" MinWidth="150" />
                             <ColumnDefinition Width="0.8*" />
@@ -111,6 +113,10 @@
                                 <RowDefinition Height="0.5*" />
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom">マップファイルの参照(Route):</TextBlock>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" >
+                                <Button Name="routeAddButton" Click="FileReferenceAddButton_Click" Content="追加" Margin="2" Background="{DynamicResource AccentColorBrush4}"/>
+                                <Button Name="routeDeleteButton" Click="FileReferenceDeleteButton_Click" Content="削除" Margin="2" Background="{DynamicResource AccentColorBrush4}"/>
+                            </StackPanel>
                         </Grid>
                         <Border Grid.Column="1" BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}" >
                             <ListView Name="routeListView" ItemsSource="{Binding}" SelectionMode="Single" >

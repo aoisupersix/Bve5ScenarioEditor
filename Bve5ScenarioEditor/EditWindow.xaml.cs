@@ -210,6 +210,56 @@ namespace Bve5ScenarioEditor
         #region EventHandler
 
         /// <summary>
+        /// ファイル参照を追加します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void FileReferenceAddButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender.Equals(routeAddButton))
+            {
+                //路線ファイル参照を追加
+                foreach(var data in editData)
+                {
+                    data.DidEdit = true;
+                    data.Data.Route.Add(
+                        new Bve5_Parsing.ScenarioGrammar.FilePath
+                        {
+                            Value = "newRoute",
+                            Weight = 1
+                        });
+                }
+                UpdateScenarioInfo();
+            }
+        }
+
+        /// <summary>
+        /// 選択されているファイル参照を削除します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void FileReferenceDeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (sender.Equals(routeDeleteButton))
+            {
+                if(routeListView.SelectedIndex == -1)
+                    //アイテムが選択されていない
+                    return;
+
+                //対応する路線ファイル参照を削除
+                var deleteItem = (FilePathReferenceItem)routeListView.SelectedItem;
+                foreach (var data in editData)
+                {
+                    var delPath = data.Data.Route.Find(x => x.Value.Equals(deleteItem.FilePath) && x.Weight.ToString().Equals(deleteItem.Weight));
+                    data.Data.Route.Remove(delPath);
+                }
+                routePathList.Remove(deleteItem);
+                UpdateScenarioInfo();
+            }
+        }
+
+        /// <summary>
         /// ファイル参照を更新します。
         /// </summary>
         /// <param name="sender">イベントのソース</param>
