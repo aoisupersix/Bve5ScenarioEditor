@@ -51,12 +51,12 @@
             </Grid.ColumnDefinitions>
             <Image Name="thumbnailImage" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" OpacityMask="White"/>
             <WrapPanel Name="scenarioInfoPanel" Grid.Column="1" Orientation="Vertical">
-                <TextBlock Name="scenarioTitleText" Margin="1" FontSize="13">タイトル</TextBlock>
-                <TextBlock Name="scenarioCommentText" Margin="1" FontSize="13">コメント</TextBlock>
-                <TextBlock Name="scenarioRouteTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">路線名</TextBlock>
-                <TextBlock Name="scenarioVehicleTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">車両名</TextBlock>
-                <TextBlock Name="scenarioAuthorText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">作者</TextBlock>
-                <TextBlock Name="scenarioFileNameText" Margin="1" FontSize="12" Foreground="#FF5F5F5F">ファイル名</TextBlock>
+                <TextBlock Name="scenarioTitleText" Margin="1" FontSize="13" Text="{Binding Title}"/>
+                <TextBlock Name="scenarioCommentText" Margin="1" FontSize="13" Text="{Binding Comment}"/>
+                <TextBlock Name="scenarioRouteTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F" Text="{Binding RouteTitle}"/>
+                <TextBlock Name="scenarioVehicleTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F" Text="{Binding VehicleTitle}"/>
+                <TextBlock Name="scenarioAuthorText" Margin="1" FontSize="12" Foreground="#FF5F5F5F" Text="{Binding Author}"/>
+                <TextBlock Name="scenarioFileNameText" Margin="1" FontSize="12" Foreground="#FF5F5F5F" Text="{Binding FileName}"/>
             </WrapPanel>
         </Grid>
         <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" />
@@ -75,15 +75,15 @@
                         <ColumnDefinition Width="0.8*" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">タイトル(Title):</TextBlock>
-                    <TextBox Name="titleTextBox" Grid.Row="0" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
+                    <TextBox Name="titleTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
                     <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">路線名(RouteTitle):</TextBlock>
-                    <TextBox Name="routeTitleTextBox" Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
+                    <TextBox Name="routeTitleTextBox" Grid.Row="1" Grid.Column="1" Text="{Binding RouteTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
                     <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">車両名(VehicleTitle):</TextBlock>
-                    <TextBox Name="vehicleTitleTextBox" Grid.Row="2" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
+                    <TextBox Name="vehicleTitleTextBox" Grid.Row="2" Grid.Column="1" Text="{Binding VehicleTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
                     <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">作者名(Author):</TextBlock>
-                    <TextBox Name="authorTextBox" Grid.Row="3" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
+                    <TextBox Name="authorTextBox" Grid.Row="3" Grid.Column="1" Text="{Binding Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
                     <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">コメント(Comment):</TextBlock>
-                    <TextBox Name="commentTextBox" Grid.Row="4" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" AcceptsReturn="True" />
+                    <TextBox Name="commentTextBox" Grid.Row="4" Grid.Column="1" Text="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" AcceptsReturn="True" />
                 </Grid>
             </TabItem>
             <TabItem Name="fileReferenceTab" Header="ファイル参照">
