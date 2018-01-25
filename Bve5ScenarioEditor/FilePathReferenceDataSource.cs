@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Bve5_Parsing.ScenarioGrammar;
 
 namespace Bve5ScenarioEditor
 {
@@ -10,6 +11,7 @@ namespace Bve5ScenarioEditor
     {
         string weight;
 
+        public int OriginIdx { get; set; }
         public string FilePath { get; set; }
         public string Weight
         {
@@ -23,7 +25,7 @@ namespace Bve5ScenarioEditor
 
         public string Error { get { return null; } }
 
-        // これも実装必須のプロパティで、各プロパティに対応するエラーメッセージを返す
+        //エラーメッセージ
         public string this[string propertyName]
         {
             get

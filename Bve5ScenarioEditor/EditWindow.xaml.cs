@@ -152,17 +152,20 @@ namespace Bve5ScenarioEditor
         /// <param name="scenarios">表示するシナリオデータ</param>
         void ShowFileReferenceInfo(Scenario[] scenarios)
         {
-            if(scenarios.Length == 1)
+            routePathList.Clear();
+            Scenario scenario = scenarios[0];
+            int count = scenarios.Count(x => x.Data.Route.SequenceEqual(scenario.Data.Route));
+            if(count == scenarios.Length)
             {
-                Scenario scenario = scenarios[0];
                 double weightSum = scenario.Data.Route.Select(x => x.Weight).Sum();
-                foreach (var filePath in scenario.Data.Route)
+                foreach (var filePath in scenario.Data.Route.Select((v, i) => new { v, i }))
                 {
                     routePathList.Add(new FilePathReferenceDataSource
                     {
-                        FilePath = filePath.Value,
-                        Weight = filePath.Weight.ToString(),
-                        Probability = Math.Round(filePath.Weight / weightSum, 2) * 100 + "%"
+                        OriginIdx = filePath.i,
+                        FilePath = filePath.v.Value,
+                        Weight = filePath.v.Weight.ToString(),
+                        Probability = Math.Round(filePath.v.Weight / weightSum, 2) * 100 + "%"
                     });
                 }
             }
@@ -178,9 +181,6 @@ namespace Bve5ScenarioEditor
                 this.Title += "*";
             ShowScenarioInfo(editData, isUpdateEditView);
             //ファイル参照タブの情報表示
-            routePathList = new ObservableCollection<FilePathReferenceDataSource>();
-            routeListView.DataContext = routePathList;
-
             ShowFileReferenceInfo(editData);
         }
 
@@ -224,6 +224,39 @@ namespace Bve5ScenarioEditor
         void WeightTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !new Regex(@"[0-9\.]").IsMatch(e.Text);
+        }
+
+        /// <summary>
+        /// 重み付け係数のテキストボックス入力完了した際にシナリオデータに適用します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void WeightTextBox_Changed(object sender, RoutedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+
+            if (double.TryParse(textBox.Text, out double weight))
+            {
+                //入力値が正しい場合は更新
+                if (textBox.Name.Equals("weightTextBox"))
+                {
+                    //路線ファイルの重み付け係数更新
+                    var selectedItem = (FilePathReferenceDataSource)routeListView.SelectedItem;
+                    foreach (var data in editData)
+                    {
+                        data.Data.Route[selectedItem.OriginIdx] = new Bve5_Parsing.ScenarioGrammar.FilePath
+                        {
+                            Value = data.Data.Route[selectedItem.OriginIdx].Value,
+                            Weight = weight
+                        };
+                    }
+                    ShowFileReferenceInfo(editData);
+                }
+                else
+                {
+                    //TODO 車両ファイル
+                }
+            }
         }
 
         /// <summary>
@@ -371,6 +404,8 @@ namespace Bve5ScenarioEditor
         public EditWindow()
         {
             InitializeComponent();
+            routePathList = new ObservableCollection<FilePathReferenceDataSource>();
+            routeListView.DataContext = routePathList;
         }
 
         /// <summary>
