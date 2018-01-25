@@ -27,6 +27,11 @@ namespace Bve5ScenarioEditor
     public partial class EditWindow : MetroWindow
     {
         /// <summary>
+        /// 編集するデータのディレクトリパス
+        /// </summary>
+        string directoryPath;
+
+        /// <summary>
         /// 路線ファイル参照リストボックスのアイテムリスト
         /// </summary>
         ObservableCollection<FilePathReferenceDataSource> routePathList;
@@ -37,10 +42,8 @@ namespace Bve5ScenarioEditor
         ObservableCollection<FilePathReferenceDataSource> vehiclePathList;
 
         /// <summary>
-        /// 編集するシナリオデータ
+        /// 行った編集を適用するかを表すフラグ
         /// </summary>
-        Scenario[] editData;
-
         bool isEditApply = false;
 
         /// <summary>
@@ -147,22 +150,32 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// ファイルの選択確率を更新します。
+        /// </summary>
+        void UpdateFileReferenceProbability()
+        {
+            double weightSum = routePathList.Select(x => double.Parse(x.Weight)).Sum();
+            foreach(var item in routePathList)
+            {
+                item.Probability = Math.Round(double.Parse(item.Weight) / weightSum, 2) * 100 + "%";
+            }
+        }
+
+        /// <summary>
         /// ファイル参照情報をUIに表示します。
         /// </summary>
         /// <param name="scenarios">表示するシナリオデータ</param>
         void ShowFileReferenceInfo(Scenario[] scenarios)
         {
-            routePathList.Clear();
             Scenario scenario = scenarios[0];
             int count = scenarios.Count(x => x.Data.Route.SequenceEqual(scenario.Data.Route));
-            if(count == scenarios.Length)
+            if (count == scenarios.Length)
             {
                 double weightSum = scenario.Data.Route.Select(x => x.Weight).Sum();
                 foreach (var filePath in scenario.Data.Route.Select((v, i) => new { v, i }))
                 {
                     routePathList.Add(new FilePathReferenceDataSource
                     {
-                        OriginIdx = filePath.i,
                         FilePath = filePath.v.Value,
                         Weight = filePath.v.Weight.ToString(),
                         Probability = Math.Round(filePath.v.Weight / weightSum, 2) * 100 + "%"
@@ -172,16 +185,48 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// シナリオデータに行った編集を適用します。
+        /// </summary>
+        /// <param name="scenarios">編集を適用するシナリオデータ</param>
+        void SetEditData(Scenario[] scenarios)
+        {
+            //現時点ではファイル参照のみ更新
+
+            //路線ファイル参照
+            if(scenarios.Length == 1 || routeListView.Items.Count > 0)
+            {
+                //ダミーのシナリオを作成し、その差分から編集されたかどうかを確認する
+                var dummyScenario = new Scenario();
+                foreach(var item in routePathList)
+                {
+                    dummyScenario.Data.Route.Add(new Bve5_Parsing.ScenarioGrammar.FilePath
+                    {
+                        Value = item.FilePath,
+                        Weight = double.Parse(item.Weight)
+                    });
+                }
+                foreach(var scenario in scenarios)
+                {
+                    if (!scenario.Data.Route.SequenceEqual(dummyScenario.Data.Route))
+                    {
+                        //編集
+                        scenario.DidEdit = true;
+                        scenario.Data.Route = dummyScenario.Data.Route;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// シナリオ情報の表示を更新します。
         /// </summary>
-        void UpdateScenarioInfo(bool isUpdateEditView)
+        void UpdateScenarioInfo(Scenario[] editData, bool isUpdateEditView)
         {
             this.Title = editData.Length > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Length + "シナリオ" : "Edit - " + editData[0].Data.Title;
             if(editData.Any(x => x.DidEdit))
                 this.Title += "*";
             ShowScenarioInfo(editData, isUpdateEditView);
-            //ファイル参照タブの情報表示
-            ShowFileReferenceInfo(editData);
+            UpdateFileReferenceProbability();
         }
 
         /// <summary>
@@ -216,6 +261,11 @@ namespace Bve5ScenarioEditor
 
         #region EventHandler
 
+        void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateFileReferenceProbability();
+        }
+
         /// <summary>
         /// 重み付け係数のテキストボックス入力受付を数字のみに制限します。
         /// </summary>
@@ -227,11 +277,11 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// 重み付け係数のテキストボックス入力完了した際にシナリオデータに適用します。
+        /// 重み付け係数のテキストボックスの入力をシナリオデータに反映します。
         /// </summary>
         /// <param name="sender">イベントのソース</param>
         /// <param name="e">イベントのデータ</param>
-        void WeightTextBox_Changed(object sender, RoutedEventArgs e)
+        void WeightTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var textBox = (TextBox)sender;
 
@@ -242,15 +292,7 @@ namespace Bve5ScenarioEditor
                 {
                     //路線ファイルの重み付け係数更新
                     var selectedItem = (FilePathReferenceDataSource)routeListView.SelectedItem;
-                    foreach (var data in editData)
-                    {
-                        data.Data.Route[selectedItem.OriginIdx] = new Bve5_Parsing.ScenarioGrammar.FilePath
-                        {
-                            Value = data.Data.Route[selectedItem.OriginIdx].Value,
-                            Weight = weight
-                        };
-                    }
-                    ShowFileReferenceInfo(editData);
+                    selectedItem.Weight = weight.ToString();
                 }
                 else
                 {
@@ -269,17 +311,13 @@ namespace Bve5ScenarioEditor
             if (sender.Equals(routeAddButton))
             {
                 //路線ファイル参照を追加
-                foreach(var data in editData)
+                routePathList.Add(new FilePathReferenceDataSource
                 {
-                    data.DidEdit = true;
-                    data.Data.Route.Add(
-                        new Bve5_Parsing.ScenarioGrammar.FilePath
-                        {
-                            Value = "new route",
-                            Weight = 1
-                        });
-                }
-                UpdateScenarioInfo(false);
+                    FilePath = "new route",
+                    Weight = "1",
+                    Probability = "1" //確率はバックパッチで当てる
+                });
+                UpdateFileReferenceProbability();
             }
         }
 
@@ -299,13 +337,8 @@ namespace Bve5ScenarioEditor
 
                 //対応する路線ファイル参照を削除
                 var deleteItem = (FilePathReferenceDataSource)routeListView.SelectedItem;
-                foreach (var data in editData)
-                {
-                    var delPath = data.Data.Route.Find(x => x.Value.Equals(deleteItem.FilePath) && x.Weight.ToString().Equals(deleteItem.Weight));
-                    data.Data.Route.Remove(delPath);
-                }
                 routePathList.Remove(deleteItem);
-                UpdateScenarioInfo(false);
+                UpdateFileReferenceProbability();
             }
         }
 
@@ -326,22 +359,13 @@ namespace Bve5ScenarioEditor
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
                 //シナリオ情報を更新
-                string val = GetRelativeFilePath(editData[0].File.DirectoryName + @"\", dlg.FileName);
+                string val = GetRelativeFilePath(directoryPath + @"\", dlg.FileName);
                 var button = (Button)sender;
                 if (button.Name.Equals("routeReferenceButton"))
                 {
                     //路線ファイル更新
-                    int idx = routeListView.SelectedIndex;
-                    if (!editData[0].Data.Route[idx].Value.Equals(val))
-                    {
-                        editData[0].DidEdit = true;
-                        editData[0].Data.Route[idx] = 
-                            new Bve5_Parsing.ScenarioGrammar.FilePath {
-                                Value = val,
-                                Weight = editData[0].Data.Route[idx].Weight
-                            };
-                        UpdateScenarioInfo(false);
-                    }
+                    var item = (FilePathReferenceDataSource)routeListView.SelectedItem;
+                    item.FilePath = val;
                 }
                 else
                 {
@@ -366,13 +390,8 @@ namespace Bve5ScenarioEditor
             dlg.Filter = "画像ファイル(*.png,*.jpg,*.bmp,*.gif)|*.png;*.jpg;*.bmp;*.gif|すべてのファイル(*.*)|*.*";
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
-                string path = GetRelativeFilePath(editData[0].File.DirectoryName + @"\", dlg.FileName);
-                if (!editData.All(x => x.Data.Image.Equals(path)))
-                {
-                    editData[0].DidEdit = true;
-                    editData[0].Data.Image = path;
-                    UpdateScenarioInfo(false);
-                }
+                string path = GetRelativeFilePath(directoryPath + @"\", dlg.FileName);
+                imagePathTextBox.Text = path;
             }
         }
 
@@ -415,19 +434,16 @@ namespace Bve5ScenarioEditor
         /// <returns>編集後のシナリオデータ</returns>
         public Scenario[] ShowWindow(Scenario[] scenarioData)
         {
-            editData = new Scenario[scenarioData.Length];
-            for(int i = 0; i < editData.Length; i++)
-            {
-                editData[i] = scenarioData[i].Copy();
-            }
-            UpdateScenarioInfo(true);
+            directoryPath = scenarioData[0].File.DirectoryName;
+            UpdateScenarioInfo(scenarioData, true);
+            ShowFileReferenceInfo(scenarioData);
             this.DataContext = new FilePathReferenceDataSource();
             this.ShowDialog();
 
             if (isEditApply)
-                return this.editData;
-            else
-                return scenarioData;
+                SetEditData(scenarioData);
+
+            return scenarioData;
         }
     }
 }

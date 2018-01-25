@@ -105,6 +105,7 @@
     <Compile Include="FilePathReferenceDataSource.cs" />
     <Compile Include="Scenario.cs" />
     <Compile Include="ScenarioDataManagement.cs" />
+    <Compile Include="ViewModelBase.cs" />
     <Page Include="EditWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

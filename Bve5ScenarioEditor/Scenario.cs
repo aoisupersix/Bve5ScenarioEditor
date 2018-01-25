@@ -84,7 +84,17 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// ファイルパスを指定してシナリオを作成します。
+        /// シナリオデータのダミーを作成します。通常は使用しません。
+        /// </summary>
+        public Scenario()
+        {
+            Data = new ScenarioData();
+            Data.Route = new System.Collections.Generic.List<FilePath>();
+            Data.Vehicle = new System.Collections.Generic.List<FilePath>();
+        }
+
+        /// <summary>
+        /// ファイルパスを指定して新しいインスタンスを作成します。
         /// </summary>
         /// <param name="path">シナリオファイルのパス</param>
         public Scenario(string path)

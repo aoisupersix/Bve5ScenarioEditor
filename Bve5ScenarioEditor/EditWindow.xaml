@@ -135,7 +135,7 @@
                                                                 <ColumnDefinition Width="1*" />
                                                                 <ColumnDefinition Width="40" />
                                                             </Grid.ColumnDefinitions>
-                                                            <TextBox Grid.Column="0" Text="{Binding FilePath}" Controls:TextBoxHelper.Watermark="路線ファイルパス" Controls:TextBoxHelper.AutoWatermark="True" />
+                                                            <TextBox Grid.Column="0" Text="{Binding FilePath}" Controls:TextBoxHelper.Watermark="路線ファイルパス" Controls:TextBoxHelper.AutoWatermark="True" LostFocus="TextBox_LostFocus" />
                                                             <Button Grid.Column="1" Name="routeReferenceButton" Click="FileReferenceButton_Click" FontSize="10" Content="..."  Style="{DynamicResource MaterialDesignRaisedButton}" Background="{DynamicResource AccentSelectedColorBrush}" Foreground="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" />
                                                         </Grid>
                                                     </Grid>
@@ -147,7 +147,7 @@
                                                 <DataTemplate>
                                                     <Grid>
                                                         <TextBlock Text="{Binding Weight}" Style="{StaticResource unselectedListViewStyle}"/>
-                                                        <TextBox Name="weightTextBox" Text="{Binding Weight, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"  Style="{StaticResource selectedListViewStyle}" PreviewTextInput="WeightTextBox_PreviewTextInput" LostFocus="WeightTextBox_Changed" />
+                                                        <TextBox Name="weightTextBox" Text="{Binding Weight, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"  Style="{StaticResource selectedListViewStyle}" PreviewTextInput="WeightTextBox_PreviewTextInput" TextChanged="WeightTextBox_TextChanged" LostFocus="TextBox_LostFocus" />
                                                     </Grid>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>

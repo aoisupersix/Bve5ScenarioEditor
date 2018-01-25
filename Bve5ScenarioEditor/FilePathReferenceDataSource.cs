@@ -1,17 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
-using Bve5_Parsing.ScenarioGrammar;
+using System.Runtime.CompilerServices;
 
 namespace Bve5ScenarioEditor
 {
     /// <summary>
     /// ファイル参照のリストビューアイテム
     /// </summary>
-    class FilePathReferenceDataSource : IDataErrorInfo
+    class FilePathReferenceDataSource : ViewModelBase, IDataErrorInfo
     {
         string weight;
-
-        public int OriginIdx { get; set; }
+        string probability;
+        
         public string FilePath { get; set; }
         public string Weight
         {
@@ -19,9 +19,18 @@ namespace Bve5ScenarioEditor
             set
             {
                 weight = value;
+                this.OnPropertyChanged();
             }
         }
-        public string Probability { get; set; }
+        public string Probability
+        {
+            get { return probability; }
+            set
+            {
+                probability = value;
+                this.OnPropertyChanged();
+            }
+        }
 
         public string Error { get { return null; } }
 
