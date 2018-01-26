@@ -166,6 +166,66 @@ namespace Bve5ScenarioEditor
             scenarioFileNameText.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// 現在のディレクトリにあるシナリオファイルを読み込みます。
+        /// </summary>
+        void LoadScenarios()
+        {
+            statusText.Text = "シナリオの読み込み中...";
+            Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
+            statusProgressBar.Value = 0;
+            DoEvents();
+
+            //シナリオの削除
+            scenarioSelectListView.Items.Clear();
+            scenarioManager = new ScenarioDataManagement();
+            ClearScenarioInfo();
+
+            if (Directory.Exists(dirPath))
+            {
+                string[] files = Directory.GetFiles(dirPath, "*");
+
+                //プログレスバーの準備
+                float incVal = (float)100 / files.Length;
+
+                //リストビューの準備
+                Wf.ImageList imgList = new Wf.ImageList();
+                imgList.ImageSize = ThumbnailSize;
+                scenarioSelectListView.LargeImageList = imgList;
+
+                //シナリオの読み込み
+                List<Scenario> scenarios = new List<Scenario>();
+                List<Wf.ListViewItem> addItems = new List<Wf.ListViewItem>();
+                foreach (string file in files)
+                {
+                    Scenario scenario = new Scenario(file);
+                    if (scenario.Load())
+                    {
+                        scenarios.Add(scenario);
+                        addItems.Add(scenario.CreateListViewItem(scenarioSelectListView));
+                    }
+                    statusProgressBar.Value += incVal;
+                    DoEvents();
+                }
+
+                scenarioSelectListView.Items.AddRange(addItems.ToArray());
+                scenarioManager.SetNewMemento(scenarios);
+                GroupingFor(groupIdx);
+
+                statusProgressBar.Value = 100;
+                statusText.Text = "読み込み完了";
+                Mouse.SetCursor(Cursors.Arrow);
+            }
+            else
+            {
+                //ディレクトリが存在しない
+                scenarioSelectListView.Clear();
+
+                statusText.Text = "指定されたディレクトリが存在しません。";
+                statusProgressBar.Value = 0;
+            }
+        }
+
         #region EventHandler
         /// <summary>
         /// Windowがレンダリングされた後、コンボボックスにファイルパスを追加します。
@@ -255,7 +315,7 @@ namespace Bve5ScenarioEditor
                         scenarioRouteTitleText.Text = "複数路線名..."; ;
                     if (scenario.Data.Route.Count == 0)
                         scenarioRoutePathText.Visibility = Visibility.Collapsed;
-                    else if(!scenario.Data.Route[0].Value.Equals(routePath))
+                    else if (!scenario.Data.Route[0].Value.Equals(routePath))
                         scenarioRoutePathText.Text = "複数路線ファイル...";
                     if (!item.SubItems[(int)Scenario.SubItemIndex.VEHICLE_TITLE].Text.Equals(vehicleTitle))
                         scenarioVehicleTitleText.Text = "複数車両名...";
@@ -326,7 +386,7 @@ namespace Bve5ScenarioEditor
         void ReferenceButton_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new Wf.FolderBrowserDialog();
-            if(dlg.ShowDialog() == Wf.DialogResult.OK)
+            if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
                 dirPath = dlg.SelectedPath;
                 filePathComboBox.Items.Add(dirPath);
@@ -461,66 +521,6 @@ namespace Bve5ScenarioEditor
         }
 
         #endregion EventHandler
-
-        /// <summary>
-        /// 現在のディレクトリにあるシナリオファイルを読み込みます。
-        /// </summary>
-        void LoadScenarios()
-        {
-            statusText.Text = "シナリオの読み込み中...";
-            Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
-            statusProgressBar.Value = 0;
-            DoEvents();
-
-            //シナリオの削除
-            scenarioSelectListView.Items.Clear();
-            scenarioManager = new ScenarioDataManagement();
-            ClearScenarioInfo();
-
-            if (Directory.Exists(dirPath))
-            {
-                string[] files = Directory.GetFiles(dirPath, "*");
-
-                //プログレスバーの準備
-                float incVal = (float)100 / files.Length;
-
-                //リストビューの準備
-                Wf.ImageList imgList = new Wf.ImageList();
-                imgList.ImageSize = ThumbnailSize;
-                scenarioSelectListView.LargeImageList = imgList;
-
-                //シナリオの読み込み
-                List<Scenario> scenarios = new List<Scenario>();
-                List<Wf.ListViewItem> addItems = new List<Wf.ListViewItem>();
-                foreach (string file in files)
-                {
-                    Scenario scenario = new Scenario(file);
-                    if (scenario.Load())
-                    {
-                        scenarios.Add(scenario);
-                        addItems.Add(scenario.CreateListViewItem(scenarioSelectListView));
-                    }
-                    statusProgressBar.Value += incVal;
-                    DoEvents();
-                }
-
-                scenarioSelectListView.Items.AddRange(addItems.ToArray());
-                scenarioManager.SetNewMemento(scenarios);
-                GroupingFor(groupIdx);
-
-                statusProgressBar.Value = 100;
-                statusText.Text = "読み込み完了";
-                Mouse.SetCursor(Cursors.Arrow);
-            }
-            else
-            {
-                //ディレクトリが存在しない
-                scenarioSelectListView.Clear();
-
-                statusText.Text = "指定されたディレクトリが存在しません。";
-                statusProgressBar.Value = 0;
-            }
-        }
 
         /// <summary>
         /// 新しいインスタンスを初期化します。
