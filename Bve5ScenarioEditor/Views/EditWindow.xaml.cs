@@ -48,25 +48,25 @@ namespace Bve5ScenarioEditor
             originalData.Route = scenarios[0].Data.Route;
             originalData.Vehicle = scenarios[0].Data.Vehicle;
             //ベースとなるデータを設定
-            originalData.Title = scenarios[0].Data.Title;
-            originalData.RouteTitle = scenarios[0].Data.RouteTitle;
-            originalData.VehicleTitle = scenarios[0].Data.VehicleTitle;
-            originalData.Author = scenarios[0].Data.Author;
-            originalData.Comment = scenarios[0].Data.Comment;
-            originalData.Image = scenarios[0].Data.Image;
+            originalData.Title = scenarios[0].Data.Title ?? "";
+            originalData.RouteTitle = scenarios[0].Data.RouteTitle ?? "";
+            originalData.VehicleTitle = scenarios[0].Data.VehicleTitle ?? "";
+            originalData.Author = scenarios[0].Data.Author ?? "";
+            originalData.Comment = scenarios[0].Data.Comment ?? "";
+            originalData.Image = scenarios[0].Data.Image ?? "";
 
             //ベースと異なる項目は「複数...」に変更
-            if (scenarios.Count(x => x.Data.Title.Equals(originalData.Title)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.Title.Equals(x.Data.Title)) < scenarios.Length)
                 originalData.Title = "複数タイトル...";
-            if (scenarios.Count(x => x.Data.RouteTitle.Equals(originalData.RouteTitle)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.RouteTitle.Equals(x.Data.RouteTitle)) < scenarios.Length)
                 originalData.RouteTitle = "複数路線名...";
-            if (scenarios.Count(x => x.Data.VehicleTitle.Equals(originalData.VehicleTitle)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.VehicleTitle.Equals(x.Data.VehicleTitle)) < scenarios.Length)
                 originalData.VehicleTitle = "複数車両名...";
-            if (scenarios.Count(x => x.Data.Author.Equals(originalData.Author)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.Author.Equals(x.Data.Author)) < scenarios.Length)
                 originalData.Author = "複数作者名...";
-            if (scenarios.Count(x => x.Data.Comment.Equals(originalData.Comment)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.Comment.Equals(x.Data.Comment)) < scenarios.Length)
                 originalData.Comment = "複数コメント...";
-            if (scenarios.Count(x => x.Data.Image.Equals(originalData.Image)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.Image.Equals(x.Data.Image)) < scenarios.Length)
                 originalData.Image = "";
 
             //ファイル参照が複数ある場合は空に
