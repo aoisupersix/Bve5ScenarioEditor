@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 
 using MahApps.Metro.Controls;
+using System.Threading.Tasks;
 
 namespace Bve5ScenarioEditor
 {
@@ -224,6 +225,77 @@ namespace Bve5ScenarioEditor
             }
         }
 
+        /// <summary>
+        /// シナリオのバックアップを非同期で行います。
+        /// </summary>
+        /// <returns>voidにできないのでTaskを返す</returns>
+        async Task BackupScenarioAsync()
+        {
+            statusText.Text = "シナリオのバックアップ中...";
+            Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
+            statusProgressBar.Value = 0;
+            DoEvents();
+
+            Progress<float> progress = new Progress<float>(OnProgressChanged);
+
+            try
+            {
+                //非同期で行う
+                Task task = Task.Run(() =>
+                {
+                    BackupScenario(progress);
+                });
+
+                //タスク完了を待つ
+                await task;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("バックアップ作成中にエラーが発生しました。:{0}", e.Message);
+            }
+            statusProgressBar.Value = 100;
+            statusText.Text = "バックアップ完了";
+        }
+
+        /// <summary>
+        /// シナリオファイルをバックアップします。
+        /// </summary>
+        void BackupScenario(IProgress<float> progress)
+        {
+            //ディレクトリの準備
+            string backupDir = Directory.GetCurrentDirectory() + @"\Backup";
+            if(!Directory.Exists(backupDir))
+            {
+                Directory.CreateDirectory(backupDir);
+            }
+            else
+            {
+                //ディレクトリを一旦削除して再び作る
+                DirectoryInfo dirInfo = new DirectoryInfo(backupDir);
+                dirInfo.Delete(true);
+                Directory.CreateDirectory(backupDir);
+            }
+            List<Scenario> scenarios = scenarioManager.GetOldestSnapShot();
+
+            //プログレスバーの準備
+            float incVal = (float)100 / scenarios.Count;
+            float val = 0;
+
+            //バックアップ
+            foreach (var scenario in scenarios)
+            {
+                scenario.Backup(backupDir);
+                val += incVal;
+                progress.Report(val);
+            }
+
+        }
+
+        /// <summary>
+        /// シナリオファイルを指定されたディレクトリに保存します。
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <param name="isSaveAllData"></param>
         void SaveScenario(string dir, bool isSaveAllData)
         {
             //ディレクトリの存在チェック
@@ -497,10 +569,12 @@ namespace Bve5ScenarioEditor
             GroupingFor(groupIdx);
         }
 
-        void DirectorySaveMenuItem_Click(object sender, RoutedEventArgs e)
+        async void DirectorySaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
             //TODO: 現在はテスト
-            SaveScenario("F:", false);
+            //SaveScenario("F:", false);
+            await BackupScenarioAsync();
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -523,6 +597,11 @@ namespace Bve5ScenarioEditor
         void Exit_Program(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        void OnProgressChanged(float val)
+        {
+            statusProgressBar.Value = val;
         }
 
         #endregion EventHandler

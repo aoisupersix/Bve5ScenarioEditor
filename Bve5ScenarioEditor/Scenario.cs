@@ -125,6 +125,15 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// シナリオデータを指定されたディレクトリにコピー(バックアップ)します。
+        /// </summary>
+        /// <param name="dir">コピーするディレクトリ</param>
+        public void Backup(string dir)
+        {
+            File.CopyTo(dir + @"\" + File.Name);
+        }
+
+        /// <summary>
         /// シナリオデータ指定されたディレクトリに上書き保存します。
         /// </summary>
         /// <param name="dir">書き込むディレクトリ</param>

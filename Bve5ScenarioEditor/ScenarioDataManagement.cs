@@ -56,6 +56,15 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// 最初のスナップショットのコピーを返します。
+        /// </summary>
+        /// <returns></returns>
+        public List<Scenario> GetOldestSnapShot()
+        {
+            return GetSnapShot(0);
+        }
+
+        /// <summary>
         /// 最新のシナリオデータを新たに追加します。
         /// </summary>
         /// <param name="snap">追加するシナリオデータ</param>
