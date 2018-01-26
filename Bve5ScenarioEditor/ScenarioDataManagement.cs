@@ -76,5 +76,17 @@ namespace Bve5ScenarioEditor
             _snapShot.Add(copy);
             TopIndex++;
         }
+
+        /// <summary>
+        /// 最新のシナリオデータに編集されたデータが含まれているかを取得します。
+        /// </summary>
+        /// <returns>編集されている場合はtrue</returns>
+        public bool NewestSnapDidEdit()
+        {
+            if (_snapShot[TopIndex].FindIndex(x => x.DidEdit == true) != -1)
+                return true;
+            else
+                return false;
+        }
     }
 }

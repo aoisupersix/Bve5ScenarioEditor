@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Windows;
 using Wf = System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 using MahApps.Metro.Controls;
@@ -251,10 +249,7 @@ namespace Bve5ScenarioEditor
             statusText.Text = "シナリオを" + scenarioSelectListView.SelectedItems.Count + "個選択中。";
 
             if (scenarioSelectListView.SelectedItems.Count == 0)
-            {
-                //選択したアイテムがないので情報を非表示に
-                ClearScenarioInfo();
-            }
+                ClearScenarioInfo();                 //選択したアイテムがないので情報を非表示に
             else
             {
                 //選択したアイテムの共通項目を調べる
@@ -272,15 +267,8 @@ namespace Bve5ScenarioEditor
 
                 //サムネイル情報の描画
                 if (imgIdx != -1)
-                {
-                    Bitmap bitmap = (Bitmap)scenarioSelectListView.LargeImageList.Images[scenarioSelectListView.SelectedItems[0].ImageIndex];
-                    using (Stream st = new MemoryStream())
-                    {
-                        bitmap.Save(st, System.Drawing.Imaging.ImageFormat.Png);
-                        st.Seek(0, SeekOrigin.Begin);
-                        thumbnailImage.Source = BitmapFrame.Create(st, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-                    }
-                }
+                    thumbnailImage.Source = ThumbnailModule.CreateThumbnailImageSource(dirPath + @"\" + baseScenario.Data.Image, ThumbnailSize);
+
                 //情報をTextBlockに設定
                 scenarioTitleText.Text = title;
                 scenarioRouteTitleText.Text = routeTitle;

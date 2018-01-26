@@ -47,43 +47,6 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// シナリオのサムネイルを縦横比を固定して返します。
-        /// </summary>
-        /// <param name="path">サムネイル画像のファイルパス</param>
-        /// <param name="width">サムネイルの横幅</param>
-        /// <param name="height">サムネイルの縦幅</param>
-        /// <returns>引数に指定した大きさのサムネイル画像</returns>
-        Image CreateThumbnail(string path, Size imgSize)
-        {
-            Bitmap originalBitmap = new Bitmap(path);
-            //縦横比の計算
-            int x, y;
-            double w = (double)imgSize.Width / originalBitmap.Width;
-            double h = (double)imgSize.Height / originalBitmap.Height;
-            if (w <= h)
-            {
-                x = imgSize.Width;
-                y = (int)(imgSize.Width * (w / h));
-            }
-            else
-            {
-                x = (int)(imgSize.Height * (h / w));
-                y = imgSize.Height;
-            }
-
-            //描画位置を計算
-            int sx = (imgSize.Width - x) / 2;
-            int sy = (imgSize.Height - y) / 2;
-
-            //imagelistに合わせたサムネイルを描画
-            Bitmap bitmap = new Bitmap(imgSize.Width, imgSize.Height);
-            Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.DrawImage(originalBitmap, sx, sy, x, y);
-
-            return bitmap;
-        }
-
-        /// <summary>
         /// ファイルパスを指定して新しいインスタンスを作成します。
         /// </summary>
         /// <param name="path">シナリオファイルのパス</param>
@@ -92,6 +55,10 @@ namespace Bve5ScenarioEditor
             File = new FileInfo(path);
         }
 
+        /// <summary>
+        /// 現在のシナリオデータをコピーしたインスタンスを返します。
+        /// </summary>
+        /// <returns>現在のシナリオデータのコピー</returns>
         public Scenario Copy()
         {
             Scenario copy = new Scenario(this.File.FullName);
@@ -185,7 +152,7 @@ namespace Bve5ScenarioEditor
                 try
                 {
                     if (!listView.LargeImageList.Images.ContainsKey(Data.Image))
-                        listView.LargeImageList.Images.Add(Data.Image, CreateThumbnail(dirName + Data.Image, listView.LargeImageList.ImageSize));
+                        listView.LargeImageList.Images.Add(Data.Image, ThumbnailModule.CreateThumbnail(dirName + Data.Image, listView.LargeImageList.ImageSize));
                     Image img = Image.FromFile(dirName + Data.Image);
                     Item.ImageIndex = listView.LargeImageList.Images.IndexOfKey(Data.Image);
                 }
