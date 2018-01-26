@@ -250,7 +250,7 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void WeightTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !new Regex(@"[0-9\.]").IsMatch(e.Text);
+            e.Handled = !new Regex(@"[0-9.]").IsMatch(e.Text);
         }
 
         /// <summary>
@@ -261,6 +261,9 @@ namespace Bve5ScenarioEditor
         void WeightTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var textBox = (TextBox)sender;
+
+            if (textBox.Text.Length > 0 && textBox.Text[textBox.Text.Length - 1] == '.')
+                return;
 
             if (double.TryParse(textBox.Text, out double weight))
             {

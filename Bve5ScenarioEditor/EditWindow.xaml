@@ -147,7 +147,7 @@
                                                 <DataTemplate>
                                                     <Grid>
                                                         <TextBlock Text="{Binding Weight}" Style="{StaticResource unselectedListViewStyle}"/>
-                                                        <TextBox Name="weightTextBox" Text="{Binding Weight, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"  Style="{StaticResource selectedListViewStyle}" PreviewTextInput="WeightTextBox_PreviewTextInput" TextChanged="WeightTextBox_TextChanged" LostFocus="TextBox_LostFocus" />
+                                                        <TextBox Name="weightTextBox" Text="{Binding Weight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"  Style="{StaticResource selectedListViewStyle}" PreviewTextInput="WeightTextBox_PreviewTextInput" TextChanged="WeightTextBox_TextChanged" LostFocus="TextBox_LostFocus" />
                                                     </Grid>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>

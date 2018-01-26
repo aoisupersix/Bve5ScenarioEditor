@@ -9,10 +9,15 @@ namespace Bve5ScenarioEditor
     /// </summary>
     class FilePathReferenceDataSource : ViewModelBase, IDataErrorInfo
     {
+        string filePath;
         string weight;
         string probability;
         
-        public string FilePath { get; set; }
+        public string FilePath
+        {
+            get { return filePath; }
+            set { filePath = value; OnPropertyChanged(); }
+        }
         public string Weight
         {
             get { return weight; }
