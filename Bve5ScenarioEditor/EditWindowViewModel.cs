@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Media;
 
@@ -10,21 +12,21 @@ namespace Bve5ScenarioEditor
     class EditWindowViewModel : ViewModelBase
     {
 
-        ObservableCollection<FilePathReferenceDataSource> _routePathList;
+        ObservableCollection<FileRef_ListViewItem> _routePathList;
         /// <summary>
         /// 路線ファイル参照リストボックスのアイテムリスト
         /// </summary>
-        public ObservableCollection<FilePathReferenceDataSource> RoutePathList
+        public ObservableCollection<FileRef_ListViewItem> RoutePathList
         {
             get { return _routePathList; }
             set { _routePathList = value; OnPropertyChanged(); }
         }
 
-        ObservableCollection<FilePathReferenceDataSource> _vehiclePathList;
+        ObservableCollection<FileRef_ListViewItem> _vehiclePathList;
         /// <summary>
         /// 車両ファイル参照リストボックスのアイテムリスト
         /// </summary>
-        public ObservableCollection<FilePathReferenceDataSource> VehiclePathList
+        public ObservableCollection<FileRef_ListViewItem> VehiclePathList
         {
             get { return _vehiclePathList; }
             set { _vehiclePathList = value; OnPropertyChanged(); }
@@ -135,8 +137,71 @@ namespace Bve5ScenarioEditor
 
         public EditWindowViewModel()
         {
-            _routePathList = new ObservableCollection<FilePathReferenceDataSource>();
-            _vehiclePathList = new ObservableCollection<FilePathReferenceDataSource>();
+            _routePathList = new ObservableCollection<FileRef_ListViewItem>();
+            _vehiclePathList = new ObservableCollection<FileRef_ListViewItem>();
+        }
+    }
+
+    /// <summary>
+    /// ファイル参照のリストビューアイテム
+    /// </summary>
+    class FileRef_ListViewItem : ViewModelBase, IDataErrorInfo
+    {
+        string filePath;
+        string weight;
+        string probability;
+
+        public string FilePath
+        {
+            get { return filePath; }
+            set { filePath = value; OnPropertyChanged(); }
+        }
+        public string Weight
+        {
+            get { return weight; }
+            set
+            {
+                weight = value;
+                this.OnPropertyChanged();
+            }
+        }
+        public string Probability
+        {
+            get { return probability; }
+            set
+            {
+                probability = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public string Error { get { return null; } }
+
+        //エラーメッセージ
+        public string this[string propertyName]
+        {
+            get
+            {
+                string result = null;
+                switch (propertyName)
+                {
+                    case "Weight":
+                        if (this.Weight == null) return null;
+
+                        double ii;
+                        try
+                        {
+                            ii = double.Parse(this.Weight);
+                        }
+                        catch (Exception)
+                        {
+                            result = "重みは係数は整数もしくは少数で入力してください。";
+                            break;
+                        }
+                        break;
+                }
+                return result;
+            }
         }
     }
 }

@@ -61,10 +61,37 @@ namespace Bve5ScenarioEditor
         /// </summary>
         void InitializeContextMenu()
         {
-            contextMenuItem_Edit.Click += ShowEditWindow;
+            contextMenuItem_Edit.Click += EditSelectedScenario;
 
             contextMenu.MenuItems.Add(contextMenuItem_Edit);
             contextMenu.MenuItems.Add(contextMenuItem_Delete);
+        }
+
+        /// <summary>
+        /// シナリオ情報の編集ウインドウを表示します。
+        /// </summary>
+        void ShowEditWindow()
+        {
+            if (scenarioSelectListView.SelectedItems.Count > 0)
+            {
+                List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
+                List<Scenario> editData = new List<Scenario>();
+                foreach (Wf.ListViewItem item in scenarioSelectListView.SelectedItems)
+                {
+                    editData.Add(scenarios.Find(a => a.Item.Equals(item)));
+                }
+                EditWindow editWindow = new EditWindow();
+                editWindow.Owner = this;
+                Scenario[] returnData = editWindow.ShowWindow(editData.ToArray());
+                foreach (var ret in returnData)
+                {
+                    ret.CreateListViewItem(scenarioSelectListView);
+                    int idx = scenarios.FindIndex(x => x.File.Equals(ret.File));
+                    scenarios[idx] = ret;
+                }
+                scenarioManager.SetNewMemento(scenarios);
+                GroupingFor(groupIdx);
+            }
         }
 
         /// <summary>
@@ -151,35 +178,6 @@ namespace Bve5ScenarioEditor
             filePathComboBox.Items.Add(dirPath);
             this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
             //コンボボックスのイベントからシナリオを読み込む
-        }
-
-        /// <summary>
-        /// シナリオ情報の編集ウインドウを表示します。
-        /// </summary>
-        /// <param name="sender">イベントのソース</param>
-        /// <param name="e">イベントのデータ</param>
-        void ShowEditWindow(object sender, EventArgs e)
-        {
-            if (scenarioSelectListView.SelectedItems.Count > 0)
-            {
-                List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
-                List<Scenario> editData = new List<Scenario>();
-                foreach (Wf.ListViewItem item in scenarioSelectListView.SelectedItems)
-                {
-                    editData.Add(scenarios.Find(a => a.Item.Equals(item)));
-                }
-                EditWindow editWindow = new EditWindow();
-                editWindow.Owner = this;
-                Scenario[] returnData = editWindow.ShowWindow(editData.ToArray());
-                foreach(var ret in returnData)
-                {
-                    ret.CreateListViewItem(scenarioSelectListView);
-                    int idx = scenarios.FindIndex(x => x.File.Equals(ret.File));
-                    scenarios[idx] = ret;
-                }
-                scenarioManager.SetNewMemento(scenarios);
-                GroupingFor(groupIdx);
-            }
         }
 
         /// <summary>
@@ -275,6 +273,26 @@ namespace Bve5ScenarioEditor
                         scenarioFileNameText.Text = "複数ファイル名...";
                 }
             }
+        }
+
+        /// <summary>
+        /// EditWindowを表示し、選択しているシナリオを編集します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void EditSelectedScenario(object sender, EventArgs e)
+        {
+            ShowEditWindow();
+        }
+
+        /// <summary>
+        /// EditWindowを表示し、選択しているシナリオを編集します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void EditSelectedScenario(object sender, RoutedEventArgs e)
+        {
+            ShowEditWindow();
         }
 
         /// <summary>

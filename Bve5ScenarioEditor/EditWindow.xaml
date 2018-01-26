@@ -23,6 +23,18 @@
             <Setter Property="BorderThickness" Value="1,1,1,1"/>
         </Style>
 
+        <!--シナリオ情報表示パネル-->
+        <Style x:Key="InfoBlock_Primary" TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="1" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style x:Key="InfoBlock_Secondary" TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="1" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#FF5F5F5F" />
+        </Style>
+
+        <!--ListViewItem-->
         <local:BooleanVisiblityConverter x:Key="booleanConverter" />
         <Style x:Key="unselectedListViewStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="Visibility"
@@ -36,14 +48,6 @@
                 AncestorType={x:Type ListViewItem}}, Converter={StaticResource booleanConverter},
                   ConverterParameter=True}" />
         </Style>
-
-        <CollectionViewSource x:Key="viewSource_FilePath">
-            <CollectionViewSource.SortDescriptions>
-                <scm:SortDescription
-                    Direction="Ascending"
-                    PropertyName="FilePath"/>
-            </CollectionViewSource.SortDescriptions>
-        </CollectionViewSource>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -63,12 +67,12 @@
             </Grid.ColumnDefinitions>
             <Image Name="thumbnailImage" Source="{Binding Image, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" OpacityMask="White"/>
             <WrapPanel Name="scenarioInfoPanel" Grid.Column="1" Orientation="Vertical">
-                <TextBlock Name="scenarioTitleText" Margin="1" FontSize="13" Text="{Binding Title}"/>
-                <TextBlock Name="scenarioCommentText" Margin="1" FontSize="13" Text="{Binding Comment}"/>
-                <TextBlock Name="scenarioRouteTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F" Text="{Binding RouteTitle}"/>
-                <TextBlock Name="scenarioVehicleTitleText" Margin="1" FontSize="12" Foreground="#FF5F5F5F" Text="{Binding VehicleTitle}"/>
-                <TextBlock Name="scenarioAuthorText" Margin="1" FontSize="12" Foreground="#FF5F5F5F" Text="{Binding Author}"/>
-                <TextBlock Name="scenarioFileNameText" Margin="1" FontSize="12" Foreground="#FF5F5F5F" Text="{Binding FileName}"/>
+                <TextBlock Name="scenarioTitleText" Style="{StaticResource InfoBlock_Primary}" Text="{Binding Title}"/>
+                <TextBlock Name="scenarioCommentText" Style="{StaticResource InfoBlock_Primary}" Text="{Binding Comment}"/>
+                <TextBlock Name="scenarioRouteTitleText" Style="{StaticResource InfoBlock_Secondary}" Text="{Binding RouteTitle}"/>
+                <TextBlock Name="scenarioVehicleTitleText" Style="{StaticResource InfoBlock_Secondary}" Text="{Binding VehicleTitle}"/>
+                <TextBlock Name="scenarioAuthorText" Style="{StaticResource InfoBlock_Secondary}" Text="{Binding Author}"/>
+                <TextBlock Name="scenarioFileNameText" Style="{StaticResource InfoBlock_Secondary}" Text="{Binding FileName}"/>
             </WrapPanel>
         </Grid>
         <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" />
