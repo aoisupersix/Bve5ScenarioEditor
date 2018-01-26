@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Drawing;
 using System.IO;
@@ -121,6 +122,74 @@ namespace Bve5ScenarioEditor
             }
             Console.Error.WriteLine("Scenario Load Error");
             return false;
+        }
+
+        /// <summary>
+        /// シナリオデータ指定されたディレクトリに上書き保存します。
+        /// </summary>
+        /// <param name="dir">書き込むディレクトリ</param>
+        public void Save(string dir)
+        {
+            //シナリオは削除されているのでスキップ
+            if (DidDelete)
+                return;
+
+            //書き込むテキストの用意
+            string text = "";
+            string version = Data.Version ?? "2.00";
+            Data.Route = Data.Route ?? new System.Collections.Generic.List<FilePath>();
+            Data.Vehicle = Data.Vehicle ?? new System.Collections.Generic.List<FilePath>();
+
+            //ヘッダー
+            text += "Bvets Scenario " + version;
+            if(Data.Encoding != null) { text += ":" + Data.Encoding; }
+            text += Environment.NewLine + Environment.NewLine;
+
+            //各シナリオデータ
+            //路線ファイル
+            if(Data.Route.Count == 1)
+                text += "Route = " + Data.Route[0].Value + Environment.NewLine;
+            else if(Data.Route.Count > 1)
+            {
+                text += "Route = ";
+                for(int i = 0; i < Data.Route.Count - 1; i++)
+                    text += Data.Route[i].Value + " * " + Data.Route[i].Weight + " | ";
+                text += Data.Route[Data.Route.Count - 1].Value + " * " + Data.Route[Data.Route.Count - 1].Weight + Environment.NewLine;
+            }
+            //車両ファイル
+            if (Data.Vehicle.Count == 1)
+                text += "Vehicle = " + Data.Vehicle[0].Value + Environment.NewLine;
+            else if (Data.Vehicle.Count > 1)
+            {
+                text += "Vehicle = ";
+                for (int i = 0; i < Data.Vehicle.Count - 1; i++)
+                    text += Data.Vehicle[i].Value + " * " + Data.Vehicle[i].Weight + " | ";
+                text += Data.Vehicle[Data.Vehicle.Count - 1].Value + " * " + Data.Vehicle[Data.Vehicle.Count - 1].Weight + Environment.NewLine;
+            }
+            //タイトル
+            if (Data.Title != null && !Data.Title.Equals(""))
+                text += "Title = " + Data.Title + Environment.NewLine;
+            //サムネイル画像
+            if (Data.Image != null && !Data.Image.Equals(""))
+                text += "Image = " + Data.Image + Environment.NewLine;
+            //路線名
+            if (Data.RouteTitle != null && !Data.RouteTitle.Equals(""))
+                text += "RouteTitle = " + Data.RouteTitle + Environment.NewLine;
+            //車両名
+            if (Data.VehicleTitle != null && !Data.VehicleTitle.Equals(""))
+                text += "VehicleTitle = " + Data.VehicleTitle + Environment.NewLine;
+            //作者
+            if (Data.Author != null && !Data.Author.Equals(""))
+                text += "Author = " + Data.Author + Environment.NewLine;
+            //コメント
+            if (Data.Comment != null && !Data.Comment.Equals(""))
+                text += "Comment = " + Data.Comment + Environment.NewLine;
+
+            //保存
+            string savePath = dir + @"\" + File.Name;
+            StreamWriter sw = new StreamWriter(savePath, false, Encoding.GetEncoding(Data.Encoding ?? "utf-8"));
+            sw.Write(text);
+            sw.Close();
         }
 
         /// <summary>

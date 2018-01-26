@@ -224,6 +224,17 @@ namespace Bve5ScenarioEditor
             }
         }
 
+        void SaveScenario(string dir, bool isSaveAllData)
+        {
+            //ディレクトリの存在チェック
+            if (!Directory.Exists(dir))
+                return;
+
+            List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
+            //保存のテスト
+            scenarios[0].Save("F:");
+        }
+
         #region EventHandler
         /// <summary>
         /// Windowがレンダリングされた後、コンボボックスにファイルパスを追加します。
@@ -484,6 +495,12 @@ namespace Bve5ScenarioEditor
             CheckSortMenuItem(sender);
             groupIdx = Scenario.SubItemIndex.FILE_NAME;
             GroupingFor(groupIdx);
+        }
+
+        void DirectorySaveMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: 現在はテスト
+            SaveScenario("F:", false);
         }
 
         /// <summary>
