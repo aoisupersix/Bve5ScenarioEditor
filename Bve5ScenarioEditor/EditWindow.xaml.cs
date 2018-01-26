@@ -92,115 +92,14 @@ namespace Bve5ScenarioEditor
             scenarioTextDataSource = new EditWindowViewModel();
             this.DataContext = scenarioTextDataSource;
 
+            scenarioTextDataSource.DirPath = this.directoryPath;
             scenarioTextDataSource.Title = originalData.Title;
             scenarioTextDataSource.RouteTitle = originalData.RouteTitle;
             scenarioTextDataSource.VehicleTitle = originalData.VehicleTitle;
             scenarioTextDataSource.Author = originalData.Author;
             scenarioTextDataSource.Comment = originalData.Comment;
-            scenarioTextDataSource.FileName = fileName;
-        }
-
-        /// <summary>
-        /// シナリオ情報を表示します。
-        /// </summary>
-        /// <param name="showData">表示するシナリオ</param>
-        /// <param name="isShowEditView">編集画面のUIも表示させるかどうか(初回のみtrueにする)</param>
-        void ShowScenarioInfo(Scenario[] showData, bool isShowEditView)
-        {
-            if (showData.Length > 0)
-            {
-                //選択したアイテムの共通項目を調べる
-                //ベースとなるアイテムの取得
-                Scenario baseScenario = showData[0];
-                int imgIdx = baseScenario.Item.ImageIndex;
-                string title = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.TITLE].Text;
-                string routeTitle = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.ROUTE_TITLE].Text;
-                string vehicleTitle = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.VEHICLE_TITLE].Text;
-                string author = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.AUTHOR].Text;
-                string comment = baseScenario.Data.Comment ?? "";
-                string fileName = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.FILE_NAME].Text;
-
-                //サムネイル情報の描画
-                if (imgIdx != -1)
-                {
-                    Bitmap bitmap = (Bitmap)baseScenario.Item.ImageList.Images[baseScenario.Item.ImageIndex];
-                    using (Stream st = new MemoryStream())
-                    {
-                        bitmap.Save(st, System.Drawing.Imaging.ImageFormat.Png);
-                        st.Seek(0, SeekOrigin.Begin);
-                        thumbnailImage.Source = BitmapFrame.Create(st, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-                    }
-                }
-                //情報をTextBlockに設定
-                scenarioTitleText.Text = title;
-                scenarioRouteTitleText.Text = routeTitle;
-                scenarioVehicleTitleText.Text = vehicleTitle;
-                scenarioAuthorText.Text = author;
-                scenarioCommentText.Text = comment;
-                scenarioFileNameText.Text = fileName;
-
-                //初期設定にすべての情報を表示
-                thumbnailImage.Visibility = Visibility.Visible;
-                scenarioTitleText.Visibility = Visibility.Visible;
-                scenarioCommentText.Visibility = Visibility.Visible;
-                scenarioRouteTitleText.Visibility = Visibility.Visible;
-                scenarioVehicleTitleText.Visibility = Visibility.Visible;
-                scenarioAuthorText.Visibility = Visibility.Visible;
-                scenarioFileNameText.Visibility = Visibility.Visible;
-
-                //編集画面のTextBoxも更新
-                if (isShowEditView)
-                {
-                    titleTextBox.Text = title;
-                    routeTitleTextBox.Text = routeTitle;
-                    vehicleTitleTextBox.Text = vehicleTitle;
-                    authorTextBox.Text = author;
-                    commentTextBox.Text = comment;
-                    imagePathTextBox.Text = baseScenario.Data.Image;
-                }
-
-                //ベースと異なる情報は非表示に
-                foreach (Scenario scenario in showData)
-                {
-
-                    if (scenario.Item.ImageIndex != imgIdx || imgIdx == -1)
-                        thumbnailImage.Visibility = Visibility.Collapsed;
-                    if (!scenario.Item.SubItems[(int)Scenario.SubItemIndex.TITLE].Text.Equals(title))
-                    {
-                        scenarioTitleText.Text = "複数タイトル...";
-                        if (isShowEditView)
-                            titleTextBox.Text = "複数タイトル...";
-                    }
-                    if (!scenario.Item.SubItems[(int)Scenario.SubItemIndex.ROUTE_TITLE].Text.Equals(routeTitle))
-                    {
-                        scenarioRouteTitleText.Text = "複数路線名..."; ;
-                        if (isShowEditView)
-                            routeTitleTextBox.Text = "複数路線名...";
-                    }
-                    if (!scenario.Item.SubItems[(int)Scenario.SubItemIndex.VEHICLE_TITLE].Text.Equals(vehicleTitle))
-                    {
-                        scenarioVehicleTitleText.Text = "複数車両名...";
-                        if (isShowEditView)
-                            vehicleTitleTextBox.Text = "複数車両名...";
-                    }
-                    if (!scenario.Item.SubItems[(int)Scenario.SubItemIndex.AUTHOR].Text.Equals(author))
-                    {
-                        scenarioAuthorText.Text = "複数作者名...";
-                        if (isShowEditView)
-                            authorTextBox.Text = "複数作者名...";
-                    }
-                    if (scenario.Data.Comment == null || scenario.Data.Comment.Equals(""))
-                        scenarioCommentText.Visibility = Visibility.Collapsed;
-                    else if (!scenario.Data.Comment.Equals(comment))
-                    {
-                        scenarioCommentText.Text = "複数コメント...";
-                        if (isShowEditView)
-                            commentTextBox.Text = "複数コメント...";
-                    }
-                    if (!scenario.Item.SubItems[(int)Scenario.SubItemIndex.FILE_NAME].Text.Equals(fileName))
-                        scenarioFileNameText.Text = "複数ファイル名...";
-                }
-            }
+            scenarioTextDataSource.FileName = GetRelativeFilePath(directoryPath, fileName);
+            scenarioTextDataSource.ImagePath = originalData.Image;
         }
 
         /// <summary>
@@ -281,23 +180,7 @@ namespace Bve5ScenarioEditor
             this.Title = editData.Length > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Length + "シナリオ" : "Edit - " + editData[0].Data.Title;
             if(editData.Any(x => x.DidEdit))
                 this.Title += "*";
-            //ShowScenarioInfo(editData, isUpdateEditView);
             UpdateFileReferenceProbability();
-        }
-
-        /// <summary>
-        /// シナリオ情報表示をすべて非表示にします。
-        /// </summary>
-        void ClearScenarioInfo()
-        {
-            //シナリオ情報を非表示にする
-            thumbnailImage.Visibility = Visibility.Collapsed;
-            scenarioTitleText.Visibility = Visibility.Collapsed;
-            scenarioCommentText.Visibility = Visibility.Collapsed;
-            scenarioRouteTitleText.Visibility = Visibility.Collapsed;
-            scenarioVehicleTitleText.Visibility = Visibility.Collapsed;
-            scenarioAuthorText.Visibility = Visibility.Collapsed;
-            scenarioFileNameText.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -495,12 +378,14 @@ namespace Bve5ScenarioEditor
         /// <returns>編集後のシナリオデータ</returns>
         public Scenario[] ShowWindow(Scenario[] scenarioData)
         {
+            directoryPath = scenarioData[0].File.DirectoryName;
+
             InitOriginalData(scenarioData);
             InitTextDataSource(scenarioData[0].File.FullName);
-            directoryPath = scenarioData[0].File.DirectoryName;
             ShowFileReferenceInfo(scenarioData);
             this.ShowDialog();
 
+            //編集を適用
             if (isEditApply)
                 SetEditData(scenarioData);
 

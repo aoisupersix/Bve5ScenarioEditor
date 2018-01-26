@@ -106,6 +106,7 @@
     <Compile Include="Scenario.cs" />
     <Compile Include="ScenarioDataManagement.cs" />
     <Compile Include="EditWindowViewModel.cs" />
+    <Compile Include="ThumbnailModule.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Page Include="EditWindow.xaml">
       <SubType>Designer</SubType>
