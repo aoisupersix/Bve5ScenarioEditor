@@ -50,7 +50,7 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="ヘルプ(_H)">
-                <MenuItem Header="バージョン情報" />
+                <MenuItem Header="バージョン情報" Click="Show_VersionWindow" />
             </MenuItem>
         </Menu>
 

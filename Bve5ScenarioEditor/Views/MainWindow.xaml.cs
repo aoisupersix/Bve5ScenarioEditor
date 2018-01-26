@@ -438,6 +438,23 @@ namespace Bve5ScenarioEditor
             GroupingFor(groupIdx);
         }
 
+        /// <summary>
+        /// VersionWindowを表示します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void Show_VersionWindow(object sender, RoutedEventArgs e)
+        {
+            VersionWindow verWindow = new VersionWindow();
+            verWindow.Owner = this;
+            verWindow.ShowDialog();
+        }
+
+        /// <summary>
+        /// ウインドウを閉じます。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void Exit_Program(object sender, RoutedEventArgs e)
         {
             this.Close();

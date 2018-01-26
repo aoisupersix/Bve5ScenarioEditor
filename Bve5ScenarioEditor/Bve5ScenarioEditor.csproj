@@ -94,35 +94,42 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="Views\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BooleanVisiblityConverter.cs" />
-    <Compile Include="EditWindow.xaml.cs">
+    <Compile Include="Views\EditWindow.xaml.cs">
       <DependentUpon>EditWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Scenario.cs" />
     <Compile Include="ScenarioDataManagement.cs" />
-    <Compile Include="EditWindowViewModel.cs" />
+    <Compile Include="ViewModels\EditWindowViewModel.cs" />
     <Compile Include="ThumbnailModule.cs" />
-    <Compile Include="ViewModelBase.cs" />
-    <Page Include="EditWindow.xaml">
+    <Compile Include="Views\VersionWindow.xaml.cs">
+      <DependentUpon>VersionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Page Include="Views\EditWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="Views\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\VersionWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -162,9 +169,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="icon.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
