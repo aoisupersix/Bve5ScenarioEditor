@@ -383,6 +383,13 @@ namespace Bve5ScenarioEditor
             InitOriginalData(scenarioData);
             InitTextDataSource(scenarioData[0].File.FullName);
             ShowFileReferenceInfo(scenarioData);
+
+            //ウインドウタイトルの代入
+            scenarioTextDataSource.WindowTitle = "Edit: " + scenarioData[0].Data.Title;
+            if (scenarioData.Length > 1)
+                scenarioTextDataSource.WindowTitle += "ほか" + scenarioData.Length + "シナリオ";
+
+            //このダイアログの表示
             this.ShowDialog();
 
             //編集を適用

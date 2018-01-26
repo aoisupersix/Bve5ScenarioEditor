@@ -12,7 +12,7 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
-        Title="EditWindow" Height="700" Width="600">
+        Title="{Binding WindowTitle}" Height="700" Width="600">
     <Window.Resources>
         <Style x:Key="ListViewItemStyle1" TargetType="ListViewItem">
             <Setter Property="BorderBrush" Value="{StaticResource AccentColorBrush2}"/>
