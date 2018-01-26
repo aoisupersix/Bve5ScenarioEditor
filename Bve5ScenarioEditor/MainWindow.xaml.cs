@@ -438,6 +438,11 @@ namespace Bve5ScenarioEditor
             GroupingFor(groupIdx);
         }
 
+        void Exit_Program(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
         #endregion EventHandler
 
         /// <summary>

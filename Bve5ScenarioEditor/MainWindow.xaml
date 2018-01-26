@@ -27,7 +27,8 @@
             <MenuItem Header="ファイル(_F)" >
                 <MenuItem Header="シナリオを上書き保存(_S)" InputGestureText="Ctrl+S" />
                 <MenuItem Header="シナリオを別ディレクトリに保存(_A)" InputGestureText="Ctrl+Shift+S" />
-                <MenuItem Header="終了(_X)" />
+                <Separator />
+                <MenuItem Header="終了(_X)" Click="Exit_Program"/>
             </MenuItem>
             <MenuItem Header="編集(_E)">
                 <MenuItem Header="新規シナリオを作成(_N)" />
