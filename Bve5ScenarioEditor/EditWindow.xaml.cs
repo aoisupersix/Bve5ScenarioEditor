@@ -81,6 +81,13 @@ namespace Bve5ScenarioEditor
                 originalData.Comment = "複数コメント...";
             if (scenarios.Count(x => x.Data.Image.Equals(originalData.Image)) < scenarios.Length)
                 originalData.Image = "";
+
+            //ファイル参照が複数ある場合は空に
+            if(scenarios.Length > 1)
+            {
+                originalData.Route = new List<FilePath>();
+                originalData.Vehicle = new List<FilePath>();
+            }
         }
 
         /// <summary>
@@ -143,44 +150,70 @@ namespace Bve5ScenarioEditor
         /// <param name="scenarios">編集を適用するシナリオデータ</param>
         void SetEditData(Scenario[] scenarios)
         {
-            //現時点ではファイル参照のみ更新
-
-            //路線ファイル参照
-            if(scenarios.Length == 1 || routeListView.Items.Count > 0)
+            //路線ファイル参照の差分確認用ダミーを作成する
+            var dummyScenario = new ScenarioData();
+            dummyScenario.Route = new List<FilePath>();
+            dummyScenario.Vehicle = new List<FilePath>();
+            foreach (var item in routePathList)
             {
-                //ダミーのシナリオを作成し、その差分から編集されたかどうかを確認する
-                var dummyScenario = new Bve5_Parsing.ScenarioGrammar.ScenarioData();
-                dummyScenario.Route = new List<Bve5_Parsing.ScenarioGrammar.FilePath>();
-                dummyScenario.Vehicle = new List<Bve5_Parsing.ScenarioGrammar.FilePath>();
-                foreach(var item in routePathList)
+                dummyScenario.Route.Add(new FilePath
                 {
-                    dummyScenario.Route.Add(new Bve5_Parsing.ScenarioGrammar.FilePath
-                    {
-                        Value = item.FilePath,
-                        Weight = double.Parse(item.Weight)
-                    });
-                }
-                foreach(var scenario in scenarios)
-                {
-                    if (!scenario.Data.Route.SequenceEqual(dummyScenario.Route))
-                    {
-                        //編集
-                        scenario.DidEdit = true;
-                        scenario.Data.Route = dummyScenario.Route;
-                    }
-                }
+                    Value = item.FilePath,
+                    Weight = double.Parse(item.Weight)
+                });
             }
-        }
+            //TODO: 車両ファイル
 
-        /// <summary>
-        /// シナリオ情報の表示を更新します。
-        /// </summary>
-        void UpdateScenarioInfo(Scenario[] editData, bool isUpdateEditView)
-        {
-            this.Title = editData.Length > 1 ? "Edit - " + editData[0].Data.Title + " など" + editData.Length + "シナリオ" : "Edit - " + editData[0].Data.Title;
-            if(editData.Any(x => x.DidEdit))
-                this.Title += "*";
-            UpdateFileReferenceProbability();
+            //編集されたデータを更新
+            foreach (var scenario in scenarios)
+            {
+                //タイトル
+                if (!scenarioTextDataSource.Title.Equals(originalData.Title))
+                {
+                    scenario.DidEdit = true;
+                    scenario.Data.Title = scenarioTextDataSource.Title;
+                }
+                //路線名
+                if (!scenarioTextDataSource.RouteTitle.Equals(originalData.RouteTitle))
+                {
+                    scenario.DidEdit = true;
+                    scenario.Data.RouteTitle = scenarioTextDataSource.RouteTitle;
+                }
+                //車両名
+                if (!scenarioTextDataSource.VehicleTitle.Equals(originalData.VehicleTitle))
+                {
+                    scenario.DidEdit = true;
+                    scenario.Data.VehicleTitle = scenarioTextDataSource.VehicleTitle;
+                }
+                //作者名
+                if (!scenarioTextDataSource.Author.Equals(originalData.Author))
+                {
+                    scenario.DidEdit = true;
+                    scenario.Data.Author = scenarioTextDataSource.Author;
+                }
+                //コメント
+                if (!scenarioTextDataSource.Comment.Equals(originalData.Comment))
+                {
+                    scenario.DidEdit = true;
+                    scenario.Data.Comment = scenarioTextDataSource.Comment;
+                }
+                //画像パス
+                if (!scenarioTextDataSource.ImagePath.Equals(originalData.Image))
+                {
+                    scenario.DidEdit = true;
+                    scenario.Data.Image = scenarioTextDataSource.ImagePath;
+                }
+
+                //路線ファイル
+                if (!dummyScenario.Route.SequenceEqual(originalData.Route))
+                {
+                    //編集
+                    scenario.DidEdit = true;
+                    scenario.Data.Route = dummyScenario.Route;
+                }
+
+                //TODO: 車両ファイル
+            }
         }
 
         /// <summary>
@@ -335,7 +368,7 @@ namespace Bve5ScenarioEditor
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
                 string path = GetRelativeFilePath(directoryPath + @"\", dlg.FileName);
-                imagePathTextBox.Text = path;
+                scenarioTextDataSource.ImagePath = path;
             }
         }
 
