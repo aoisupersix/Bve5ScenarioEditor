@@ -168,8 +168,11 @@ namespace Bve5ScenarioEditor
         /// <summary>
         /// 現在のディレクトリにあるシナリオファイルを読み込みます。
         /// </summary>
-        void LoadScenarios()
+        async void LoadScenarios()
         {
+            //バックアップ完了まで保存は不可にする
+            menuItem_OverwriteSave.IsEnabled = false;
+            menuItem_OtherDirSave.IsEnabled = false;
             statusText.Text = "シナリオの読み込み中...";
             Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
             statusProgressBar.Value = 0;
@@ -223,6 +226,11 @@ namespace Bve5ScenarioEditor
                 statusText.Text = "指定されたディレクトリが存在しません。";
                 statusProgressBar.Value = 0;
             }
+            await BackupScenarioAsync();
+
+            //保存の有効化
+            menuItem_OverwriteSave.IsEnabled = true;
+            menuItem_OtherDirSave.IsEnabled = true;
         }
 
         /// <summary>
@@ -569,12 +577,15 @@ namespace Bve5ScenarioEditor
             GroupingFor(groupIdx);
         }
 
-        async void DirectorySaveMenuItem_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void DirectorySaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
             //TODO: 現在はテスト
             //SaveScenario("F:", false);
-            await BackupScenarioAsync();
-            Console.WriteLine();
         }
 
         /// <summary>
@@ -599,6 +610,10 @@ namespace Bve5ScenarioEditor
             this.Close();
         }
 
+        /// <summary>
+        /// 非同期処理中のプログレスバーを更新します。
+        /// </summary>
+        /// <param name="val">プログレスバーの値</param>
         void OnProgressChanged(float val)
         {
             statusProgressBar.Value = val;
@@ -614,6 +629,7 @@ namespace Bve5ScenarioEditor
             Wf.Application.EnableVisualStyles();
             InitializeComponent();
             InitializeContextMenu();
+            DataContext = this;
 
             ThumbnailSize = new System.Drawing.Size(96, 96);
             scenarioSelectListView.View = Wf.View.LargeIcon;

@@ -25,8 +25,8 @@
 
         <Menu Grid.Row="0" FontSize="12" FontFamily="{DynamicResource MaterialDesignFont}" >
             <MenuItem Header="ファイル(_F)" >
-                <MenuItem Header="シナリオを上書き保存(_S)" InputGestureText="Ctrl+S" />
-                <MenuItem Header="シナリオを別ディレクトリに保存(_A)" InputGestureText="Ctrl+Shift+S" Click="DirectorySaveMenuItem_Click" />
+                <MenuItem Name="menuItem_OverwriteSave" Header="シナリオを上書き保存(_S)" InputGestureText="Ctrl+S" />
+                <MenuItem Name="menuItem_OtherDirSave" Header="シナリオを別ディレクトリに保存(_A)" InputGestureText="Ctrl+Shift+S" Click="DirectorySaveMenuItem_Click" />
                 <Separator />
                 <MenuItem Header="終了(_X)" Click="Exit_Program"/>
             </MenuItem>
