@@ -147,7 +147,60 @@
                                                 <DataTemplate>
                                                     <Grid>
                                                         <TextBlock Text="{Binding Weight}" Style="{StaticResource unselectedListViewStyle}"/>
-                                                        <TextBox Name="weightTextBox" Text="{Binding Weight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"  Style="{StaticResource selectedListViewStyle}" PreviewTextInput="WeightTextBox_PreviewTextInput" TextChanged="WeightTextBox_TextChanged" LostFocus="TextBox_LostFocus" />
+                                                        <TextBox Name="routeWeightTextBox" Text="{Binding Weight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"  Style="{StaticResource selectedListViewStyle}" PreviewTextInput="WeightTextBox_PreviewTextInput" TextChanged="WeightTextBox_TextChanged" LostFocus="TextBox_LostFocus" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="選択確率" DisplayMemberBinding="{Binding Probability}" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </Border>
+                    </Grid>
+                    <Grid Grid.Row="3" Margin="2,5,2,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="170"/>
+                            <ColumnDefinition Width="0.8*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.5*" />
+                                <RowDefinition Height="0.5*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom">車両ファイルの参照(Vehicle):</TextBlock>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" >
+                                <Button Name="vehicleAddButton" Click="FileReferenceAddButton_Click" Content="追加" Margin="2" Style="{DynamicResource MaterialDesignRaisedButton}"/>
+                                <Button Name="vehicleDeleteButton" Click="FileReferenceDeleteButton_Click" Content="削除" Margin="2" Style="{DynamicResource MaterialDesignRaisedButton}"/>
+                            </StackPanel>
+                        </Grid>
+                        <Border Grid.Column="1" BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}" >
+                            <ListView Name="vehicleListView" ItemsSource="{Binding}" SelectionMode="Single" >
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="ファイルパス" Width="300">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <TextBlock Text="{Binding FilePath}" Style="{StaticResource unselectedListViewStyle}"/>
+                                                        <Grid Style="{StaticResource selectedListViewStyle}">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="1*" />
+                                                                <ColumnDefinition Width="40" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBox Grid.Column="0" Text="{Binding FilePath}" Controls:TextBoxHelper.Watermark="車両ファイルパス" Controls:TextBoxHelper.AutoWatermark="True" LostFocus="TextBox_LostFocus" />
+                                                            <Button Grid.Column="1" Name="vehicleReferenceButton" Click="FileReferenceButton_Click" FontSize="10" Content="..."  Style="{DynamicResource MaterialDesignRaisedButton}" Background="{DynamicResource AccentSelectedColorBrush}" Foreground="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" />
+                                                        </Grid>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="重み">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <TextBlock Text="{Binding Weight}" Style="{StaticResource unselectedListViewStyle}"/>
+                                                        <TextBox Name="vehicleWeightTextBox" Text="{Binding Weight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"  Style="{StaticResource selectedListViewStyle}" PreviewTextInput="WeightTextBox_PreviewTextInput" TextChanged="WeightTextBox_TextChanged" LostFocus="TextBox_LostFocus" />
                                                     </Grid>
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
