@@ -259,7 +259,7 @@ namespace Bve5ScenarioEditor
             }
             catch (Exception e)
             {
-                MessageBox.Show("バックアップ作成中にエラーが発生しました。:{0}", e.Message);
+                MessageBox.Show("バックアップ作成中にエラーが発生しました。:" + e.Message, "エラー");
             }
             statusProgressBar.Value = 100;
             statusText.Text = "バックアップ完了";
@@ -310,9 +310,31 @@ namespace Bve5ScenarioEditor
             if (!Directory.Exists(dir))
                 return;
 
+            statusText.Text = "シナリオの保存中...";
+            Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
+            statusProgressBar.Value = 0;
+            DoEvents();
+
             List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
-            //保存のテスト
-            scenarios[0].Save("F:");
+            float incVal = (float)100 / scenarios.Count;
+            //保存
+            try
+            {
+                foreach(var scenario in scenarios)
+                {
+                    scenario.Save(dir);
+                    statusProgressBar.Value += incVal;
+                    DoEvents();
+                }
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show("保存に失敗しました。:" + e.Message, "エラー");
+            }
+
+            statusProgressBar.Value = 100;
+            statusText.Text = dir + "に保存完了";
+            Mouse.SetCursor(Cursors.Arrow);
         }
 
         #region EventHandler
@@ -578,14 +600,20 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// 
+        /// シナリオファイルを別のディレクトリに保存します。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void DirectorySaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: 現在はテスト
-            //SaveScenario("F:", false);
+            var dlg = new Wf.FolderBrowserDialog();
+            dlg.Description = "シナリオを保存するフォルダを選択してください。";
+            dlg.SelectedPath = dirPath;
+            if (dlg.ShowDialog() == Wf.DialogResult.OK)
+            {
+                dirPath = dlg.SelectedPath;
+                SaveScenario(dirPath, true);
+            }
         }
 
         /// <summary>
