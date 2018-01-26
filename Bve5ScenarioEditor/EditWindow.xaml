@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bve5ScenarioEditor"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -13,6 +14,9 @@
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
         Title="{Binding WindowTitle}" Height="700" Width="600">
+    <Window.DataContext>
+        <local:EditWindowViewModel />
+    </Window.DataContext>
     <Window.Resources>
         <Style x:Key="ListViewItemStyle1" TargetType="ListViewItem">
             <Setter Property="BorderBrush" Value="{StaticResource AccentColorBrush2}"/>
@@ -32,6 +36,14 @@
                 AncestorType={x:Type ListViewItem}}, Converter={StaticResource booleanConverter},
                   ConverterParameter=True}" />
         </Style>
+
+        <CollectionViewSource x:Key="viewSource_FilePath">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription
+                    Direction="Ascending"
+                    PropertyName="FilePath"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -90,7 +102,7 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="0.1*" />
-                        <RowDefinition Height="0.1*" />
+                        <RowDefinition Height="0.12*" />
                         <RowDefinition Height="0.5*" />
                         <RowDefinition Height="0.5*" />
                     </Grid.RowDefinitions>
@@ -103,7 +115,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">サムネイル画像の参照(Image):</TextBlock>
                         <TextBox Name="imagePathTextBox" Grid.Column="1" Text="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="3" />
-                        <Button Click="ImageReferenceButton_Click" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Content="..." Background="{DynamicResource AccentColorBrush3}" Foreground="{DynamicResource IdealForegroundColorBrush}" />
+                        <Button Click="ImageReferenceButton_Click" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Content="..." Style="{DynamicResource MaterialDesignRaisedButton}" />
                     </Grid>
                     <Grid Grid.Row="2" Margin="2,5,2,0">
                         <Grid.ColumnDefinitions>
@@ -122,7 +134,7 @@
                             </StackPanel>
                         </Grid>
                         <Border Grid.Column="1" BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}" >
-                            <ListView Name="routeListView" ItemsSource="{Binding}" SelectionMode="Single" >
+                            <ListView Name="routeListView" ItemsSource="{Binding RoutePathList}" SelectionMode="Single" >
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="ファイルパス" Width="300">
@@ -175,7 +187,7 @@
                             </StackPanel>
                         </Grid>
                         <Border Grid.Column="1" BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}" >
-                            <ListView Name="vehicleListView" ItemsSource="{Binding}" SelectionMode="Single" >
+                            <ListView Name="vehicleListView" ItemsSource="{Binding VehiclePathList}" SelectionMode="Single" >
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="ファイルパス" Width="300">

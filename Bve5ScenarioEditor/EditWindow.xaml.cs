@@ -29,17 +29,10 @@ namespace Bve5ScenarioEditor
         /// </summary>
         string directoryPath;
 
-        EditWindowViewModel scenarioTextDataSource;
-
         /// <summary>
-        /// 路線ファイル参照リストボックスのアイテムリスト
+        /// EditWindowのデータソース
         /// </summary>
-        ObservableCollection<FilePathReferenceDataSource> routePathList;
-
-        /// <summary>
-        /// 車両ファイル参照リストボックスのアイテムリスト
-        /// </summary>
-        ObservableCollection<FilePathReferenceDataSource> vehiclePathList;
+        EditWindowViewModel dataSource;
 
         /// <summary>
         /// 行った編集を適用するかを表すフラグ
@@ -96,17 +89,17 @@ namespace Bve5ScenarioEditor
         /// <param name="fileName">シナリオファイル名</param>
         void InitTextDataSource(string fileName)
         {
-            scenarioTextDataSource = new EditWindowViewModel();
-            this.DataContext = scenarioTextDataSource;
+            dataSource = new EditWindowViewModel();
+            this.DataContext = dataSource;
 
-            scenarioTextDataSource.DirPath = this.directoryPath;
-            scenarioTextDataSource.Title = originalData.Title;
-            scenarioTextDataSource.RouteTitle = originalData.RouteTitle;
-            scenarioTextDataSource.VehicleTitle = originalData.VehicleTitle;
-            scenarioTextDataSource.Author = originalData.Author;
-            scenarioTextDataSource.Comment = originalData.Comment;
-            scenarioTextDataSource.FileName = GetRelativeFilePath(directoryPath, fileName);
-            scenarioTextDataSource.ImagePath = originalData.Image;
+            dataSource.DirPath = this.directoryPath;
+            dataSource.Title = originalData.Title;
+            dataSource.RouteTitle = originalData.RouteTitle;
+            dataSource.VehicleTitle = originalData.VehicleTitle;
+            dataSource.Author = originalData.Author;
+            dataSource.Comment = originalData.Comment;
+            dataSource.FileName = GetRelativeFilePath(directoryPath, fileName);
+            dataSource.ImagePath = originalData.Image;
         }
 
         /// <summary>
@@ -115,14 +108,14 @@ namespace Bve5ScenarioEditor
         void UpdateFileReferenceProbability()
         {
             //路線ファイル
-            double weightSum = routePathList.Select(x => double.Parse(x.Weight)).Sum();
-            foreach(var item in routePathList)
+            double weightSum = dataSource.RoutePathList.Select(x => double.Parse(x.Weight)).Sum();
+            foreach(var item in dataSource.RoutePathList)
             {
                 item.Probability = Math.Round(double.Parse(item.Weight) / weightSum, 2) * 100 + "%";
             }
             //車両ファイル
-            weightSum = vehiclePathList.Select(x => double.Parse(x.Weight)).Sum();
-            foreach(var item in vehiclePathList)
+            weightSum = dataSource.VehiclePathList.Select(x => double.Parse(x.Weight)).Sum();
+            foreach(var item in dataSource.VehiclePathList)
             {
                 item.Probability = Math.Round(double.Parse(item.Weight) / weightSum, 2) * 100 + "%";
             }
@@ -141,7 +134,7 @@ namespace Bve5ScenarioEditor
             {
                 foreach (var filePath in scenario.Data.Route)
                 {
-                    routePathList.Add(new FilePathReferenceDataSource
+                    dataSource.RoutePathList.Add(new FilePathReferenceDataSource
                     {
                         FilePath = filePath.Value,
                         Weight = filePath.Weight.ToString(),
@@ -156,7 +149,7 @@ namespace Bve5ScenarioEditor
             {
                 foreach (var filePath in scenario.Data.Vehicle)
                 {
-                    vehiclePathList.Add(new FilePathReferenceDataSource
+                    dataSource.VehiclePathList.Add(new FilePathReferenceDataSource
                     {
                         FilePath = filePath.Value,
                         Weight = filePath.Weight.ToString(),
@@ -181,7 +174,7 @@ namespace Bve5ScenarioEditor
             dummyScenario.Vehicle = new List<FilePath>();
 
             //路線ファイル
-            foreach (var item in routePathList)
+            foreach (var item in dataSource.RoutePathList)
             {
                 dummyScenario.Route.Add(new FilePath
                 {
@@ -190,7 +183,7 @@ namespace Bve5ScenarioEditor
                 });
             }
             //車両ファイル
-            foreach (var item in vehiclePathList)
+            foreach (var item in dataSource.VehiclePathList)
             {
                 dummyScenario.Vehicle.Add(new FilePath
                 {
@@ -203,40 +196,40 @@ namespace Bve5ScenarioEditor
             foreach (var scenario in scenarios)
             {
                 //タイトル
-                if (!scenarioTextDataSource.Title.Equals(originalData.Title))
+                if (!dataSource.Title.Equals(originalData.Title))
                 {
                     scenario.DidEdit = true;
-                    scenario.Data.Title = scenarioTextDataSource.Title;
+                    scenario.Data.Title = dataSource.Title;
                 }
                 //路線名
-                if (!scenarioTextDataSource.RouteTitle.Equals(originalData.RouteTitle))
+                if (!dataSource.RouteTitle.Equals(originalData.RouteTitle))
                 {
                     scenario.DidEdit = true;
-                    scenario.Data.RouteTitle = scenarioTextDataSource.RouteTitle;
+                    scenario.Data.RouteTitle = dataSource.RouteTitle;
                 }
                 //車両名
-                if (!scenarioTextDataSource.VehicleTitle.Equals(originalData.VehicleTitle))
+                if (!dataSource.VehicleTitle.Equals(originalData.VehicleTitle))
                 {
                     scenario.DidEdit = true;
-                    scenario.Data.VehicleTitle = scenarioTextDataSource.VehicleTitle;
+                    scenario.Data.VehicleTitle = dataSource.VehicleTitle;
                 }
                 //作者名
-                if (!scenarioTextDataSource.Author.Equals(originalData.Author))
+                if (!dataSource.Author.Equals(originalData.Author))
                 {
                     scenario.DidEdit = true;
-                    scenario.Data.Author = scenarioTextDataSource.Author;
+                    scenario.Data.Author = dataSource.Author;
                 }
                 //コメント
-                if (!scenarioTextDataSource.Comment.Equals(originalData.Comment))
+                if (!dataSource.Comment.Equals(originalData.Comment))
                 {
                     scenario.DidEdit = true;
-                    scenario.Data.Comment = scenarioTextDataSource.Comment;
+                    scenario.Data.Comment = dataSource.Comment;
                 }
                 //画像パス
-                if (!scenarioTextDataSource.ImagePath.Equals(originalData.Image))
+                if (!dataSource.ImagePath.Equals(originalData.Image))
                 {
                     scenario.DidEdit = true;
-                    scenario.Data.Image = scenarioTextDataSource.ImagePath;
+                    scenario.Data.Image = dataSource.ImagePath;
                 }
 
                 //路線ファイル
@@ -335,7 +328,7 @@ namespace Bve5ScenarioEditor
             if (sender.Equals(routeAddButton))
             {
                 //路線ファイル参照を追加
-                routePathList.Add(new FilePathReferenceDataSource
+                dataSource.RoutePathList.Add(new FilePathReferenceDataSource
                 {
                     FilePath = "new route",
                     Weight = "1",
@@ -346,7 +339,7 @@ namespace Bve5ScenarioEditor
             else
             {
                 //車両ファイル参照を追加
-                vehiclePathList.Add(new FilePathReferenceDataSource
+                dataSource.VehiclePathList.Add(new FilePathReferenceDataSource
                 {
                     FilePath = "new vehicle",
                     Weight = "1",
@@ -372,7 +365,7 @@ namespace Bve5ScenarioEditor
 
                 //対応する路線ファイル参照を削除
                 var deleteItem = (FilePathReferenceDataSource)routeListView.SelectedItem;
-                routePathList.Remove(deleteItem);
+                dataSource.RoutePathList.Remove(deleteItem);
                 UpdateFileReferenceProbability();
             }
             else
@@ -383,7 +376,7 @@ namespace Bve5ScenarioEditor
 
                 //対応する路線ファイル参照を削除
                 var deleteItem = (FilePathReferenceDataSource)vehicleListView.SelectedItem;
-                vehiclePathList.Remove(deleteItem);
+                dataSource.VehiclePathList.Remove(deleteItem);
                 UpdateFileReferenceProbability();
             }
         }
@@ -439,8 +432,13 @@ namespace Bve5ScenarioEditor
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
                 string path = GetRelativeFilePath(directoryPath + @"\", dlg.FileName);
-                scenarioTextDataSource.ImagePath = path;
+                dataSource.ImagePath = path;
             }
+        }
+
+        void RouteListViewColumn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         /// <summary>
@@ -471,10 +469,6 @@ namespace Bve5ScenarioEditor
         public EditWindow()
         {
             InitializeComponent();
-            routePathList = new ObservableCollection<FilePathReferenceDataSource>();
-            routeListView.DataContext = routePathList;
-            vehiclePathList = new ObservableCollection<FilePathReferenceDataSource>();
-            vehicleListView.DataContext = vehiclePathList;
         }
 
         /// <summary>
@@ -491,9 +485,9 @@ namespace Bve5ScenarioEditor
             ShowFileReferenceInfo(scenarioData);
 
             //ウインドウタイトルの代入
-            scenarioTextDataSource.WindowTitle = "Edit: " + scenarioData[0].Data.Title;
+            dataSource.WindowTitle = "Edit: " + scenarioData[0].Data.Title;
             if (scenarioData.Length > 1)
-                scenarioTextDataSource.WindowTitle += "ほか" + scenarioData.Length + "シナリオ";
+                dataSource.WindowTitle += "ほか" + scenarioData.Length + "シナリオ";
 
             //このダイアログの表示
             this.ShowDialog();
