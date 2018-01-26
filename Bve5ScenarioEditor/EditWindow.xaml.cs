@@ -74,13 +74,13 @@ namespace Bve5ScenarioEditor
             if (scenarios.Count(x => x.Data.RouteTitle.Equals(originalData.RouteTitle)) < scenarios.Length)
                 originalData.RouteTitle = "複数路線名...";
             if (scenarios.Count(x => x.Data.VehicleTitle.Equals(originalData.VehicleTitle)) < scenarios.Length)
-                originalData.Title = "複数車両名...";
+                originalData.VehicleTitle = "複数車両名...";
             if (scenarios.Count(x => x.Data.Author.Equals(originalData.Author)) < scenarios.Length)
-                originalData.RouteTitle = "複数作者名...";
+                originalData.Author = "複数作者名...";
             if (scenarios.Count(x => x.Data.Comment.Equals(originalData.Comment)) < scenarios.Length)
-                originalData.Title = "複数コメント...";
+                originalData.Comment = "複数コメント...";
             if (scenarios.Count(x => x.Data.Image.Equals(originalData.Image)) < scenarios.Length)
-                originalData.RouteTitle = "";
+                originalData.Image = "";
         }
 
         /// <summary>
