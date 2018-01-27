@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Media;
 
-namespace Bve5ScenarioEditor
+namespace Bve5ScenarioEditor.ViewModels
 {
     /// <summary>
     /// EditWindowのビューモデル

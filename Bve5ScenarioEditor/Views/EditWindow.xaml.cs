@@ -10,6 +10,7 @@ using System.Windows.Input;
 
 using MahApps.Metro.Controls;
 using Bve5_Parsing.ScenarioGrammar;
+using Bve5ScenarioEditor.ViewModels;
 
 namespace Bve5ScenarioEditor
 {

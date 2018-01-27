@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Bve5ScenarioEditor
+namespace Bve5ScenarioEditor.ViewModels
 {
     /// <summary>
     /// ViewModel 基底クラス を表現します。
