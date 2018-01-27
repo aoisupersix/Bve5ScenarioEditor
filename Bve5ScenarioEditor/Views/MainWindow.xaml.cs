@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using Wf = System.Windows.Forms;
+using Wpf = System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using MahApps.Metro.Controls;
@@ -45,7 +46,7 @@ namespace Bve5ScenarioEditor
         /// </summary>
         void DoEvents()
         {
-            DispatcherFrame frame = new DispatcherFrame();
+            var frame = new DispatcherFrame();
             var callback = new DispatcherOperationCallback(obj =>
             {
                 ((DispatcherFrame)obj).Continue = false;
@@ -68,6 +69,22 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// リストビューで選択されているシナリオインスタンスのリストを返します。
+        /// </summary>
+        /// <returns>シナリオインスタンスのリスト</returns>
+        List<Scenario> GetSelectedScenario()
+        {
+            List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
+            var selected = new List<Scenario>();
+            foreach (var item in scenarioSelectListView.SelectedItems)
+            {
+                selected.Add(scenarios.Find(a => a.Item.Equals(item)));
+            }
+
+            return selected;
+        }
+
+        /// <summary>
         /// シナリオ情報の編集ウインドウを表示します。
         /// </summary>
         void ShowEditWindow()
@@ -75,18 +92,15 @@ namespace Bve5ScenarioEditor
             if (scenarioSelectListView.SelectedItems.Count > 0)
             {
                 List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
-                List<Scenario> editData = new List<Scenario>();
-                foreach (Wf.ListViewItem item in scenarioSelectListView.SelectedItems)
-                {
-                    editData.Add(scenarios.Find(a => a.Item.Equals(item)));
-                }
                 EditWindow editWindow = new EditWindow();
                 editWindow.Owner = this;
-                Scenario[] returnData = editWindow.ShowWindow(editData.ToArray());
+                Scenario[] returnData = editWindow.ShowWindow(GetSelectedScenario().ToArray());
+
+                //編集されたシナリオを適用
                 foreach (var ret in returnData)
                 {
                     ret.CreateListViewItem(scenarioSelectListView);
-                    int idx = scenarios.FindIndex(x => x.File.Equals(ret.File));
+                    int idx = scenarios.FindIndex(x => x.FilePath.Equals(ret.FilePath));
                     scenarios[idx] = ret;
                 }
                 scenarioManager.SetNewMemento(scenarios);
@@ -99,24 +113,24 @@ namespace Bve5ScenarioEditor
         /// </summary>
         void DeleteScenario()
         {
-            if (scenarioSelectListView.SelectedItems.Count > 0)
+            List<Scenario> delData = GetSelectedScenario();
+            if (delData.Count > 0)
             {
                 List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
-                List<Scenario> delData = new List<Scenario>();
-                foreach (Wf.ListViewItem item in scenarioSelectListView.SelectedItems)
-                {
-                    delData.Add(scenarios.Find(a => a.Item.Equals(item)));
-                }
+
+                //削除の確認
                 Wf.DialogResult res = Wf.MessageBox.Show(
                     delData.Count + "個のシナリオファイルを削除します。よろしいですか？",
                     "確認",
                     Wf.MessageBoxButtons.OKCancel);
+
                 if (res == Wf.DialogResult.OK)
                 {
                     //削除
-                    foreach(var data in delData)
+                    foreach(var del in delData)
                     {
-                        data.DidDelete = true;
+                        var scenario = scenarios.Find(x => x.FilePath == del.FilePath);
+                        scenario.DidDelete = true;
                     }
                     scenarioManager.SetNewMemento(scenarios);
                     GroupingFor(groupIdx);
@@ -154,11 +168,11 @@ namespace Bve5ScenarioEditor
         /// <param name="displayMenuItem">チェックするメニューアイテム</param>
         void CheckDisplayMenuItem(object displayMenuItem)
         {
-            System.Windows.Controls.MenuItem checkItem = (System.Windows.Controls.MenuItem)displayMenuItem;
+            var checkItem = displayMenuItem as Wpf.MenuItem;
             checkItem.IsChecked = true;
 
             //checkItem以外のMenuItemのチェックを外す
-            foreach (System.Windows.Controls.MenuItem item in menuItem_Display.Items)
+            foreach (Wpf.MenuItem item in menuItem_Display.Items)
             {
                 if (checkItem != item)
                     item.IsChecked = false;
@@ -171,11 +185,11 @@ namespace Bve5ScenarioEditor
         /// <param name="checkItem">チェックするメニューアイテム</param>
         void CheckSortMenuItem(object sortMenuItem)
         {
-            System.Windows.Controls.MenuItem checkItem = (System.Windows.Controls.MenuItem)sortMenuItem;
+            var checkItem = sortMenuItem as Wpf.MenuItem;
             checkItem.IsChecked = true;
 
             //checkItem以外のMenuItemのチェックを外す
-            foreach (System.Windows.Controls.MenuItem item in menuItem_Sort.Items)
+            foreach (Wpf.MenuItem item in menuItem_Sort.Items)
             {
                 if (checkItem != item)
                     item.IsChecked = false;
@@ -192,9 +206,7 @@ namespace Bve5ScenarioEditor
             scenarioTitleText.Visibility = Visibility.Collapsed;
             scenarioCommentText.Visibility = Visibility.Collapsed;
             scenarioRouteTitleText.Visibility = Visibility.Collapsed;
-            scenarioRoutePathText.Visibility = Visibility.Collapsed;
             scenarioVehicleTitleText.Visibility = Visibility.Collapsed;
-            scenarioVehiclePathText.Visibility = Visibility.Collapsed;
             scenarioAuthorText.Visibility = Visibility.Collapsed;
             scenarioFileNameText.Visibility = Visibility.Collapsed;
         }
@@ -209,8 +221,8 @@ namespace Bve5ScenarioEditor
             menuItem_OtherDirSave.IsEnabled = false;
             filePathComboBox.IsEnabled = false;
             referenceButton.IsEnabled = false;
+
             statusText.Text = "シナリオの読み込み中...";
-            Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
             statusProgressBar.Value = 0;
             DoEvents();
 
@@ -227,16 +239,16 @@ namespace Bve5ScenarioEditor
                 float incVal = (float)100 / files.Length;
 
                 //リストビューの準備
-                Wf.ImageList imgList = new Wf.ImageList();
+                var imgList = new Wf.ImageList();
                 imgList.ImageSize = ThumbnailSize;
                 scenarioSelectListView.LargeImageList = imgList;
 
                 //シナリオの読み込み
-                List<Scenario> scenarios = new List<Scenario>();
+                var scenarios = new List<Scenario>();
                 List<Wf.ListViewItem> addItems = new List<Wf.ListViewItem>();
                 foreach (string file in files)
                 {
-                    Scenario scenario = new Scenario(file);
+                    var scenario = new Scenario(file);
                     if (scenario.Load())
                     {
                         scenarios.Add(scenario);
@@ -252,7 +264,6 @@ namespace Bve5ScenarioEditor
 
                 statusProgressBar.Value = 100;
                 statusText.Text = "読み込み完了";
-                Mouse.SetCursor(Cursors.Arrow);
             }
             else
             {
@@ -262,6 +273,7 @@ namespace Bve5ScenarioEditor
                 statusText.Text = "指定されたディレクトリが存在しません。";
                 statusProgressBar.Value = 0;
             }
+            //読み込んだシナリオをバックアップ
             await BackupScenarioAsync();
 
             //保存とパス変更の有効化
@@ -305,27 +317,19 @@ namespace Bve5ScenarioEditor
         async Task BackupScenarioAsync()
         {
             statusText.Text = "シナリオのバックアップ中...";
-            Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
             statusProgressBar.Value = 0;
             DoEvents();
 
             Progress<float> progress = new Progress<float>(OnProgressChanged);
 
-            try
+            //非同期で行う
+            Task task = Task.Run(() =>
             {
-                //非同期で行う
-                Task task = Task.Run(() =>
-                {
-                    BackupScenario(progress);
-                });
+                BackupScenario(progress);
+            });
+            //タスク完了を待つ
+            await task;
 
-                //タスク完了を待つ
-                await task;
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("バックアップ作成中にエラーが発生しました。:" + e.Message, "エラー");
-            }
             statusProgressBar.Value = 100;
             statusText.Text = "バックアップ完了";
         }
@@ -376,7 +380,6 @@ namespace Bve5ScenarioEditor
                 return;
 
             statusText.Text = "シナリオの保存中...";
-            Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
             statusProgressBar.Value = 0;
             DoEvents();
 
@@ -390,19 +393,25 @@ namespace Bve5ScenarioEditor
                     if (scenario.DidDelete)
                     {
                         //削除
-                    }
-                    if (isSaveAllData)
-                    {
-                        //全てのシナリオを保存
-                        if (!scenario.DidDelete)
-                            scenario.Save(dir);
+                        if (File.Exists(dir + @"\" + scenario.FileName))
+                            File.Delete(dir + @"\" + scenario.FileName);
                     }
                     else
                     {
-                        //編集されたシナリオのみ保存
-                        if (scenario.DidEdit)
-                            scenario.Save(dir);
+                        if (isSaveAllData)
+                        {
+                            //全てのシナリオを保存
+                            if (!scenario.DidDelete)
+                                scenario.Save(dir);
+                        }
+                        else
+                        {
+                            //編集されたシナリオのみ保存
+                            if (scenario.DidEdit)
+                                scenario.Save(dir);
+                        }
                     }
+
                     statusProgressBar.Value += incVal;
                     DoEvents();
                 }
@@ -412,11 +421,11 @@ namespace Bve5ScenarioEditor
                 scenarios.RemoveAll(x => x.DidDelete);
                 scenarioManager.SetNewMemento(scenarios);
                 if (filePathComboBox.Items.IndexOf(dir) != -1)
-                    this.filePathComboBox.SelectedIndex = filePathComboBox.Items.IndexOf(dir);
+                    filePathComboBox.SelectedIndex = filePathComboBox.Items.IndexOf(dir);
                 else
                 {
                     filePathComboBox.Items.Add(dir);
-                    this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
+                    filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
                 }
                 statusProgressBar.Value = 100;
                 statusText.Text = dir + "に保存完了";
@@ -427,7 +436,6 @@ namespace Bve5ScenarioEditor
                 MessageBox.Show("保存に失敗しました。:" + e.Message, "エラー");
                 statusProgressBar.Value = 0;
                 statusText.Text = "シナリオの保存に失敗しました。";
-                Mouse.SetCursor(Cursors.Arrow);
             }
         }
 
@@ -439,12 +447,10 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void Window_ContentRendered(object sender, EventArgs e)
         {
-            //ファイルパスを追加
             //Bve標準ディレクトリの取得
             string dir = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
             filePathComboBox.Items.Add(dir);
-            this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
-            //コンボボックスのイベントからシナリオを読み込む
+            filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
         }
 
         /// <summary>
@@ -455,79 +461,75 @@ namespace Bve5ScenarioEditor
         void ScenarioSelectListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
-            statusText.Text = "シナリオを" + scenarioSelectListView.SelectedItems.Count + "個選択中。";
+            List<Scenario> selected = GetSelectedScenario();
+            statusText.Text = "シナリオを" + selected.Count + "個選択中。";
 
-            if (scenarioSelectListView.SelectedItems.Count == 0)
-                ClearScenarioInfo();                 //選択したアイテムがないので情報を非表示に
+            ClearScenarioInfo();
+
+            if (selected.Count == 0)
+                return;
             else
             {
-                //選択したアイテムの共通項目を調べる
                 //ベースとなるアイテムの取得
-                Scenario baseScenario = scenarios.Find(a => a.Item.Equals(scenarioSelectListView.SelectedItems[0]));
-                int imgIdx = baseScenario.Item.ImageIndex;
-                string title = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.TITLE].Text;
-                string routeTitle = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.ROUTE_TITLE].Text;
-                string routePath = baseScenario.Data.Route.Count == 0 ? "" : baseScenario.Data.Route[0].Value;
-                string vehicleTitle = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.VEHICLE_TITLE].Text;
-                string vehiclePath = baseScenario.Data.Vehicle.Count == 0 ? "" : baseScenario.Data.Vehicle[0].Value;
-                string author = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.AUTHOR].Text;
-                string comment = baseScenario.Data.Comment ?? "";
-                string fileName = baseScenario.Item.SubItems[(int)Scenario.SubItemIndex.FILE_NAME].Text;
+                string title = selected[0].Data.Title;
+                string routeTitle = selected[0].Data.RouteTitle;
+                string vehicleTitle = selected[0].Data.VehicleTitle;
+                string author = selected[0].Data.Author;
+                string comment = selected[0].Data.Comment;
+                string image = selected[0].Data.Image;
+                string fileName = selected[0].FileName;
+
+                //ベースと異なる項目を「複数...」に変更
+                if (selected.Count(x => x.Data.Title.Equals(title)) < selected.Count)
+                    title = "複数タイトル...";
+                if (selected.Count(x => x.Data.RouteTitle.Equals(routeTitle)) < selected.Count)
+                    routeTitle = "複数路線名...";
+                if (selected.Count(x => x.Data.VehicleTitle.Equals(vehicleTitle)) < selected.Count)
+                    vehicleTitle = "複数車両名...";
+                if (selected.Count(x => x.Data.Author.Equals(author)) < selected.Count)
+                    author = "複数作者名...";
+                if (selected.Count(x => x.Data.Comment.Equals(comment)) < selected.Count)
+                    comment = "複数コメント...";
+                if (selected.Count(x => x.Data.Image.Equals(image)) < selected.Count)
+                    image = "";
 
                 //サムネイル情報の描画
-                if (imgIdx != -1)
-                    thumbnailImage.Source = ThumbnailModule.CreateThumbnailImageSource(dirPath + @"\" + baseScenario.Data.Image, ThumbnailSize);
-
-                //情報をTextBlockに設定
-                scenarioTitleText.Text = title;
-                scenarioRouteTitleText.Text = routeTitle;
-                scenarioRoutePathText.Text = routePath;
-                scenarioVehicleTitleText.Text = vehicleTitle;
-                scenarioVehiclePathText.Text = vehiclePath;
-                scenarioAuthorText.Text = author;
-                scenarioCommentText.Text = comment;
-                scenarioFileNameText.Text = fileName;
-
-                //初期設定にすべての情報を表示
-                thumbnailImage.Visibility = Visibility.Visible;
-                scenarioTitleText.Visibility = Visibility.Visible;
-                scenarioCommentText.Visibility = Visibility.Visible;
-                scenarioRouteTitleText.Visibility = Visibility.Visible;
-                scenarioRoutePathText.Visibility = Visibility.Visible;
-                scenarioVehicleTitleText.Visibility = Visibility.Visible;
-                scenarioVehiclePathText.Visibility = Visibility.Visible;
-                scenarioAuthorText.Visibility = Visibility.Visible;
-                scenarioFileNameText.Visibility = Visibility.Visible;
-
-                //ベースと異なる情報は非表示に
-                foreach (Wf.ListViewItem item in scenarioSelectListView.SelectedItems)
+                if (!image.Equals("") && File.Exists(dirPath + @"\" + image))
                 {
-                    Scenario scenario = scenarios.Find(a => a.Item.Equals(item));
+                    thumbnailImage.Source = ThumbnailModule.CreateThumbnailImageSource(dirPath + @"\" + image, ThumbnailSize);
+                    thumbnailImage.Visibility = Visibility.Visible;
+                }
 
-                    if (item.ImageIndex != imgIdx || imgIdx == -1)
-                        thumbnailImage.Visibility = Visibility.Collapsed;
-                    if (!item.SubItems[(int)Scenario.SubItemIndex.TITLE].Text.Equals(title))
-                        scenarioTitleText.Text = "複数タイトル...";
-                    if (!item.SubItems[(int)Scenario.SubItemIndex.ROUTE_TITLE].Text.Equals(routeTitle))
-                        scenarioRouteTitleText.Text = "複数路線名..."; ;
-                    if (scenario.Data.Route.Count == 0)
-                        scenarioRoutePathText.Visibility = Visibility.Collapsed;
-                    else if (!scenario.Data.Route[0].Value.Equals(routePath))
-                        scenarioRoutePathText.Text = "複数路線ファイル...";
-                    if (!item.SubItems[(int)Scenario.SubItemIndex.VEHICLE_TITLE].Text.Equals(vehicleTitle))
-                        scenarioVehicleTitleText.Text = "複数車両名...";
-                    if (scenario.Data.Vehicle.Count == 0)
-                        scenarioVehiclePathText.Visibility = Visibility.Collapsed;
-                    else if (!scenario.Data.Vehicle[0].Value.Equals(vehiclePath))
-                        scenarioVehiclePathText.Text = "複数車両ファイル...";
-                    if (!item.SubItems[(int)Scenario.SubItemIndex.AUTHOR].Text.Equals(author))
-                        scenarioAuthorText.Text = "複数作者...";
-                    if (scenario.Data.Comment == null || scenario.Data.Comment.Equals(""))
-                        scenarioCommentText.Visibility = Visibility.Collapsed;
-                    else if (!scenario.Data.Comment.Equals(comment))
-                        scenarioCommentText.Text = "複数コメント...";
-                    if (!item.SubItems[(int)Scenario.SubItemIndex.FILE_NAME].Text.Equals(fileName))
-                        scenarioFileNameText.Text = "複数ファイル名...";
+                //情報を表示
+                if (!title.Equals(""))
+                {
+                    scenarioTitleText.Text = title;
+                    scenarioTitleText.Visibility = Visibility.Visible;
+                }
+                if (!routeTitle.Equals(""))
+                {
+                    scenarioRouteTitleText.Text = routeTitle;
+                    scenarioRouteTitleText.Text = routeTitle;
+                }
+                if (!vehicleTitle.Equals(""))
+                {
+                    scenarioVehicleTitleText.Text = vehicleTitle;
+                    scenarioVehicleTitleText.Visibility = Visibility.Visible;
+                }
+                if (!author.Equals(""))
+                {
+                    scenarioAuthorText.Text = author;
+                    scenarioAuthorText.Visibility = Visibility.Visible;
+                }
+                if (!comment.Equals(""))
+                {
+                    scenarioCommentText.Text = comment;
+                    scenarioCommentText.Visibility = Visibility.Visible;
+                }
+                if (selected.Count == 1)
+                {
+                    scenarioFileNameText.Text = selected[0].FileName;
+                    scenarioFileNameText.Visibility = Visibility.Visible;
                 }
             }
         }

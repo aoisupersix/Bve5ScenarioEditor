@@ -92,7 +92,7 @@ namespace Bve5ScenarioEditor
             dataSource.VehicleTitle = originalData.VehicleTitle;
             dataSource.Author = originalData.Author;
             dataSource.Comment = originalData.Comment;
-            dataSource.FileName = GetRelativeFilePath(directoryPath, fileName);
+            dataSource.FileName = fileName;
             dataSource.ImagePath = originalData.Image;
         }
 
@@ -468,10 +468,10 @@ namespace Bve5ScenarioEditor
         /// <returns>編集後のシナリオデータ</returns>
         public Scenario[] ShowWindow(Scenario[] scenarioData)
         {
-            directoryPath = scenarioData[0].File.DirectoryName;
+            directoryPath = Path.GetDirectoryName(scenarioData[0].FilePath);
 
             InitOriginalData(scenarioData);
-            InitTextDataSource(scenarioData[0].File.FullName);
+            InitTextDataSource(scenarioData[0].FileName);
             ShowFileReferenceInfo(scenarioData);
 
             //ウインドウタイトルの代入

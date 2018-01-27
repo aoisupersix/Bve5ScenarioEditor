@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Drawing;
@@ -25,9 +26,14 @@ namespace Bve5ScenarioEditor
         public bool DidDelete { get; set; }
 
         /// <summary>
-        /// シナリオファイルの情報
+        /// シナリオのファイルパス
         /// </summary>
-        public FileInfo File { get; private set; }
+        public string FilePath { get; set; }
+
+        /// <summary>
+        /// シナリオのファイル名
+        /// </summary>
+        public string FileName { get; private set; }
 
         /// <summary>
         /// シナリオ情報
@@ -48,12 +54,32 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// シナリオデータの初期化をします。
+        /// </summary>
+        void InitData()
+        {
+            Data.Version = Data.Version ?? "";
+            Data.Encoding = Data.Encoding ?? "";
+            Data.Title = Data.Title ?? "";
+            Data.RouteTitle = Data.RouteTitle ?? "";
+            Data.VehicleTitle = Data.VehicleTitle ?? "";
+            Data.Image = Data.Image ?? "";
+            Data.Author = Data.Author ?? "";
+            Data.Comment = Data.Comment ?? "";
+            if (Data.Route == null)
+                Data.Route = new List<FilePath>();
+            if (Data.Vehicle == null)
+                Data.Vehicle = new List<FilePath>();
+        }
+
+        /// <summary>
         /// ファイルパスを指定して新しいインスタンスを作成します。
         /// </summary>
         /// <param name="path">シナリオファイルのパス</param>
-        public Scenario(string path)
+        public Scenario(string filePath)
         {
-            File = new FileInfo(path);
+            FilePath = filePath;
+            FileName = Path.GetFileName(filePath);
         }
 
         /// <summary>
@@ -62,18 +88,17 @@ namespace Bve5ScenarioEditor
         /// <returns>現在のシナリオデータのコピー</returns>
         public Scenario Copy()
         {
-            Scenario copy = new Scenario(this.File.FullName);
+            Scenario copy = new Scenario(FilePath);
             copy.DidEdit = this.DidEdit;
             copy.DidDelete = this.DidDelete;
-            copy.File = this.File;
             copy.Data = new ScenarioData()
             {
                 Version = this.Data.Version,
                 Encoding = this.Data.Encoding,
                 Image = this.Data.Image,
                 Title = this.Data.Title,
-                Route = new System.Collections.Generic.List<FilePath>(this.Data.Route),
-                Vehicle = new System.Collections.Generic.List<FilePath>(this.Data.Vehicle),
+                Route = new List<FilePath>(this.Data.Route),
+                Vehicle = new List<FilePath>(this.Data.Vehicle),
                 RouteTitle = this.Data.RouteTitle,
                 VehicleTitle = this.Data.VehicleTitle,
                 Author = this.Data.Author,
@@ -90,34 +115,42 @@ namespace Bve5ScenarioEditor
         /// <returns>シナリオが正常に読み込めたかどうか</returns>
         public bool Load()
         {
-            //ReadJEncを利用してファイルの読み込み
-            using (Hnx8.ReadJEnc.FileReader reader = new FileReader(this.File))
+            if (!File.Exists(FilePath))
             {
-                Hnx8.ReadJEnc.CharCode c = reader.Read(this.File);
+                //ファイルが存在しない
+                Console.Error.WriteLine("Scenario: 【{0}】not found.", FileName);
+                return false;
+            }
+
+            //ReadJEncを利用してファイルの読み込み
+            FileInfo file = new FileInfo(FilePath);
+            using (Hnx8.ReadJEnc.FileReader reader = new FileReader(file))
+            {
+                Hnx8.ReadJEnc.CharCode c = reader.Read(file);
                 Console.WriteLine("-----------------------------------------------------------------------");
-                Console.WriteLine("Loading ScenarioFile【{0}】...", this.File.Name);
+                Console.WriteLine("Loading ScenarioFile【{0}】...", FileName);
                 string text = reader.Text;
-                if (c is CharCode.Text && Regex.IsMatch(text, @"BveTs", RegexOptions.IgnoreCase))
+                if (c is CharCode.Text && Regex.IsMatch(text, @"BveTs\s*Scenario", RegexOptions.IgnoreCase))
                 {
                     //読み込んだファイルがテキスト
                     Console.WriteLine("Encoding: {0}", c.Name);
                     ScenarioGrammarParser parser = new ScenarioGrammarParser();
-
                     try
                     {
                         this.Data = parser.Parse(text);
                         Console.WriteLine("Parse Successful !");
+                        InitData();
                         return true;
                     }
                     catch (NullReferenceException)
                     {
-                        Console.Error.WriteLine("Scenario: 【{0}】header mismatched.", this.File.FullName);
+                        Console.Error.WriteLine("Scenario: 【{0}】header mismatched.", FileName);
                     }
                 }
                 else
                 {
                     //テキストファイルではない
-                    Console.Error.WriteLine("【{0}】is not text file.", this.File.FullName);
+                    Console.Error.WriteLine("【{0}】is not text file.", FileName);
                 }
             }
             Console.Error.WriteLine("Scenario Load Error");
@@ -130,7 +163,10 @@ namespace Bve5ScenarioEditor
         /// <param name="dir">コピーするディレクトリ</param>
         public void Backup(string dir)
         {
-            File.CopyTo(dir + @"\" + File.Name);
+            if (File.Exists(FilePath))
+                File.Copy(FilePath, dir + @"\" + FileName);
+            else
+                Save(dir);
         }
 
         /// <summary>
@@ -145,13 +181,11 @@ namespace Bve5ScenarioEditor
 
             //書き込むテキストの用意
             string text = "";
-            string version = Data.Version ?? "2.00";
-            Data.Route = Data.Route ?? new System.Collections.Generic.List<FilePath>();
-            Data.Vehicle = Data.Vehicle ?? new System.Collections.Generic.List<FilePath>();
+            string version = Data.Version.Equals("") ? "2.00" : Data.Version;
 
             //ヘッダー
             text += "Bvets Scenario " + version;
-            if(Data.Encoding != null) { text += ":" + Data.Encoding; }
+            if(!Data.Encoding.Equals("")) { text += ":" + Data.Encoding; }
             text += Environment.NewLine + Environment.NewLine;
 
             //各シナリオデータ
@@ -176,27 +210,27 @@ namespace Bve5ScenarioEditor
                 text += Data.Vehicle[Data.Vehicle.Count - 1].Value + " * " + Data.Vehicle[Data.Vehicle.Count - 1].Weight + Environment.NewLine;
             }
             //タイトル
-            if (Data.Title != null && !Data.Title.Equals(""))
+            if (!Data.Title.Equals(""))
                 text += "Title = " + Data.Title + Environment.NewLine;
             //サムネイル画像
-            if (Data.Image != null && !Data.Image.Equals(""))
+            if (!Data.Image.Equals(""))
                 text += "Image = " + Data.Image + Environment.NewLine;
             //路線名
-            if (Data.RouteTitle != null && !Data.RouteTitle.Equals(""))
+            if (!Data.RouteTitle.Equals(""))
                 text += "RouteTitle = " + Data.RouteTitle + Environment.NewLine;
             //車両名
-            if (Data.VehicleTitle != null && !Data.VehicleTitle.Equals(""))
+            if (!Data.VehicleTitle.Equals(""))
                 text += "VehicleTitle = " + Data.VehicleTitle + Environment.NewLine;
             //作者
-            if (Data.Author != null && !Data.Author.Equals(""))
+            if (!Data.Author.Equals(""))
                 text += "Author = " + Data.Author + Environment.NewLine;
             //コメント
-            if (Data.Comment != null && !Data.Comment.Equals(""))
+            if (!Data.Comment.Equals(""))
                 text += "Comment = " + Data.Comment + Environment.NewLine;
 
             //保存
-            string savePath = dir + @"\" + File.Name;
-            StreamWriter sw = new StreamWriter(savePath, false, Encoding.GetEncoding(Data.Encoding ?? "utf-8"));
+            string savePath = dir + @"\" + FileName;
+            StreamWriter sw = new StreamWriter(savePath, false, Encoding.GetEncoding(Data.Encoding.Equals("") ? "utf-8" : Data.Encoding));
             sw.Write(text);
             sw.Close();
         }
@@ -217,13 +251,13 @@ namespace Bve5ScenarioEditor
             subItems[(int)SubItemIndex.ROUTE_TITLE] = Data.RouteTitle ?? "";
             subItems[(int)SubItemIndex.VEHICLE_TITLE] = Data.VehicleTitle ?? "";
             subItems[(int)SubItemIndex.AUTHOR] = Data.Author ?? "";
-            subItems[(int)SubItemIndex.FILE_NAME] = this.File.Name;
+            subItems[(int)SubItemIndex.FILE_NAME] = FileName;
 
             Item.SubItems.AddRange(subItems);
             Item.SubItems.RemoveAt(0); //なぜかSubItemsが一つ多いのでindex0を削除する。
 
             //画像の追加
-            string dirName = this.File.DirectoryName + @"\";
+            string dirName = Path.GetDirectoryName(FilePath) + @"\";
             if (Data.Image != null && System.IO.File.Exists(dirName + Data.Image))
             {
                 //画像登録
