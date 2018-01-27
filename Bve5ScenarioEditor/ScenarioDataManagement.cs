@@ -94,7 +94,7 @@ namespace Bve5ScenarioEditor
         /// <returns>編集されているデータの数</returns>
         public int NewestSnapEditCount()
         {
-            return _snapShot[TopIndex].Count(x => x.DidEdit);
+            return _snapShot[TopIndex].Count(x => x.DidEdit || x.DidDelete);
         }
     }
 }

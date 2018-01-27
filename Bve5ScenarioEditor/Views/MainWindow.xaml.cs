@@ -61,6 +61,7 @@ namespace Bve5ScenarioEditor
         void InitializeContextMenu()
         {
             contextMenuItem_Edit.Click += EditSelectedScenario;
+            contextMenuItem_Delete.Click += DeleteSelectedScenario;
 
             contextMenu.MenuItems.Add(contextMenuItem_Edit);
             contextMenu.MenuItems.Add(contextMenuItem_Delete);
@@ -94,6 +95,36 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// 選択されているシナリオに削除フラグをつけます。
+        /// </summary>
+        void DeleteScenario()
+        {
+            if (scenarioSelectListView.SelectedItems.Count > 0)
+            {
+                List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
+                List<Scenario> delData = new List<Scenario>();
+                foreach (Wf.ListViewItem item in scenarioSelectListView.SelectedItems)
+                {
+                    delData.Add(scenarios.Find(a => a.Item.Equals(item)));
+                }
+                Wf.DialogResult res = Wf.MessageBox.Show(
+                    delData.Count + "個のシナリオファイルを削除します。よろしいですか？",
+                    "確認",
+                    Wf.MessageBoxButtons.OKCancel);
+                if (res == Wf.DialogResult.OK)
+                {
+                    //削除
+                    foreach(var data in delData)
+                    {
+                        data.DidDelete = true;
+                    }
+                    scenarioManager.SetNewMemento(scenarios);
+                    GroupingFor(groupIdx);
+                }
+            }
+        }
+
+        /// <summary>
         /// シナリオのグルーピングとソートを行います。
         /// </summary>
         /// <param name="subIdx">グルーピングする項目</param>
@@ -109,8 +140,11 @@ namespace Bve5ScenarioEditor
             //グルーピング
             foreach(Scenario scenario in scenarios)
             {
-                scenarioSelectListView.Items.Add(scenario.Item);
-                scenario.AddGroup(scenarioSelectListView, (int)subIdx);
+                if (!scenario.DidDelete)
+                {
+                    scenarioSelectListView.Items.Add(scenario.Item);
+                    scenario.AddGroup(scenarioSelectListView, (int)subIdx);
+                }
             }
         }
 
@@ -333,8 +367,8 @@ namespace Bve5ScenarioEditor
         /// <summary>
         /// シナリオファイルを指定されたディレクトリに保存します。
         /// </summary>
-        /// <param name="dir"></param>
-        /// <param name="isSaveAllData"></param>
+        /// <param name="dir">保存するディレクトリパス</param>
+        /// <param name="isSaveAllData">trueを指定すると編集していないデータも保存します。</param>
         void SaveScenario(string dir, bool isSaveAllData)
         {
             //ディレクトリの存在チェック
@@ -353,6 +387,10 @@ namespace Bve5ScenarioEditor
             {
                 foreach(var scenario in scenarios)
                 {
+                    if (scenario.DidDelete)
+                    {
+                        //削除
+                    }
                     if (isSaveAllData)
                     {
                         //全てのシナリオを保存
@@ -362,7 +400,7 @@ namespace Bve5ScenarioEditor
                     else
                     {
                         //編集されたシナリオのみ保存
-                        if (!scenario.DidDelete && scenario.DidEdit)
+                        if (scenario.DidEdit)
                             scenario.Save(dir);
                     }
                     statusProgressBar.Value += incVal;
@@ -370,6 +408,9 @@ namespace Bve5ScenarioEditor
                 }
 
                 //後処理
+                scenarios.Select(x => x.DidEdit = false);
+                scenarios.RemoveAll(x => x.DidDelete);
+                scenarioManager.SetNewMemento(scenarios);
                 if (filePathComboBox.Items.IndexOf(dir) != -1)
                     this.filePathComboBox.SelectedIndex = filePathComboBox.Items.IndexOf(dir);
                 else
@@ -377,7 +418,6 @@ namespace Bve5ScenarioEditor
                     filePathComboBox.Items.Add(dir);
                     this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
                 }
-
                 statusProgressBar.Value = 100;
                 statusText.Text = dir + "に保存完了";
                 Mouse.SetCursor(Cursors.Arrow);
@@ -510,6 +550,11 @@ namespace Bve5ScenarioEditor
         void EditSelectedScenario(object sender, RoutedEventArgs e)
         {
             ShowEditWindow();
+        }
+
+        void DeleteSelectedScenario(object sender, EventArgs e)
+        {
+            DeleteScenario();
         }
 
         /// <summary>
