@@ -382,11 +382,9 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void FileReferenceButton_Click(object sender, RoutedEventArgs e)
         {
-            string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
-
             var dlg = new Wf.OpenFileDialog();
-            if (Directory.Exists(dirPath))
-                dlg.InitialDirectory = dirPath;
+            if (Directory.Exists(directoryPath))
+                dlg.InitialDirectory = directoryPath;
             dlg.Title = "ファイルを選択";
             dlg.Filter = "全てのファイル(*.*)|*.*|テキストファイル(*.txt)|*.txt";
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
@@ -416,11 +414,9 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void ImageReferenceButton_Click(object sender, RoutedEventArgs e)
         {
-            string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
-
             var dlg = new Wf.OpenFileDialog();
-            if (Directory.Exists(dirPath))
-                dlg.InitialDirectory = dirPath;
+            if (Directory.Exists(directoryPath))
+                dlg.InitialDirectory = directoryPath;
             dlg.Title = "ファイルを選択";
             dlg.Filter = "画像ファイル(*.png,*.jpg,*.bmp,*.gif)|*.png;*.jpg;*.bmp;*.gif|すべてのファイル(*.*)|*.*";
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
