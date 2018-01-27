@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Drawing;
 using System.IO;
@@ -47,43 +48,6 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// シナリオのサムネイルを縦横比を固定して返します。
-        /// </summary>
-        /// <param name="path">サムネイル画像のファイルパス</param>
-        /// <param name="width">サムネイルの横幅</param>
-        /// <param name="height">サムネイルの縦幅</param>
-        /// <returns>引数に指定した大きさのサムネイル画像</returns>
-        Image CreateThumbnail(string path, Size imgSize)
-        {
-            Bitmap originalBitmap = new Bitmap(path);
-            //縦横比の計算
-            int x, y;
-            double w = (double)imgSize.Width / originalBitmap.Width;
-            double h = (double)imgSize.Height / originalBitmap.Height;
-            if (w <= h)
-            {
-                x = imgSize.Width;
-                y = (int)(imgSize.Width * (w / h));
-            }
-            else
-            {
-                x = (int)(imgSize.Height * (h / w));
-                y = imgSize.Height;
-            }
-
-            //描画位置を計算
-            int sx = (imgSize.Width - x) / 2;
-            int sy = (imgSize.Height - y) / 2;
-
-            //imagelistに合わせたサムネイルを描画
-            Bitmap bitmap = new Bitmap(imgSize.Width, imgSize.Height);
-            Graphics graphics = Graphics.FromImage(bitmap);
-            graphics.DrawImage(originalBitmap, sx, sy, x, y);
-
-            return bitmap;
-        }
-
-        /// <summary>
         /// ファイルパスを指定して新しいインスタンスを作成します。
         /// </summary>
         /// <param name="path">シナリオファイルのパス</param>
@@ -92,6 +56,10 @@ namespace Bve5ScenarioEditor
             File = new FileInfo(path);
         }
 
+        /// <summary>
+        /// 現在のシナリオデータをコピーしたインスタンスを返します。
+        /// </summary>
+        /// <returns>現在のシナリオデータのコピー</returns>
         public Scenario Copy()
         {
             Scenario copy = new Scenario(this.File.FullName);
@@ -157,6 +125,83 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// シナリオデータを指定されたディレクトリにコピー(バックアップ)します。
+        /// </summary>
+        /// <param name="dir">コピーするディレクトリ</param>
+        public void Backup(string dir)
+        {
+            File.CopyTo(dir + @"\" + File.Name);
+        }
+
+        /// <summary>
+        /// シナリオデータ指定されたディレクトリに上書き保存します。
+        /// </summary>
+        /// <param name="dir">書き込むディレクトリ</param>
+        public void Save(string dir)
+        {
+            //シナリオは削除されているのでスキップ
+            if (DidDelete)
+                return;
+
+            //書き込むテキストの用意
+            string text = "";
+            string version = Data.Version ?? "2.00";
+            Data.Route = Data.Route ?? new System.Collections.Generic.List<FilePath>();
+            Data.Vehicle = Data.Vehicle ?? new System.Collections.Generic.List<FilePath>();
+
+            //ヘッダー
+            text += "Bvets Scenario " + version;
+            if(Data.Encoding != null) { text += ":" + Data.Encoding; }
+            text += Environment.NewLine + Environment.NewLine;
+
+            //各シナリオデータ
+            //路線ファイル
+            if(Data.Route.Count == 1)
+                text += "Route = " + Data.Route[0].Value + Environment.NewLine;
+            else if(Data.Route.Count > 1)
+            {
+                text += "Route = ";
+                for(int i = 0; i < Data.Route.Count - 1; i++)
+                    text += Data.Route[i].Value + " * " + Data.Route[i].Weight + " | ";
+                text += Data.Route[Data.Route.Count - 1].Value + " * " + Data.Route[Data.Route.Count - 1].Weight + Environment.NewLine;
+            }
+            //車両ファイル
+            if (Data.Vehicle.Count == 1)
+                text += "Vehicle = " + Data.Vehicle[0].Value + Environment.NewLine;
+            else if (Data.Vehicle.Count > 1)
+            {
+                text += "Vehicle = ";
+                for (int i = 0; i < Data.Vehicle.Count - 1; i++)
+                    text += Data.Vehicle[i].Value + " * " + Data.Vehicle[i].Weight + " | ";
+                text += Data.Vehicle[Data.Vehicle.Count - 1].Value + " * " + Data.Vehicle[Data.Vehicle.Count - 1].Weight + Environment.NewLine;
+            }
+            //タイトル
+            if (Data.Title != null && !Data.Title.Equals(""))
+                text += "Title = " + Data.Title + Environment.NewLine;
+            //サムネイル画像
+            if (Data.Image != null && !Data.Image.Equals(""))
+                text += "Image = " + Data.Image + Environment.NewLine;
+            //路線名
+            if (Data.RouteTitle != null && !Data.RouteTitle.Equals(""))
+                text += "RouteTitle = " + Data.RouteTitle + Environment.NewLine;
+            //車両名
+            if (Data.VehicleTitle != null && !Data.VehicleTitle.Equals(""))
+                text += "VehicleTitle = " + Data.VehicleTitle + Environment.NewLine;
+            //作者
+            if (Data.Author != null && !Data.Author.Equals(""))
+                text += "Author = " + Data.Author + Environment.NewLine;
+            //コメント
+            if (Data.Comment != null && !Data.Comment.Equals(""))
+                text += "Comment = " + Data.Comment + Environment.NewLine;
+
+            //保存
+            string savePath = dir + @"\" + File.Name;
+            StreamWriter sw = new StreamWriter(savePath, false, Encoding.GetEncoding(Data.Encoding ?? "utf-8"));
+            sw.Write(text);
+            sw.Close();
+        }
+
+        /// <summary>
         /// このシナリオのlistViewItemを作成します。
         /// </summary>
         /// <param name="listView">対象のlistView</param>
@@ -185,7 +230,7 @@ namespace Bve5ScenarioEditor
                 try
                 {
                     if (!listView.LargeImageList.Images.ContainsKey(Data.Image))
-                        listView.LargeImageList.Images.Add(Data.Image, CreateThumbnail(dirName + Data.Image, listView.LargeImageList.ImageSize));
+                        listView.LargeImageList.Images.Add(Data.Image, ThumbnailModule.CreateThumbnail(dirName + Data.Image, listView.LargeImageList.ImageSize));
                     Image img = Image.FromFile(dirName + Data.Image);
                     Item.ImageIndex = listView.LargeImageList.Images.IndexOfKey(Data.Image);
                 }

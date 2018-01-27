@@ -1,14 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Windows;
 using Wf = System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-
 using MahApps.Metro.Controls;
+using System.Threading.Tasks;
 
 namespace Bve5ScenarioEditor
 {
@@ -169,8 +168,13 @@ namespace Bve5ScenarioEditor
         /// <summary>
         /// 現在のディレクトリにあるシナリオファイルを読み込みます。
         /// </summary>
-        void LoadScenarios()
+        async void LoadScenarios()
         {
+            //バックアップ完了まで保存とパスの変更は不可にする
+            menuItem_OverwriteSave.IsEnabled = false;
+            menuItem_OtherDirSave.IsEnabled = false;
+            filePathComboBox.IsEnabled = false;
+            referenceButton.IsEnabled = false;
             statusText.Text = "シナリオの読み込み中...";
             Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
             statusProgressBar.Value = 0;
@@ -224,18 +228,181 @@ namespace Bve5ScenarioEditor
                 statusText.Text = "指定されたディレクトリが存在しません。";
                 statusProgressBar.Value = 0;
             }
+            await BackupScenarioAsync();
+
+            //保存とパス変更の有効化
+            menuItem_OverwriteSave.IsEnabled = true;
+            menuItem_OtherDirSave.IsEnabled = true;
+            filePathComboBox.IsEnabled = true;
+            referenceButton.IsEnabled = true;
+        }
+
+        /// <summary>
+        /// シナリオファイルを破棄してよいか確認します。
+        /// </summary>
+        /// <returns></returns>
+        bool CheckScenarioDiscard()
+        {
+            if (scenarioManager == null)
+                return true;
+            int count = scenarioManager.NewestSnapEditCount();
+            if (count == 0)
+                return true;
+            Wf.DialogResult res = Wf.MessageBox.Show(
+                count + "個のシナリオファイルの編集が未保存です。保存しますか？",
+                "確認",
+                Wf.MessageBoxButtons.YesNoCancel);
+            if (res == Wf.DialogResult.Yes)
+            {
+                //上書き保存
+                SaveScenario(dirPath, false);
+                return true;
+            }
+            else if (res == Wf.DialogResult.No)
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// シナリオのバックアップを非同期で行います。
+        /// </summary>
+        /// <returns>voidにできないのでTaskを返す</returns>
+        async Task BackupScenarioAsync()
+        {
+            statusText.Text = "シナリオのバックアップ中...";
+            Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
+            statusProgressBar.Value = 0;
+            DoEvents();
+
+            Progress<float> progress = new Progress<float>(OnProgressChanged);
+
+            try
+            {
+                //非同期で行う
+                Task task = Task.Run(() =>
+                {
+                    BackupScenario(progress);
+                });
+
+                //タスク完了を待つ
+                await task;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("バックアップ作成中にエラーが発生しました。:" + e.Message, "エラー");
+            }
+            statusProgressBar.Value = 100;
+            statusText.Text = "バックアップ完了";
+        }
+
+        /// <summary>
+        /// シナリオファイルをバックアップします。
+        /// </summary>
+        void BackupScenario(IProgress<float> progress)
+        {
+            //ディレクトリの準備
+            string backupDir = Directory.GetCurrentDirectory() + @"\Backup";
+            if(!Directory.Exists(backupDir))
+            {
+                Directory.CreateDirectory(backupDir);
+            }
+            else
+            {
+                //ディレクトリを一旦削除して再び作る
+                DirectoryInfo dirInfo = new DirectoryInfo(backupDir);
+                dirInfo.Delete(true);
+                Directory.CreateDirectory(backupDir);
+            }
+            List<Scenario> scenarios = scenarioManager.GetOldestSnapShot();
+
+            //プログレスバーの準備
+            float incVal = (float)100 / scenarios.Count;
+            float val = 0;
+
+            //バックアップ
+            foreach (var scenario in scenarios)
+            {
+                scenario.Backup(backupDir);
+                val += incVal;
+                progress.Report(val);
+            }
+
+        }
+
+        /// <summary>
+        /// シナリオファイルを指定されたディレクトリに保存します。
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <param name="isSaveAllData"></param>
+        void SaveScenario(string dir, bool isSaveAllData)
+        {
+            //ディレクトリの存在チェック
+            if (!Directory.Exists(dir))
+                return;
+
+            statusText.Text = "シナリオの保存中...";
+            Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
+            statusProgressBar.Value = 0;
+            DoEvents();
+
+            List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
+            float incVal = (float)100 / scenarios.Count;
+            //保存
+            try
+            {
+                foreach(var scenario in scenarios)
+                {
+                    if (isSaveAllData)
+                    {
+                        //全てのシナリオを保存
+                        if (!scenario.DidDelete)
+                            scenario.Save(dir);
+                    }
+                    else
+                    {
+                        //編集されたシナリオのみ保存
+                        if (!scenario.DidDelete && scenario.DidEdit)
+                            scenario.Save(dir);
+                    }
+                    statusProgressBar.Value += incVal;
+                    DoEvents();
+                }
+
+                //後処理
+                if (filePathComboBox.Items.IndexOf(dir) != -1)
+                    this.filePathComboBox.SelectedIndex = filePathComboBox.Items.IndexOf(dir);
+                else
+                {
+                    filePathComboBox.Items.Add(dir);
+                    this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
+                }
+
+                statusProgressBar.Value = 100;
+                statusText.Text = dir + "に保存完了";
+                Mouse.SetCursor(Cursors.Arrow);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show("保存に失敗しました。:" + e.Message, "エラー");
+                statusProgressBar.Value = 0;
+                statusText.Text = "シナリオの保存に失敗しました。";
+                Mouse.SetCursor(Cursors.Arrow);
+            }
         }
 
         #region EventHandler
         /// <summary>
-        /// Windowがレンダリングされた後、コンボボックスにファイルパスを追加します。
+        /// Windowがレンダリングされた後、コンボボックスにファイルパスを追加します。初回のみの処理。
         /// </summary>
         /// <param name="sender">イベントのソース</param>
         /// <param name="e">イベントのデータ</param>
         void Window_ContentRendered(object sender, EventArgs e)
         {
             //ファイルパスを追加
-            filePathComboBox.Items.Add(dirPath);
+            //Bve標準ディレクトリの取得
+            string dir = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
+            filePathComboBox.Items.Add(dir);
             this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
             //コンボボックスのイベントからシナリオを読み込む
         }
@@ -251,10 +418,7 @@ namespace Bve5ScenarioEditor
             statusText.Text = "シナリオを" + scenarioSelectListView.SelectedItems.Count + "個選択中。";
 
             if (scenarioSelectListView.SelectedItems.Count == 0)
-            {
-                //選択したアイテムがないので情報を非表示に
-                ClearScenarioInfo();
-            }
+                ClearScenarioInfo();                 //選択したアイテムがないので情報を非表示に
             else
             {
                 //選択したアイテムの共通項目を調べる
@@ -272,15 +436,8 @@ namespace Bve5ScenarioEditor
 
                 //サムネイル情報の描画
                 if (imgIdx != -1)
-                {
-                    Bitmap bitmap = (Bitmap)scenarioSelectListView.LargeImageList.Images[scenarioSelectListView.SelectedItems[0].ImageIndex];
-                    using (Stream st = new MemoryStream())
-                    {
-                        bitmap.Save(st, System.Drawing.Imaging.ImageFormat.Png);
-                        st.Seek(0, SeekOrigin.Begin);
-                        thumbnailImage.Source = BitmapFrame.Create(st, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-                    }
-                }
+                    thumbnailImage.Source = ThumbnailModule.CreateThumbnailImageSource(dirPath + @"\" + baseScenario.Data.Image, ThumbnailSize);
+
                 //情報をTextBlockに設定
                 scenarioTitleText.Text = title;
                 scenarioRouteTitleText.Text = routeTitle;
@@ -388,9 +545,16 @@ namespace Bve5ScenarioEditor
             var dlg = new Wf.FolderBrowserDialog();
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
-                dirPath = dlg.SelectedPath;
-                filePathComboBox.Items.Add(dirPath);
-                this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
+                int idx = filePathComboBox.Items.IndexOf(dlg.SelectedPath);
+                if(idx == -1)
+                {
+                    filePathComboBox.Items.Add(dlg.SelectedPath);
+                    filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
+                }
+                else
+                {
+                    filePathComboBox.SelectedIndex = idx;
+                }
             }
         }
 
@@ -401,8 +565,28 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void FilePathComboBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            dirPath = (string)filePathComboBox.SelectedValue;
-            LoadScenarios();
+            var selectVal = (string)filePathComboBox.SelectedValue;
+            if (selectVal.Equals(dirPath))
+                return;
+            if (CheckScenarioDiscard())
+            {
+                //現在のシナリオを破棄して新たなシナリオデータを生成
+                dirPath = selectVal;
+                LoadScenarios();
+            }
+            else
+            {
+                //コンボボックスのアイテムを元に戻す
+                int idx = filePathComboBox.Items.IndexOf(dirPath);
+                if(idx == -1)
+                {
+                    filePathComboBox.Items.Add(dirPath);
+                    filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
+                }
+                else
+                    filePathComboBox.SelectedIndex = idx;
+            }
+
         }
 
         /// <summary>
@@ -499,6 +683,41 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// 編集されたシナリオを上書き保存します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void OverwriteSaveMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            int count = scenarioManager.NewestSnapEditCount();
+            if (count == 0)
+                return;
+            Wf.DialogResult res = Wf.MessageBox.Show(count + "個のシナリオファイルの編集を上書き保存します。よろしいですか？", "確認", Wf.MessageBoxButtons.OKCancel);
+            if(res == Wf.DialogResult.OK)
+            {
+                //上書き保存
+                SaveScenario(dirPath, false);
+            }
+        }
+
+        /// <summary>
+        /// シナリオファイルを別のディレクトリに保存します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void DirectorySaveMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new Wf.FolderBrowserDialog();
+            dlg.Description = "シナリオを保存するフォルダを選択してください。";
+            dlg.SelectedPath = dirPath;
+            if (dlg.ShowDialog() == Wf.DialogResult.OK)
+            {
+                string dir = dlg.SelectedPath;
+                SaveScenario(dir, true);
+            }
+        }
+
+        /// <summary>
         /// VersionWindowを表示します。
         /// </summary>
         /// <param name="sender">イベントのソース</param>
@@ -520,6 +739,15 @@ namespace Bve5ScenarioEditor
             this.Close();
         }
 
+        /// <summary>
+        /// 非同期処理中のプログレスバーを更新します。
+        /// </summary>
+        /// <param name="val">プログレスバーの値</param>
+        void OnProgressChanged(float val)
+        {
+            statusProgressBar.Value = val;
+        }
+
         #endregion EventHandler
 
         /// <summary>
@@ -530,14 +758,12 @@ namespace Bve5ScenarioEditor
             Wf.Application.EnableVisualStyles();
             InitializeComponent();
             InitializeContextMenu();
+            DataContext = this;
 
             ThumbnailSize = new System.Drawing.Size(96, 96);
             scenarioSelectListView.View = Wf.View.LargeIcon;
 
             ClearScenarioInfo();
-
-            //Bve標準ディレクトリの取得
-            dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
         }
     }
 }

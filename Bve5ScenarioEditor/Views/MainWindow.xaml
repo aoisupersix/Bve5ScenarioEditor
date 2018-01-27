@@ -13,7 +13,7 @@
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
         Title="Bve5 Scenario Editor" Height="640" Width="600" ContentRendered="Window_ContentRendered">
-    <Grid>
+    <Grid Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="40" />
@@ -25,8 +25,8 @@
 
         <Menu Grid.Row="0" FontSize="12" FontFamily="{DynamicResource MaterialDesignFont}" >
             <MenuItem Header="ファイル(_F)" >
-                <MenuItem Header="シナリオを上書き保存(_S)" InputGestureText="Ctrl+S" />
-                <MenuItem Header="シナリオを別ディレクトリに保存(_A)" InputGestureText="Ctrl+Shift+S" />
+                <MenuItem Name="menuItem_OverwriteSave" Header="シナリオを上書き保存(_S)" InputGestureText="Ctrl+S" Click="OverwriteSaveMenuItem_Click" />
+                <MenuItem Name="menuItem_OtherDirSave" Header="シナリオを別ディレクトリに保存(_A)" InputGestureText="Ctrl+Shift+S" Click="DirectorySaveMenuItem_Click" />
                 <Separator />
                 <MenuItem Header="終了(_X)" Click="Exit_Program"/>
             </MenuItem>
@@ -62,7 +62,7 @@
             <ComboBox Name="filePathComboBox" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" IsEditable="True" SelectionChanged="FilePathComboBox_SelectionChanged" >
             </ComboBox>
 
-            <Button Grid.Column="1" Click="ReferenceButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="..."  Style="{DynamicResource MaterialDesignRaisedButton}" >
+            <Button Grid.Column="1" Name="referenceButton" Click="ReferenceButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="..."  Style="{DynamicResource MaterialDesignRaisedButton}" >
             </Button>
 
         </Grid>

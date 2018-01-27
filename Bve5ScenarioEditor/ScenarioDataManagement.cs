@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+
 
 namespace Bve5ScenarioEditor
 {
@@ -56,6 +58,15 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// 最初のスナップショットのコピーを返します。
+        /// </summary>
+        /// <returns></returns>
+        public List<Scenario> GetOldestSnapShot()
+        {
+            return GetSnapShot(0);
+        }
+
+        /// <summary>
         /// 最新のシナリオデータを新たに追加します。
         /// </summary>
         /// <param name="snap">追加するシナリオデータ</param>
@@ -75,6 +86,15 @@ namespace Bve5ScenarioEditor
             }
             _snapShot.Add(copy);
             TopIndex++;
+        }
+
+        /// <summary>
+        /// 最新のシナリオデータに編集されたデータがいくつ含まれているかを取得します。
+        /// </summary>
+        /// <returns>編集されているデータの数</returns>
+        public int NewestSnapEditCount()
+        {
+            return _snapShot[TopIndex].Count(x => x.DidEdit);
         }
     }
 }

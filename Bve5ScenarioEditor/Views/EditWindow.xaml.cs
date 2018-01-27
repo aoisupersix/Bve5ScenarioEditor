@@ -56,17 +56,17 @@ namespace Bve5ScenarioEditor
             originalData.Image = scenarios[0].Data.Image ?? "";
 
             //ベースと異なる項目は「複数...」に変更
-            if (scenarios.Count(x => originalData.Title.Equals(x.Data.Title)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.Title.Equals(x.Data.Title ?? "")) < scenarios.Length)
                 originalData.Title = "複数タイトル...";
-            if (scenarios.Count(x => originalData.RouteTitle.Equals(x.Data.RouteTitle)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.RouteTitle.Equals(x.Data.RouteTitle ?? "")) < scenarios.Length)
                 originalData.RouteTitle = "複数路線名...";
-            if (scenarios.Count(x => originalData.VehicleTitle.Equals(x.Data.VehicleTitle)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.VehicleTitle.Equals(x.Data.VehicleTitle ?? "")) < scenarios.Length)
                 originalData.VehicleTitle = "複数車両名...";
-            if (scenarios.Count(x => originalData.Author.Equals(x.Data.Author)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.Author.Equals(x.Data.Author ?? "")) < scenarios.Length)
                 originalData.Author = "複数作者名...";
-            if (scenarios.Count(x => originalData.Comment.Equals(x.Data.Comment)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.Comment.Equals(x.Data.Comment ?? "")) < scenarios.Length)
                 originalData.Comment = "複数コメント...";
-            if (scenarios.Count(x => originalData.Image.Equals(x.Data.Image)) < scenarios.Length)
+            if (scenarios.Count(x => originalData.Image.Equals(x.Data.Image ?? "")) < scenarios.Length)
                 originalData.Image = "";
 
             //ファイル参照が複数ある場合は空に
@@ -382,11 +382,9 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void FileReferenceButton_Click(object sender, RoutedEventArgs e)
         {
-            string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
-
             var dlg = new Wf.OpenFileDialog();
-            if (Directory.Exists(dirPath))
-                dlg.InitialDirectory = dirPath;
+            if (Directory.Exists(directoryPath))
+                dlg.InitialDirectory = directoryPath;
             dlg.Title = "ファイルを選択";
             dlg.Filter = "全てのファイル(*.*)|*.*|テキストファイル(*.txt)|*.txt";
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
@@ -416,11 +414,9 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void ImageReferenceButton_Click(object sender, RoutedEventArgs e)
         {
-            string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
-
             var dlg = new Wf.OpenFileDialog();
-            if (Directory.Exists(dirPath))
-                dlg.InitialDirectory = dirPath;
+            if (Directory.Exists(directoryPath))
+                dlg.InitialDirectory = directoryPath;
             dlg.Title = "ファイルを選択";
             dlg.Filter = "画像ファイル(*.png,*.jpg,*.bmp,*.gif)|*.png;*.jpg;*.bmp;*.gif|すべてのファイル(*.*)|*.*";
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
