@@ -612,6 +612,11 @@ namespace Bve5ScenarioEditor
             GroupingFor(groupIdx);
         }
 
+        /// <summary>
+        /// 編集されたシナリオを上書き保存します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void OverwriteSaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
             int count = scenarioManager.NewestSnapEditCount();
