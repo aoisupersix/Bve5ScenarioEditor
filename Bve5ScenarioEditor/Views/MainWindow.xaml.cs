@@ -170,9 +170,11 @@ namespace Bve5ScenarioEditor
         /// </summary>
         async void LoadScenarios()
         {
-            //バックアップ完了まで保存は不可にする
+            //バックアップ完了まで保存とパスの変更は不可にする
             menuItem_OverwriteSave.IsEnabled = false;
             menuItem_OtherDirSave.IsEnabled = false;
+            filePathComboBox.IsEnabled = false;
+            referenceButton.IsEnabled = false;
             statusText.Text = "シナリオの読み込み中...";
             Mouse.SetCursor(System.Windows.Input.Cursors.Wait);
             statusProgressBar.Value = 0;
@@ -228,9 +230,11 @@ namespace Bve5ScenarioEditor
             }
             await BackupScenarioAsync();
 
-            //保存の有効化
+            //保存とパス変更の有効化
             menuItem_OverwriteSave.IsEnabled = true;
             menuItem_OtherDirSave.IsEnabled = true;
+            filePathComboBox.IsEnabled = true;
+            referenceButton.IsEnabled = true;
         }
 
         /// <summary>
@@ -239,6 +243,8 @@ namespace Bve5ScenarioEditor
         /// <returns></returns>
         bool CheckScenarioDiscard()
         {
+            if (scenarioManager == null)
+                return true;
             int count = scenarioManager.NewestSnapEditCount();
             if (count == 0)
                 return true;
@@ -387,14 +393,16 @@ namespace Bve5ScenarioEditor
 
         #region EventHandler
         /// <summary>
-        /// Windowがレンダリングされた後、コンボボックスにファイルパスを追加します。
+        /// Windowがレンダリングされた後、コンボボックスにファイルパスを追加します。初回のみの処理。
         /// </summary>
         /// <param name="sender">イベントのソース</param>
         /// <param name="e">イベントのデータ</param>
         void Window_ContentRendered(object sender, EventArgs e)
         {
             //ファイルパスを追加
-            filePathComboBox.Items.Add(dirPath);
+            //Bve標準ディレクトリの取得
+            string dir = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
+            filePathComboBox.Items.Add(dir);
             this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
             //コンボボックスのイベントからシナリオを読み込む
         }
@@ -537,9 +545,16 @@ namespace Bve5ScenarioEditor
             var dlg = new Wf.FolderBrowserDialog();
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
-                dirPath = dlg.SelectedPath;
-                filePathComboBox.Items.Add(dirPath);
-                this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
+                int idx = filePathComboBox.Items.IndexOf(dlg.SelectedPath);
+                if(idx == -1)
+                {
+                    filePathComboBox.Items.Add(dlg.SelectedPath);
+                    filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
+                }
+                else
+                {
+                    filePathComboBox.SelectedIndex = idx;
+                }
             }
         }
 
@@ -550,8 +565,28 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void FilePathComboBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            dirPath = (string)filePathComboBox.SelectedValue;
-            LoadScenarios();
+            var selectVal = (string)filePathComboBox.SelectedValue;
+            if (selectVal.Equals(dirPath))
+                return;
+            if (CheckScenarioDiscard())
+            {
+                //現在のシナリオを破棄して新たなシナリオデータを生成
+                dirPath = selectVal;
+                LoadScenarios();
+            }
+            else
+            {
+                //コンボボックスのアイテムを元に戻す
+                int idx = filePathComboBox.Items.IndexOf(dirPath);
+                if(idx == -1)
+                {
+                    filePathComboBox.Items.Add(dirPath);
+                    filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
+                }
+                else
+                    filePathComboBox.SelectedIndex = idx;
+            }
+
         }
 
         /// <summary>
@@ -729,9 +764,6 @@ namespace Bve5ScenarioEditor
             scenarioSelectListView.View = Wf.View.LargeIcon;
 
             ClearScenarioInfo();
-
-            //Bve標準ディレクトリの取得
-            dirPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
         }
     }
 }

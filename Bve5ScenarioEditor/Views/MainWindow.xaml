@@ -62,7 +62,7 @@
             <ComboBox Name="filePathComboBox" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2" IsEditable="True" SelectionChanged="FilePathComboBox_SelectionChanged" >
             </ComboBox>
 
-            <Button Grid.Column="1" Click="ReferenceButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="..."  Style="{DynamicResource MaterialDesignRaisedButton}" >
+            <Button Grid.Column="1" Name="referenceButton" Click="ReferenceButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="..."  Style="{DynamicResource MaterialDesignRaisedButton}" >
             </Button>
 
         </Grid>
