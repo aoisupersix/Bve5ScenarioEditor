@@ -106,11 +106,18 @@
     <Compile Include="ScenarioDataManagement.cs" />
     <Compile Include="ViewModels\EditWindowViewModel.cs" />
     <Compile Include="ThumbnailModule.cs" />
+    <Compile Include="Views\FileNameInputWindow.xaml.cs">
+      <DependentUpon>FileNameInputWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\VersionWindow.xaml.cs">
       <DependentUpon>VersionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Page Include="Views\EditWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FileNameInputWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

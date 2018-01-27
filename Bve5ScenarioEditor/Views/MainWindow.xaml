@@ -31,9 +31,9 @@
                 <MenuItem Header="終了(_X)" Click="Exit_Program"/>
             </MenuItem>
             <MenuItem Header="編集(_E)">
-                <MenuItem Header="新規シナリオを作成(_N)" />
+                <MenuItem Header="新規シナリオを作成(_N)" Click="NewScenarioManuItem_Click" />
                 <MenuItem Header="選択しているシナリオを編集(_E)" Click="EditSelectedScenario" />
-                <MenuItem Header="選択しているシナリオを削除(_D)" />
+                <MenuItem Header="選択しているシナリオを削除(_D)" Click="DeleteSelectedScenario" />
             </MenuItem>
             <MenuItem Header="表示(_V)">
                 <MenuItem  Name="menuItem_Display" Header="シナリオの表示方法">

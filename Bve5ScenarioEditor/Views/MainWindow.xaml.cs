@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using MahApps.Metro.Controls;
 using System.Threading.Tasks;
+using Bve5ScenarioEditor.Views;
 
 namespace Bve5ScenarioEditor
 {
@@ -33,6 +34,7 @@ namespace Bve5ScenarioEditor
         ScenarioDataManagement scenarioManager;
 
         //以下コンテキストメニューのアイテム
+        Wf.MenuItem contextMenuItem_New = new Wf.MenuItem("新規シナリオを作成(&N)");
         Wf.MenuItem contextMenuItem_Edit = new Wf.MenuItem("シナリオを編集(&E)");
         Wf.MenuItem contextMenuItem_Delete = new Wf.MenuItem("シナリオを削除(&D)");
 
@@ -61,9 +63,11 @@ namespace Bve5ScenarioEditor
         /// </summary>
         void InitializeContextMenu()
         {
+            contextMenuItem_New.Click += NewScenarioManuItem_Click;
             contextMenuItem_Edit.Click += EditSelectedScenario;
             contextMenuItem_Delete.Click += DeleteSelectedScenario;
 
+            contextMenu.MenuItems.Add(contextMenuItem_New);
             contextMenu.MenuItems.Add(contextMenuItem_Edit);
             contextMenu.MenuItems.Add(contextMenuItem_Delete);
         }
@@ -209,6 +213,16 @@ namespace Bve5ScenarioEditor
             scenarioVehicleTitleText.Visibility = Visibility.Collapsed;
             scenarioAuthorText.Visibility = Visibility.Collapsed;
             scenarioFileNameText.Visibility = Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// 新規シナリオを作成します。
+        /// </summary>
+        void CreateNewScenario()
+        {
+            FileNameInputWindow inputWindow = new FileNameInputWindow();
+            inputWindow.Owner = this;
+            inputWindow.ShowWindow(dirPath);
         }
 
         /// <summary>
@@ -554,6 +568,21 @@ namespace Bve5ScenarioEditor
             ShowEditWindow();
         }
 
+        /// <summary>
+        /// 選択しているシナリオを削除します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void DeleteSelectedScenario(object sender, RoutedEventArgs e)
+        {
+            DeleteScenario();
+        }
+
+        /// <summary>
+        /// 選択しているシナリオを削除します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void DeleteSelectedScenario(object sender, EventArgs e)
         {
             DeleteScenario();
@@ -571,12 +600,14 @@ namespace Bve5ScenarioEditor
             if (item != null && item.Bounds.Contains(point))
             {
                 //マウスがアイテムの範囲内にあるのでメニューを有効化
+                contextMenuItem_New.Visible = false;
                 contextMenuItem_Edit.Visible = true;
                 contextMenuItem_Delete.Visible = true;
             }
             else
             {
                 //メニューを無効化
+                contextMenuItem_New.Visible = true;
                 contextMenuItem_Edit.Visible = false;
                 contextMenuItem_Delete.Visible = false;
             }
@@ -727,6 +758,26 @@ namespace Bve5ScenarioEditor
             CheckSortMenuItem(sender);
             groupIdx = Scenario.SubItemIndex.FILE_NAME;
             GroupingFor(groupIdx);
+        }
+
+        /// <summary>
+        /// 新しいシナリオを作成します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void NewScenarioManuItem_Click(object sender, RoutedEventArgs e)
+        {
+            CreateNewScenario();
+        }
+
+        /// <summary>
+        /// 新しいシナリオを作成します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void NewScenarioManuItem_Click(object sender, EventArgs e)
+        {
+            CreateNewScenario();
         }
 
         /// <summary>
