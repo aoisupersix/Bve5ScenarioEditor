@@ -6,7 +6,6 @@ Bve5ScenarioEditor
 It is software that supports the editing of BveTrainSim_5 scenario file.
 
 ## OverView
-- This software is incomplete.
 - Changes to the scenario file are applied when saving.
 - It is possible to edit multiple scenario files at once.
 
@@ -54,3 +53,10 @@ Bve5ScenarioEditor is using the following library.
 >Copyright (C) 2014-2017 hnx8(H.Takahashi)
 
 * **ライセンス全文 :** [ReadJEnc C#](http://hp.vector.co.jp/authors/VA055804/HNXgrep/ReadJEnc_Readme.txt)
+
+#### LICENSE
+The MIT License(MIT)
+
+Copyright(c) 2018 aoisupersix
+
+[License.md](License.md)
