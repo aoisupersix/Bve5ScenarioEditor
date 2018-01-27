@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
@@ -233,6 +234,31 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// シナリオファイルを破棄してよいか確認します。
+        /// </summary>
+        /// <returns></returns>
+        bool CheckScenarioDiscard()
+        {
+            int count = scenarioManager.NewestSnapEditCount();
+            if (count == 0)
+                return true;
+            Wf.DialogResult res = Wf.MessageBox.Show(
+                count + "個のシナリオファイルの編集が未保存です。保存しますか？",
+                "確認",
+                Wf.MessageBoxButtons.YesNoCancel);
+            if (res == Wf.DialogResult.Yes)
+            {
+                //上書き保存
+                SaveScenario(dirPath, false);
+                return true;
+            }
+            else if (res == Wf.DialogResult.No)
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
         /// シナリオのバックアップを非同期で行います。
         /// </summary>
         /// <returns>voidにできないのでTaskを返す</returns>
@@ -335,6 +361,15 @@ namespace Bve5ScenarioEditor
                     }
                     statusProgressBar.Value += incVal;
                     DoEvents();
+                }
+
+                //後処理
+                if (filePathComboBox.Items.IndexOf(dir) != -1)
+                    this.filePathComboBox.SelectedIndex = filePathComboBox.Items.IndexOf(dir);
+                else
+                {
+                    filePathComboBox.Items.Add(dir);
+                    this.filePathComboBox.SelectedIndex = this.filePathComboBox.Items.Count - 1;
                 }
 
                 statusProgressBar.Value = 100;
