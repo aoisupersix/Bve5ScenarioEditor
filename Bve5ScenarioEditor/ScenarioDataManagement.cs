@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+
 
 namespace Bve5ScenarioEditor
 {
@@ -87,15 +89,12 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
-        /// 最新のシナリオデータに編集されたデータが含まれているかを取得します。
+        /// 最新のシナリオデータに編集されたデータがいくつ含まれているかを取得します。
         /// </summary>
-        /// <returns>編集されている場合はtrue</returns>
-        public bool NewestSnapDidEdit()
+        /// <returns>編集されているデータの数</returns>
+        public int NewestSnapEditCount()
         {
-            if (_snapShot[TopIndex].FindIndex(x => x.DidEdit == true) != -1)
-                return true;
-            else
-                return false;
+            return _snapShot[TopIndex].Count(x => x.DidEdit);
         }
     }
 }

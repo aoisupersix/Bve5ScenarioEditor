@@ -5,7 +5,6 @@ using System.Windows;
 using Wf = System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
-
 using MahApps.Metro.Controls;
 using System.Threading.Tasks;
 
@@ -322,19 +321,33 @@ namespace Bve5ScenarioEditor
             {
                 foreach(var scenario in scenarios)
                 {
-                    scenario.Save(dir);
+                    if (isSaveAllData)
+                    {
+                        //全てのシナリオを保存
+                        if (!scenario.DidDelete)
+                            scenario.Save(dir);
+                    }
+                    else
+                    {
+                        //編集されたシナリオのみ保存
+                        if (!scenario.DidDelete && scenario.DidEdit)
+                            scenario.Save(dir);
+                    }
                     statusProgressBar.Value += incVal;
                     DoEvents();
                 }
+
+                statusProgressBar.Value = 100;
+                statusText.Text = dir + "に保存完了";
+                Mouse.SetCursor(Cursors.Arrow);
             }
             catch(Exception e)
             {
                 MessageBox.Show("保存に失敗しました。:" + e.Message, "エラー");
+                statusProgressBar.Value = 0;
+                statusText.Text = "シナリオの保存に失敗しました。";
+                Mouse.SetCursor(Cursors.Arrow);
             }
-
-            statusProgressBar.Value = 100;
-            statusText.Text = dir + "に保存完了";
-            Mouse.SetCursor(Cursors.Arrow);
         }
 
         #region EventHandler
@@ -599,6 +612,19 @@ namespace Bve5ScenarioEditor
             GroupingFor(groupIdx);
         }
 
+        void OverwriteSaveMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            int count = scenarioManager.NewestSnapEditCount();
+            if (count == 0)
+                return;
+            Wf.DialogResult res = Wf.MessageBox.Show(count + "個のシナリオファイルの編集を上書き保存します。よろしいですか？", "確認", Wf.MessageBoxButtons.OKCancel);
+            if(res == Wf.DialogResult.OK)
+            {
+                //上書き保存
+                SaveScenario(dirPath, false);
+            }
+        }
+
         /// <summary>
         /// シナリオファイルを別のディレクトリに保存します。
         /// </summary>
@@ -611,8 +637,8 @@ namespace Bve5ScenarioEditor
             dlg.SelectedPath = dirPath;
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
-                dirPath = dlg.SelectedPath;
-                SaveScenario(dirPath, true);
+                string dir = dlg.SelectedPath;
+                SaveScenario(dir, true);
             }
         }
 
