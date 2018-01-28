@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using Bve5ScenarioEditor.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,9 @@ namespace Bve5ScenarioEditor.Views
 
         public void ShowWindow(string dirPath)
         {
+            var vm = new InputWindowViewModel(dirPath);
+            DataContext = vm;
+
             this.ShowDialog();
         }
     }

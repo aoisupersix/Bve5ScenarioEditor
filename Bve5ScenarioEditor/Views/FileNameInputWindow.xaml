@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:Bve5ScenarioEditor.Views"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -16,6 +17,9 @@
         <Style x:Key="ButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
             <Setter Property="Margin" Value="3" />
         </Style>
+        <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="TextBox">
+            
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -24,12 +28,13 @@
             <RowDefinition Height="0.2*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="新規シナリオを作成します。シナリオのファイル名を入力してください。" />
-        <WrapPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock VerticalAlignment="Center" Text="ファイル名:" />
-            <TextBox Margin="2" Width="200"/>
-        </WrapPanel>
+        <TextBox Grid.Row="1" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5" md:HintAssist.Hint="シナリオファイル名"/>
         <WrapPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Content="OK" Style="{StaticResource ButtonStyle}"/>
+            <Button Content="OK" Style="{StaticResource ButtonStyle}" IsEnabled="{Binding ButtonEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <Validation.ErrorTemplate>
+                    <ControlTemplate />
+                </Validation.ErrorTemplate>
+            </Button>
             <Button Content="キャンセル" Style="{StaticResource ButtonStyle}"/>
         </WrapPanel>
     </Grid>
