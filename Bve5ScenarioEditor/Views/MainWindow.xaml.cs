@@ -442,8 +442,12 @@ namespace Bve5ScenarioEditor
                 }
 
                 //後処理
-                scenarios.Select(x => x.DidEdit = false);
-                scenarios.RemoveAll(x => x.DidDelete);
+                foreach(var scenario in scenarios)
+                {
+                    scenario.DidEdit = false;
+                    if(scenario.DidDelete)
+                        scenarios.Remove(scenario);
+                }
                 scenarioManager.SetNewMemento(scenarios);
                 if (filePathComboBox.Items.IndexOf(dir) != -1)
                     filePathComboBox.SelectedIndex = filePathComboBox.Items.IndexOf(dir);
