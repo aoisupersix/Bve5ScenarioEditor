@@ -12,7 +12,7 @@
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto" 
-        Title="新規シナリオの作成" Height="170" Width="370" IsMaxRestoreButtonEnabled="False" IsMinButtonEnabled="False">
+        Title="新規シナリオの作成" Height="170" Width="370" IsMaxRestoreButtonEnabled="False" IsMinButtonEnabled="False" ResizeMode="NoResize">
     <Window.Resources>
         <Style x:Key="ButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
             <Setter Property="Margin" Value="3" />
@@ -30,12 +30,12 @@
         <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="新規シナリオを作成します。シナリオのファイル名を入力してください。" />
         <TextBox Grid.Row="1" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5" md:HintAssist.Hint="シナリオファイル名"/>
         <WrapPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Content="OK" Style="{StaticResource ButtonStyle}" IsEnabled="{Binding ButtonEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+            <Button Content="OK" Click="OkButton_Click" Style="{StaticResource ButtonStyle}" IsEnabled="{Binding ButtonEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                 <Validation.ErrorTemplate>
                     <ControlTemplate />
                 </Validation.ErrorTemplate>
             </Button>
-            <Button Content="キャンセル" Style="{StaticResource ButtonStyle}"/>
+            <Button Content="キャンセル" Click="CancelButton_Click" Style="{StaticResource ButtonStyle}"/>
         </WrapPanel>
     </Grid>
 </Controls:MetroWindow>

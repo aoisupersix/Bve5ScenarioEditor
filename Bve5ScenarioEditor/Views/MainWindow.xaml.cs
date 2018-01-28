@@ -91,14 +91,14 @@ namespace Bve5ScenarioEditor
         /// <summary>
         /// シナリオ情報の編集ウインドウを表示します。
         /// </summary>
-        void ShowEditWindow()
+        void ShowEditWindow(List<Scenario> editScenario)
         {
-            if (scenarioSelectListView.SelectedItems.Count > 0)
+            if (editScenario.Count > 0)
             {
                 List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
                 EditWindow editWindow = new EditWindow();
                 editWindow.Owner = this;
-                Scenario[] returnData = editWindow.ShowWindow(GetSelectedScenario().ToArray());
+                Scenario[] returnData = editWindow.ShowWindow(editScenario.ToArray());
 
                 //編集されたシナリオを適用
                 foreach (var ret in returnData)
@@ -222,7 +222,18 @@ namespace Bve5ScenarioEditor
         {
             FileNameInputWindow inputWindow = new FileNameInputWindow();
             inputWindow.Owner = this;
-            inputWindow.ShowWindow(dirPath);
+            string fileName = inputWindow.ShowWindow(dirPath);
+            if(fileName != null)
+            {
+                List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
+                var newScenario = new Scenario(dirPath + @"\" + fileName);
+                newScenario.Data = new Bve5_Parsing.ScenarioGrammar.ScenarioData();
+                newScenario.Data.Title = "new scenario";
+                newScenario.InitData();
+                scenarios.Add(newScenario);
+                scenarioManager.SetNewMemento(scenarios);
+                ShowEditWindow(new List<Scenario>() { newScenario });
+            }
         }
 
         /// <summary>
@@ -555,7 +566,7 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void EditSelectedScenario(object sender, EventArgs e)
         {
-            ShowEditWindow();
+            ShowEditWindow(GetSelectedScenario());
         }
 
         /// <summary>
@@ -565,7 +576,7 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void EditSelectedScenario(object sender, RoutedEventArgs e)
         {
-            ShowEditWindow();
+            ShowEditWindow(GetSelectedScenario());
         }
 
         /// <summary>

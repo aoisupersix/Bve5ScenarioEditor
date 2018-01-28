@@ -56,8 +56,9 @@ namespace Bve5ScenarioEditor
         /// <summary>
         /// シナリオデータの初期化をします。
         /// </summary>
-        void InitData()
+        public void InitData()
         {
+            Data = Data ?? new ScenarioData();
             Data.Version = Data.Version ?? "";
             Data.Encoding = Data.Encoding ?? "";
             Data.Title = Data.Title ?? "";
