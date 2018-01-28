@@ -26,7 +26,22 @@ namespace Bve5ScenarioEditor.Views
         /// </summary>
         bool isEnableFileName = false;
 
+        /// <summary>
+        /// ウインドウのビューモデル
+        /// </summary>
+        InputWindowViewModel vm;
+
         #region EventHandler
+
+        void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Return && vm.HasErrors != true)
+            {
+                isEnableFileName = true;
+                this.Close();
+            }
+        }
+
         /// <summary>
         /// OKボタンをクリックした際にウインドウを閉じます。
         /// </summary>
@@ -55,6 +70,7 @@ namespace Bve5ScenarioEditor.Views
         public FileNameInputWindow()
         {
             InitializeComponent();
+            fileNameTextBox.Focus();
         }
 
         /// <summary>
@@ -64,7 +80,7 @@ namespace Bve5ScenarioEditor.Views
         /// <returns>ファイル名があればファイル名、なければnull</returns>
         public string ShowWindow(string dirPath)
         {
-            var vm = new InputWindowViewModel(dirPath);
+            vm = new InputWindowViewModel(dirPath);
             DataContext = vm;
 
             this.ShowDialog();
