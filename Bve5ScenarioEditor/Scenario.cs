@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows.Forms;
 using Bve5_Parsing.ScenarioGrammar;
 using Hnx8.ReadJEnc;
+using Antlr4.Runtime;
 
 namespace Bve5ScenarioEditor
 {
@@ -39,6 +40,8 @@ namespace Bve5ScenarioEditor
         /// シナリオ情報
         /// </summary>
         public ScenarioData Data { get; set; }
+
+        public ScenarioErrorListener ErrorListener { get; set; }
 
         /// <summary>
         /// リストビューのアイテム
@@ -81,6 +84,7 @@ namespace Bve5ScenarioEditor
         {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
+            ErrorListener = new ScenarioErrorListener();
         }
 
         /// <summary>
@@ -136,6 +140,7 @@ namespace Bve5ScenarioEditor
                     //読み込んだファイルがテキスト
                     Console.WriteLine("Encoding: {0}", c.Name);
                     ScenarioGrammarParser parser = new ScenarioGrammarParser();
+                    parser.ErrorListener = ErrorListener;
                     try
                     {
                         this.Data = parser.Parse(text);
