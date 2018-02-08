@@ -99,6 +99,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BooleanVisiblityConverter.cs" />
+    <Compile Include="ScenarioErrorLIstener.cs" />
     <Compile Include="ViewModels\InputWindowViewModel.cs" />
     <Compile Include="Views\EditWindow.xaml.cs">
       <DependentUpon>EditWindow.xaml</DependentUpon>
