@@ -244,6 +244,7 @@ namespace Bve5ScenarioEditor
             //バックアップ完了まで保存とパスの変更は不可にする
             menuItem_OverwriteSave.IsEnabled = false;
             menuItem_OtherDirSave.IsEnabled = false;
+            menuItem_ShowParseError.IsEnabled = false;
             filePathComboBox.IsEnabled = false;
             referenceButton.IsEnabled = false;
 
@@ -289,6 +290,9 @@ namespace Bve5ScenarioEditor
 
                 statusProgressBar.Value = 100;
                 statusText.Text = "読み込み完了";
+
+                //パースエラー表示の有効化
+                menuItem_ShowParseError.IsEnabled = true;
             }
             else
             {
@@ -690,8 +694,11 @@ namespace Bve5ScenarioEditor
         void ShowParserErrorWindow(object sender, RoutedEventArgs e)
         {
             List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
-            ParseErrorWindow errorWindow = new ParseErrorWindow(scenarios);
-            errorWindow.ShowDialog();
+            if(scenarios != null)
+            {
+                ParseErrorWindow errorWindow = new ParseErrorWindow(scenarios);
+                errorWindow.ShowDialog();
+            }
         }
 
         /// <summary>

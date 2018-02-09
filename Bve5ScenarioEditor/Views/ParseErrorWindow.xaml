@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bve5ScenarioEditor.Views"
         mc:Ignorable="d"
-        Title="パーサエラー一覧" Height="300" Width="300">
+        Title="パースエラー" Height="300" Width="600">
     <Grid>
         <TreeView ItemsSource="{Binding TreeViewItems}">
             <TreeView.ItemTemplate>
