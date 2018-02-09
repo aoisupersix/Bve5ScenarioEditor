@@ -682,6 +682,11 @@ namespace Bve5ScenarioEditor
 
         }
 
+        /// <summary>
+        /// パーサエラーウインドウを表示します
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void ShowParserErrorWindow(object sender, RoutedEventArgs e)
         {
             List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
