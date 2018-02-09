@@ -7,6 +7,12 @@
         mc:Ignorable="d"
         Title="パーサエラー一覧" Height="300" Width="300">
     <Grid>
-        
+        <TreeView ItemsSource="{Binding TreeViewItems}">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate DataType="local:ParseErrorTreeViewItem" ItemsSource="{Binding Child}">
+                    <TextBlock Text="{Binding Content}" />
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
     </Grid>
 </Window>

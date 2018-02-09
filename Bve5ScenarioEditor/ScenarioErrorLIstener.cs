@@ -25,6 +25,11 @@ namespace Bve5ScenarioEditor
             );
             base.SyntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
         }
+
+        public ScenarioErrorListener()
+        {
+            Error = new List<ScenarioError>();
+        }
     }
 
     /// <summary>

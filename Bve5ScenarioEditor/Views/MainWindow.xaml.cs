@@ -682,6 +682,13 @@ namespace Bve5ScenarioEditor
 
         }
 
+        void ShowParserErrorWindow(object sender, RoutedEventArgs e)
+        {
+            List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
+            ParseErrorWindow errorWindow = new ParseErrorWindow(scenarios);
+            errorWindow.ShowDialog();
+        }
+
         /// <summary>
         /// リストビューの表示方法をアイコンに切り替えます。
         /// </summary>

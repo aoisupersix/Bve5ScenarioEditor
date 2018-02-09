@@ -11,6 +11,7 @@ namespace Bve5ScenarioEditor.ViewModels
     /// </summary>
     class ParseErrorWindowViewModel
     {
+        public List<ParseErrorTreeViewItem> TreeViewItems { get; set; }
     }
 
     /// <summary>
@@ -18,37 +19,36 @@ namespace Bve5ScenarioEditor.ViewModels
     /// </summary>
     class ParseErrorTreeViewItem
     {
-        private List<ScenarioError> _errors;
-
         /// <summary>
         /// シナリオファイルのファイル名
         /// </summary>
-        public string FileName { get; set; }
+        public string Content { get; set; }
 
         /// <summary>
         /// エラー内容
         /// </summary>
-        public List<string> ErrorContents
-        {
-            get
-            {
-                List<string> contents = new List<string>();
-                foreach(var err in _errors)
-                {
-                    contents.Add(err.Line + "行" + err.Column + "文字目: " + err.Message);
-                }
-            }
-        }
+        public List<ParseErrorTreeViewItem> Child { get; set; }
+
+        private ParseErrorTreeViewItem() { }
 
         /// <summary>
         /// 新しいインスタンスを作成します。
         /// </summary>
         /// <param name="fileName">シナリオファイル名</param>
         /// <param name="err">パーサエラー</param>
-        public ParseErrorTreeViewItem(string fileName, List<ScenarioError> err)
+        public ParseErrorTreeViewItem(string fileName, List<ScenarioError> errors)
         {
-            FileName = fileName;
-            _errors = err;
+            Content = fileName;
+            Child = new List<ParseErrorTreeViewItem>();
+            foreach (var err in errors)
+            {
+                Child.Add(
+                    new ParseErrorTreeViewItem()
+                    {
+                        Content = err.Line + "行" + err.Column + "文字目: " + err.Message,
+                        Child = null
+                    });
+            }
         }
     }
 }
