@@ -96,6 +96,7 @@ namespace Bve5ScenarioEditor
             Scenario copy = new Scenario(FilePath);
             copy.DidEdit = this.DidEdit;
             copy.DidDelete = this.DidDelete;
+            copy.ErrorListener = this.ErrorListener;
             copy.Data = new ScenarioData()
             {
                 Version = this.Data.Version,

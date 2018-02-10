@@ -51,9 +51,12 @@ namespace Bve5ScenarioEditor
         /// <summary>
         /// 最新のスナップショットのコピーを返します。
         /// </summary>
-        /// <returns>最新のスナップショットのコピー</returns>
+        /// <returns>最新のスナップショットのコピー、もしくはnull</returns>
         public List<Scenario> GetNewestSnapShot()
         {
+            if (TopIndex == -1)
+                return null;
+
             return GetSnapShot(TopIndex);
         }
 

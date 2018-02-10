@@ -11,17 +11,24 @@ namespace Bve5ScenarioEditor
     public class ScenarioErrorListener : ParseErrorListener
     {
 
-        public ScenarioError Error { get; private set; }
+        public List<ScenarioError> Error { get; private set; }
 
         public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
         {
-            Error = new ScenarioError()
-            {
-                Line = line,
-                Column = charPositionInLine,
-                Message = msg
-            };
+            Error.Add(
+                new ScenarioError()
+                {
+                    Line = line,
+                    Column = charPositionInLine,
+                    Message = msg
+                }
+            );
             base.SyntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
+        }
+
+        public ScenarioErrorListener()
+        {
+            Error = new List<ScenarioError>();
         }
     }
 

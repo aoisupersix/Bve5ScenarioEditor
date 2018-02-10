@@ -22,11 +22,25 @@ namespace Bve5ScenarioEditor
     /// </summary>
     public partial class VersionWindow : MetroWindow
     {
+        /// <summary>
+        /// ハイパーリンクがクリックされた際にリンク先を表示します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.Uri.AbsoluteUri);
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// 新しいインスタンスを作成します。
+        /// </summary>
         public VersionWindow()
         {
             InitializeComponent();
             System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
-            versionText.Text = asm.GetName().Version.ToString();
+            versionText.Text = "Version: " + asm.GetName().Version.ToString();
         }
     }
 }
