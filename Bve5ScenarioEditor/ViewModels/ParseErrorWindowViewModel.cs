@@ -29,6 +29,9 @@ namespace Bve5ScenarioEditor.ViewModels
         /// </summary>
         public List<ParseErrorTreeViewItem> Child { get; set; }
 
+        /// <summary>
+        /// 新しいインスタンスを作成します。
+        /// </summary>
         private ParseErrorTreeViewItem() { }
 
         /// <summary>
