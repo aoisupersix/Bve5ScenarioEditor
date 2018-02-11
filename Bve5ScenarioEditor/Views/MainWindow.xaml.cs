@@ -164,6 +164,13 @@ namespace Bve5ScenarioEditor
                     scenario.AddGroup(scenarioSelectListView, (int)subIdx);
                 }
             }
+
+            //ウインドウのタイトルを変更
+            int editNum = scenarioManager.NewestSnapEditCount();
+            if (editNum > 0)
+                this.Title = "Bve5 Scenario Editor [" + editNum + "個のシナリオを編集中]";
+            else
+                this.Title = "Bve5 Scenario Editor";
         }
 
         /// <summary>
