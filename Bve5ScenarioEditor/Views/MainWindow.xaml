@@ -34,8 +34,6 @@
                 <MenuItem Header="新規シナリオを作成(_N)" Click="NewScenarioManuItem_Click" />
                 <MenuItem Header="選択しているシナリオを編集(_E)" Click="EditSelectedScenario" />
                 <MenuItem Header="選択しているシナリオを削除(_D)" Click="DeleteSelectedScenario" />
-                <Separator />
-                <MenuItem Name="menuItem_ShowParseError" Header="パーサエラーの表示(_S)" Click="ShowParserErrorWindow"/>
             </MenuItem>
             <MenuItem Header="表示(_V)">
                 <MenuItem  Name="menuItem_Display" Header="シナリオの表示方法">
@@ -50,6 +48,11 @@
                     <MenuItem Click="Sort_Author" IsCheckable="True" Header="作者" />
                     <MenuItem Click="Sort_File" IsCheckable="True" Header="ファイル" />
                 </MenuItem>
+            </MenuItem>
+            <MenuItem Header="ツール(_T)">
+                <MenuItem Name="menuItem_ShowParseError" Header="パーサエラーの表示(_S)" Click="ShowParserErrorWindow"/>
+                <Separator />
+                <MenuItem Header="オプション(_O)"/>
             </MenuItem>
             <MenuItem Header="ヘルプ(_H)">
                 <MenuItem Header="バージョン情報" Click="Show_VersionWindow" />
