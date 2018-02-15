@@ -34,5 +34,17 @@ namespace Bve5ScenarioEditor.Properties {
                 this["ScenarioPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsEnabledAutoLoad {
+            get {
+                return ((bool)(this["IsEnabledAutoLoad"]));
+            }
+            set {
+                this["IsEnabledAutoLoad"] = value;
+            }
+        }
     }
 }

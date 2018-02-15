@@ -487,14 +487,13 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void Window_ContentRendered(object sender, EventArgs e)
         {
+            //初期ディレクトリがない場合、Bve標準ディレクトリを初期ディレクトリに指定
             if (Properties.Settings.Default.ScenarioPath.Equals(""))
-            {
-                //Bve標準ディレクトリを初期ディレクトリに指定
                 Properties.Settings.Default.ScenarioPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
-            }
 
-            if (Directory.Exists(Properties.Settings.Default.ScenarioPath))
+            if (Properties.Settings.Default.IsEnabledAutoLoad && Directory.Exists(Properties.Settings.Default.ScenarioPath))
             {
+                //初期ディレクトリをコンボボックスに追加
                 filePathComboBox.Items.Add(Properties.Settings.Default.ScenarioPath);
                 filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
             }
