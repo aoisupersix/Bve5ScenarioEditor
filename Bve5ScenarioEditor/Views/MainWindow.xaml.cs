@@ -487,10 +487,22 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void Window_ContentRendered(object sender, EventArgs e)
         {
-            //Bve標準ディレクトリの取得
-            string dir = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
-            filePathComboBox.Items.Add(dir);
-            filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
+            if (Properties.Settings.Default.ScenarioPath.Equals(""))
+            {
+                //Bve標準ディレクトリを初期ディレクトリに指定
+                Properties.Settings.Default.ScenarioPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
+            }
+
+            if (Directory.Exists(Properties.Settings.Default.ScenarioPath))
+            {
+                filePathComboBox.Items.Add(Properties.Settings.Default.ScenarioPath);
+                filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
+            }
+            else
+            {
+                //初期ディレクトリが存在しない
+                statusText.Text = "シナリオファイルのディレクトリを指定してください。";
+            }
         }
 
         /// <summary>
@@ -876,6 +888,17 @@ namespace Bve5ScenarioEditor
         void Exit_Program(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        /// <summary>
+        /// ウインドウを閉じた際に呼ばれるイベントハンドラです。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void MetroWindow_Closed(object sender, EventArgs e)
+        {
+            //設定を保存
+            Properties.Settings.Default.Save();
         }
 
         /// <summary>

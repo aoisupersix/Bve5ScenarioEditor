@@ -22,5 +22,17 @@ namespace Bve5ScenarioEditor.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ScenarioPath {
+            get {
+                return ((string)(this["ScenarioPath"]));
+            }
+            set {
+                this["ScenarioPath"] = value;
+            }
+        }
     }
 }

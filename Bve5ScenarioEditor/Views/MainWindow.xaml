@@ -12,7 +12,7 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
-        Title="Bve5 Scenario Editor" Height="640" Width="600" ContentRendered="Window_ContentRendered">
+        Title="Bve5 Scenario Editor" Height="640" Width="600" ContentRendered="Window_ContentRendered" Closed="MetroWindow_Closed">
     <Grid Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
