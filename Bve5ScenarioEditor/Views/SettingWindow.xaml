@@ -36,7 +36,7 @@
             <TextBox Grid.Column="1" Margin="3" Text="{Binding InitialScenarioDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
         <Border />
-        <Button Grid.Row="3"  Style="{DynamicResource MaterialDesignRaisedButton}" Content="読み込んだディレクトリパスの履歴を削除" VerticalAlignment="Center" HorizontalAlignment="Left" />
+        <Button Grid.Row="3"  Style="{DynamicResource MaterialDesignRaisedButton}" Content="読み込んだディレクトリパスの履歴を削除" VerticalAlignment="Center" HorizontalAlignment="Left" Click="DeleteComboBoxItems" />
         <Grid Grid.Row="4" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100*" />

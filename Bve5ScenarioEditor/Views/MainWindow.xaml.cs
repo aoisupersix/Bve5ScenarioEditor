@@ -682,7 +682,7 @@ namespace Bve5ScenarioEditor
         void FilePathComboBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
             var selectVal = (string)filePathComboBox.SelectedValue;
-            if (selectVal.Equals(dirPath))
+            if (selectVal == null || selectVal.Equals(dirPath))
                 return;
             if (CheckScenarioDiscard())
             {
