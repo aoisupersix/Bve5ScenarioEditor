@@ -900,7 +900,6 @@ namespace Bve5ScenarioEditor
             List<string> paths = new List<string>();
             foreach(var item in filePathComboBox.Items)
             {
-                Console.WriteLine("Item:" + item.ToString());
                 paths.Add(item.ToString());
             }
             //設定を保存
