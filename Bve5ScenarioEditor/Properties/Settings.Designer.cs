@@ -26,24 +26,24 @@ namespace Bve5ScenarioEditor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ScenarioPath {
+        public string InitialScenarioDirectory {
             get {
-                return ((string)(this["ScenarioPath"]));
+                return ((string)(this["InitialScenarioDirectory"]));
             }
             set {
-                this["ScenarioPath"] = value;
+                this["InitialScenarioDirectory"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsEnabledAutoLoad {
+        public bool IsAutoLoadEnabled {
             get {
-                return ((bool)(this["IsEnabledAutoLoad"]));
+                return ((bool)(this["IsAutoLoadEnabled"]));
             }
             set {
-                this["IsEnabledAutoLoad"] = value;
+                this["IsAutoLoadEnabled"] = value;
             }
         }
         
@@ -55,6 +55,18 @@ namespace Bve5ScenarioEditor.Properties {
             }
             set {
                 this["PathList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsBackupEnabled {
+            get {
+                return ((bool)(this["IsBackupEnabled"]));
+            }
+            set {
+                this["IsBackupEnabled"] = value;
             }
         }
     }

@@ -56,8 +56,9 @@ namespace Bve5ScenarioEditor.Views
         void OkButton_Click(object sender, RoutedEventArgs e)
         {
             //設定に適用
-            Properties.Settings.Default.IsEnabledAutoLoad = dataSource.IsAutoLoadEnabled;
-            Properties.Settings.Default.ScenarioPath = dataSource.InitialScenarioDirectory;
+            Properties.Settings.Default.IsBackupEnabled = dataSource.IsBackupEnabled;
+            Properties.Settings.Default.IsAutoLoadEnabled = dataSource.IsAutoLoadEnabled;
+            Properties.Settings.Default.InitialScenarioDirectory = dataSource.InitialScenarioDirectory;
             Properties.Settings.Default.Save();
 
             this.Close();
@@ -86,9 +87,9 @@ namespace Bve5ScenarioEditor.Views
             //データソースの初期化
             dataSource = new SettingWindowViewModel();
             this.DataContext = dataSource;
-            dataSource.IsBackupEnabled = true; //TODO
-            dataSource.IsAutoLoadEnabled = Properties.Settings.Default.IsEnabledAutoLoad;
-            dataSource.InitialScenarioDirectory = Properties.Settings.Default.ScenarioPath;
+            dataSource.IsBackupEnabled = Properties.Settings.Default.IsBackupEnabled;
+            dataSource.IsAutoLoadEnabled = Properties.Settings.Default.IsAutoLoadEnabled;
+            dataSource.InitialScenarioDirectory = Properties.Settings.Default.InitialScenarioDirectory;
         }
     }
 }

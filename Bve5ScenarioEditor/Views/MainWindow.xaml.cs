@@ -353,6 +353,9 @@ namespace Bve5ScenarioEditor
         /// <returns>voidにできないのでTaskを返す</returns>
         async Task BackupScenarioAsync()
         {
+            if (!Properties.Settings.Default.IsBackupEnabled)
+                return;
+
             statusText.Text = "シナリオのバックアップ中...";
             statusProgressBar.Value = 0;
             DoEvents();
@@ -489,13 +492,13 @@ namespace Bve5ScenarioEditor
         void Window_ContentRendered(object sender, EventArgs e)
         {
             //初期ディレクトリがない場合、Bve標準ディレクトリを初期ディレクトリに指定
-            if (Properties.Settings.Default.ScenarioPath.Equals(""))
-                Properties.Settings.Default.ScenarioPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
+            if (Properties.Settings.Default.InitialScenarioDirectory.Equals(""))
+                Properties.Settings.Default.InitialScenarioDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
 
-            if (Properties.Settings.Default.IsEnabledAutoLoad && Directory.Exists(Properties.Settings.Default.ScenarioPath))
+            if (Properties.Settings.Default.IsAutoLoadEnabled && Directory.Exists(Properties.Settings.Default.InitialScenarioDirectory))
             {
                 //初期ディレクトリをコンボボックスに追加
-                filePathComboBox.Items.Add(Properties.Settings.Default.ScenarioPath);
+                filePathComboBox.Items.Add(Properties.Settings.Default.InitialScenarioDirectory);
                 filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
             }
             else
