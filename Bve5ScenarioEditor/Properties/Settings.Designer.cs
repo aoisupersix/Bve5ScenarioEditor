@@ -22,5 +22,52 @@ namespace Bve5ScenarioEditor.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string InitialScenarioDirectory {
+            get {
+                return ((string)(this["InitialScenarioDirectory"]));
+            }
+            set {
+                this["InitialScenarioDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsAutoLoadEnabled {
+            get {
+                return ((bool)(this["IsAutoLoadEnabled"]));
+            }
+            set {
+                this["IsAutoLoadEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection PathList {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["PathList"]));
+            }
+            set {
+                this["PathList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsBackupEnabled {
+            get {
+                return ((bool)(this["IsBackupEnabled"]));
+            }
+            set {
+                this["IsBackupEnabled"] = value;
+            }
+        }
     }
 }

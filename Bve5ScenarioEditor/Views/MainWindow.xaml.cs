@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Windows;
 using Wf = System.Windows.Forms;
@@ -352,6 +353,9 @@ namespace Bve5ScenarioEditor
         /// <returns>voidにできないのでTaskを返す</returns>
         async Task BackupScenarioAsync()
         {
+            if (!Properties.Settings.Default.IsBackupEnabled)
+                return;
+
             statusText.Text = "シナリオのバックアップ中...";
             statusProgressBar.Value = 0;
             DoEvents();
@@ -487,10 +491,21 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void Window_ContentRendered(object sender, EventArgs e)
         {
-            //Bve標準ディレクトリの取得
-            string dir = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
-            filePathComboBox.Items.Add(dir);
-            filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
+            //初期ディレクトリがない場合、Bve標準ディレクトリを初期ディレクトリに指定
+            if (Properties.Settings.Default.InitialScenarioDirectory.Equals(""))
+                Properties.Settings.Default.InitialScenarioDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Bvets\Scenarios";
+
+            if (Properties.Settings.Default.IsAutoLoadEnabled && Directory.Exists(Properties.Settings.Default.InitialScenarioDirectory))
+            {
+                //初期ディレクトリをコンボボックスに追加
+                filePathComboBox.Items.Add(Properties.Settings.Default.InitialScenarioDirectory);
+                filePathComboBox.SelectedIndex = filePathComboBox.Items.Count - 1;
+            }
+            else
+            {
+                //初期ディレクトリが存在しない
+                statusText.Text = "シナリオファイルのディレクトリを指定してください。";
+            }
         }
 
         /// <summary>
@@ -670,7 +685,7 @@ namespace Bve5ScenarioEditor
         void FilePathComboBox_SelectionChanged(object sender, RoutedEventArgs e)
         {
             var selectVal = (string)filePathComboBox.SelectedValue;
-            if (selectVal.Equals(dirPath))
+            if (selectVal == null || selectVal.Equals(dirPath))
                 return;
             if (CheckScenarioDiscard())
             {
@@ -857,6 +872,17 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// 設定ウインドウを表示します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void Show_OptionWindow(object sender, RoutedEventArgs e)
+        {
+            SettingWindow settingWindow = new SettingWindow(filePathComboBox);
+            settingWindow.ShowDialog();
+        }
+
+        /// <summary>
         /// VersionWindowを表示します。
         /// </summary>
         /// <param name="sender">イベントのソース</param>
@@ -876,6 +902,26 @@ namespace Bve5ScenarioEditor
         void Exit_Program(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        /// <summary>
+        /// ウインドウを閉じた際に呼ばれるイベントハンドラです。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void MetroWindow_Closed(object sender, EventArgs e)
+        {
+            //コンボボックスのファイルパスを記録
+            StringCollection paths = new StringCollection();
+            foreach(var item in filePathComboBox.Items)
+            {
+                //初期ディレクトリと重複していないパスは記録
+                if(!Properties.Settings.Default.IsAutoLoadEnabled || !item.ToString().Equals(Properties.Settings.Default.InitialScenarioDirectory))
+                    paths.Add(item.ToString());
+            }
+            //設定を保存
+            Properties.Settings.Default.PathList = paths;
+            Properties.Settings.Default.Save();
         }
 
         /// <summary>
@@ -903,6 +949,15 @@ namespace Bve5ScenarioEditor
             scenarioSelectListView.View = Wf.View.LargeIcon;
 
             ClearScenarioInfo();
+
+            //コンボボックスのアイテムを復元
+            if(Properties.Settings.Default.PathList != null)
+            {
+                foreach (var path in Properties.Settings.Default.PathList)
+                {
+                    filePathComboBox.Items.Add(path);
+                }
+            }
         }
     }
 }
