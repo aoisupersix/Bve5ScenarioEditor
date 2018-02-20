@@ -37,7 +37,7 @@ namespace Bve5ScenarioEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool IsAutoLoadEnabled {
             get {
                 return ((bool)(this["IsAutoLoadEnabled"]));
@@ -60,7 +60,7 @@ namespace Bve5ScenarioEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool IsBackupEnabled {
             get {
                 return ((bool)(this["IsBackupEnabled"]));
