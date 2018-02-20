@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bve5ScenarioEditor.Views"
+        xmlns:vm="clr-namespace:Bve5ScenarioEditor.ViewModels"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -13,6 +14,9 @@
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
         Title="オプション" Height="250" Width="500">
+    <Window.DataContext>
+        <vm:SettingWindowViewModel />
+    </Window.DataContext>
     <Grid Margin="3">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.3*" />
@@ -21,15 +25,15 @@
             <RowDefinition Height="0.3*" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
-        <CheckBox Grid.Row="0" Content="シナリオのバックアップを行う" />
-        <CheckBox Grid.Row="1" Content="起動時に自動でシナリオを読み込む" />
-        <Grid Grid.Row="2" VerticalAlignment="Center">
+        <CheckBox Grid.Row="0" Content="シナリオのバックアップを行う" IsChecked="{Binding IsBackupEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <CheckBox Grid.Row="1" Content="起動時に自動でシナリオを読み込む" IsChecked="{Binding IsAutoLoadEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <Grid Grid.Row="2" VerticalAlignment="Center" IsEnabled="{Binding IsAutoLoadEnabled, UpdateSourceTrigger=PropertyChanged}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="210" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" >起動時に読み込むシナリオのディレクトリ:</TextBlock>
-            <TextBox Grid.Column="1" Margin="3"/>
+            <TextBox Grid.Column="1" Margin="3" Text="{Binding InitialScenarioDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
         <Border />
         <Button Grid.Row="3"  Style="{DynamicResource MaterialDesignRaisedButton}" Content="読み込んだディレクトリパスの履歴を削除" VerticalAlignment="Center" HorizontalAlignment="Left" />

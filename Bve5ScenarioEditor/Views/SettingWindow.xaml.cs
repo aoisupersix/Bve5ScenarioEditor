@@ -21,8 +21,10 @@ namespace Bve5ScenarioEditor.Views
     public partial class SettingWindow : MetroWindow
     {
 
-        private void OkButton_Click(object sender, RoutedEventArgs e) { }
-        private void CancelButton_Click(object sender, RoutedEventArgs e) { }
+        #region EventHandler
+        void OkButton_Click(object sender, RoutedEventArgs e) { }
+        void CancelButton_Click(object sender, RoutedEventArgs e) { }
+        #endregion EventHandler
 
         /// <summary>
         /// 新しいインスタンスを作成します。
