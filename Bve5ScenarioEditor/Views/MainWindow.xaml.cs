@@ -869,6 +869,17 @@ namespace Bve5ScenarioEditor
         }
 
         /// <summary>
+        /// 設定ウインドウを表示します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void Show_OptionWindow(object sender, RoutedEventArgs e)
+        {
+            SettingWindow settingWindow = new SettingWindow(filePathComboBox);
+            settingWindow.ShowDialog();
+        }
+
+        /// <summary>
         /// VersionWindowを表示します。
         /// </summary>
         /// <param name="sender">イベントのソース</param>

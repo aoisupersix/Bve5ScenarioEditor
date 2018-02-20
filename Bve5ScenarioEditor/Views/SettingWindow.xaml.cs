@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,9 +18,13 @@ namespace Bve5ScenarioEditor.Views
     /// <summary>
     /// SettingWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class SettingWindow : Window
+    public partial class SettingWindow : MetroWindow
     {
-        public SettingWindow()
+        /// <summary>
+        /// 新しいインスタンスを作成します。
+        /// </summary>
+        /// <param name="comboBox">ディレクトリパスを表示するコンボボックス</param>
+        public SettingWindow(ComboBox comboBox)
         {
             InitializeComponent();
         }

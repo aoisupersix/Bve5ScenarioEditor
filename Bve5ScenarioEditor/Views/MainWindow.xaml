@@ -52,7 +52,7 @@
             <MenuItem Header="ツール(_T)">
                 <MenuItem Name="menuItem_ShowParseError" Header="パーサエラーの表示(_S)" Click="ShowParserErrorWindow"/>
                 <Separator />
-                <MenuItem Header="オプション(_O)"/>
+                <MenuItem Header="オプション(_O)" Click="Show_OptionWindow"/>
             </MenuItem>
             <MenuItem Header="ヘルプ(_H)">
                 <MenuItem Header="バージョン情報" Click="Show_VersionWindow" />

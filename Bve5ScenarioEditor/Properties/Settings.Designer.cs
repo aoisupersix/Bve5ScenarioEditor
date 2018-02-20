@@ -25,7 +25,7 @@ namespace Bve5ScenarioEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Aho")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ScenarioPath {
             get {
                 return ((string)(this["ScenarioPath"]));
