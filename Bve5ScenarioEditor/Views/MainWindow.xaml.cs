@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Windows;
 using Wf = System.Windows.Forms;
@@ -897,7 +898,7 @@ namespace Bve5ScenarioEditor
         void MetroWindow_Closed(object sender, EventArgs e)
         {
             //コンボボックスのファイルパスを記録
-            List<string> paths = new List<string>();
+            StringCollection paths = new StringCollection();
             foreach(var item in filePathComboBox.Items)
             {
                 paths.Add(item.ToString());
@@ -934,9 +935,12 @@ namespace Bve5ScenarioEditor
             ClearScenarioInfo();
 
             //コンボボックスのアイテムを復元
-            foreach(var path in Properties.Settings.Default.PathList)
+            if(Properties.Settings.Default.PathList != null)
             {
-                filePathComboBox.Items.Add(path);
+                foreach (var path in Properties.Settings.Default.PathList)
+                {
+                    filePathComboBox.Items.Add(path);
+                }
             }
         }
     }

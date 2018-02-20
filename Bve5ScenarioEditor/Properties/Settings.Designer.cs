@@ -25,7 +25,7 @@ namespace Bve5ScenarioEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Aho")]
         public string ScenarioPath {
             get {
                 return ((string)(this["ScenarioPath"]));
@@ -37,7 +37,7 @@ namespace Bve5ScenarioEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool IsEnabledAutoLoad {
             get {
                 return ((bool)(this["IsEnabledAutoLoad"]));
@@ -46,18 +46,14 @@ namespace Bve5ScenarioEditor.Properties {
                 this["IsEnabledAutoLoad"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public System.Collections.Generic.List<string> PathList
-        {
-            get
-            {
-                return ((System.Collections.Generic.List<string>)(this["PathList"]));
+        public global::System.Collections.Specialized.StringCollection PathList {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["PathList"]));
             }
-            set
-            {
+            set {
                 this["PathList"] = value;
             }
         }
