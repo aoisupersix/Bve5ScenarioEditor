@@ -102,6 +102,7 @@
     <Compile Include="ScenarioErrorLIstener.cs" />
     <Compile Include="ViewModels\InputWindowViewModel.cs" />
     <Compile Include="ViewModels\ParseErrorWindowViewModel.cs" />
+    <Compile Include="ViewModels\SettingWindowViewModel.cs" />
     <Compile Include="Views\EditWindow.xaml.cs">
       <DependentUpon>EditWindow.xaml</DependentUpon>
     </Compile>
