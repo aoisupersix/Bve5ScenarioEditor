@@ -896,7 +896,15 @@ namespace Bve5ScenarioEditor
         /// <param name="e">イベントのデータ</param>
         void MetroWindow_Closed(object sender, EventArgs e)
         {
+            //コンボボックスのファイルパスを記録
+            List<string> paths = new List<string>();
+            foreach(var item in filePathComboBox.Items)
+            {
+                Console.WriteLine("Item:" + item.ToString());
+                paths.Add(item.ToString());
+            }
             //設定を保存
+            Properties.Settings.Default.PathList = paths;
             Properties.Settings.Default.Save();
         }
 
@@ -925,6 +933,12 @@ namespace Bve5ScenarioEditor
             scenarioSelectListView.View = Wf.View.LargeIcon;
 
             ClearScenarioInfo();
+
+            //コンボボックスのアイテムを復元
+            foreach(var path in Properties.Settings.Default.PathList)
+            {
+                filePathComboBox.Items.Add(path);
+            }
         }
     }
 }
