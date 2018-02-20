@@ -915,7 +915,9 @@ namespace Bve5ScenarioEditor
             StringCollection paths = new StringCollection();
             foreach(var item in filePathComboBox.Items)
             {
-                paths.Add(item.ToString());
+                //初期ディレクトリと重複していないパスは記録
+                if(!Properties.Settings.Default.IsAutoLoadEnabled || !item.ToString().Equals(Properties.Settings.Default.InitialScenarioDirectory))
+                    paths.Add(item.ToString());
             }
             //設定を保存
             Properties.Settings.Default.PathList = paths;
