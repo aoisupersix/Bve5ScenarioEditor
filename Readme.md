@@ -1,4 +1,4 @@
-Bve5ScenarioEditor
+Bve5 Scenario Editor
 ===
 
 ![bve5ScenarioEditor](images/bve5scenarioeditor.png)
@@ -6,8 +6,10 @@ Bve5ScenarioEditor
 It is software that supports the editing of BveTrainSim_5 scenario file.
 
 ## OverView
+- Design compliant with original software.
 - Changes to the scenario file are applied when saving.
 - It is possible to edit multiple scenario files at once.
+- Parsing errors can be displayed.
 
 **The [author](https://github.com/aoisupersix) assumes no responsibility for any damage caused by using this software.**
 
@@ -29,7 +31,7 @@ Bve5ScenarioEditor is using the following library.
 #### [Bve5_Parsing](https://github.com/aoisupersix/Bve5_Parsing)
 >The MIT License (MIT)
 >
->Copyright(c) 2017 Aoi Tanaka
+>Copyright(c) 2017 aoisupersix
 
 *  **ライセンス全文 :** [Bve5_Parsing](https://github.com/aoisupersix/Bve5_Parsing/blob/master/License.md)
 
@@ -54,7 +56,7 @@ Bve5ScenarioEditor is using the following library.
 
 * **ライセンス全文 :** [ReadJEnc C#](http://hp.vector.co.jp/authors/VA055804/HNXgrep/ReadJEnc_Readme.txt)
 
-#### LICENSE
+## LICENSE
 The MIT License(MIT)
 
 Copyright(c) 2018 aoisupersix
