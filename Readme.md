@@ -16,6 +16,11 @@ It is software that supports the editing of BveTrainSim_5 scenario file.
 ## Requirement
 - .NetFramework 4.6.1
 
+## Installation
+1. Download the binary **Bve5ScenarioEditor.zip** of the deliverables from [here](https://github.com/aoisupersix/Bve5ScenarioEditor/releases/download/v0.1.6626.35232/Bve5ScenarioEditor.zip).
+2. Extract the file to a suitable directory.
+3. Lanch **Bve5ScenarioEditor.exe**.
+
 ## Used Librarys
 Bve5ScenarioEditor is using the following library.
 
