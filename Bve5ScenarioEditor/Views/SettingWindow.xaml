@@ -13,7 +13,7 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
-        Title="オプション" Height="250" Width="500">
+        Title="オプション" Height="250" Width="550">
     <Window.DataContext>
         <vm:SettingWindowViewModel />
     </Window.DataContext>
@@ -29,11 +29,13 @@
         <CheckBox Grid.Row="1" Content="起動時に自動でシナリオを読み込む" IsChecked="{Binding IsAutoLoadEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Grid Grid.Row="2" VerticalAlignment="Center" IsEnabled="{Binding IsAutoLoadEnabled, UpdateSourceTrigger=PropertyChanged}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="210" />
+                <ColumnDefinition Width="160" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="50" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" >起動時に読み込むシナリオのディレクトリ:</TextBlock>
-            <TextBox Grid.Column="1" Margin="3" Text="{Binding InitialScenarioDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" >起動時に読み込むディレクトリ:</TextBlock>
+            <TextBox Grid.Column="1" Margin="3" Text="{Binding InitialScenarioDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+            <Button Grid.Column="2" Name="referenceButton" Click="ReferenceButton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" Content="..."  Style="{DynamicResource MaterialDesignRaisedButton}" />
         </Grid>
         <Border />
         <Button Grid.Row="3"  Style="{DynamicResource MaterialDesignRaisedButton}" Content="読み込んだディレクトリパスの履歴を削除" VerticalAlignment="Center" HorizontalAlignment="Left" Click="DeleteComboBoxItems" />

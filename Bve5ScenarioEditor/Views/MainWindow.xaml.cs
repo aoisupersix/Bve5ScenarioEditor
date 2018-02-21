@@ -27,7 +27,7 @@ namespace Bve5ScenarioEditor
         /// <summary>
         /// シナリオをグルーピング(ソート)する項目
         /// </summary>
-        Scenario.SubItemIndex groupIdx = Scenario.SubItemIndex.ROUTE_TITLE;
+        Scenario.SubItemIndex groupIdx;
 
         /// <summary>
         /// シナリオ情報の管理クラス
@@ -149,6 +149,10 @@ namespace Bve5ScenarioEditor
         /// <param name="subIdx">グルーピングする項目</param>
         void GroupingFor(Scenario.SubItemIndex subIdx)
         {
+            //シナリオ読み込み前は何もしない
+            if (scenarioManager == null)
+                return;
+
             //ソート
             List<Scenario> scenarios = scenarioManager.GetNewestSnapShot();
             scenarios.Sort((a, b) => string.Compare(a.Item.SubItems[(int)subIdx].Text, b.Item.SubItems[(int)subIdx].Text));
@@ -954,8 +958,12 @@ namespace Bve5ScenarioEditor
 
             ClearScenarioInfo();
 
+            //初期グルーピング
+            groupIdx = Scenario.SubItemIndex.ROUTE_TITLE;
+            CheckSortMenuItem(menuItem_SortRouteTitle);
+
             //コンボボックスのアイテムを復元
-            if(Properties.Settings.Default.PathList != null)
+            if (Properties.Settings.Default.PathList != null)
             {
                 foreach (var path in Properties.Settings.Default.PathList)
                 {

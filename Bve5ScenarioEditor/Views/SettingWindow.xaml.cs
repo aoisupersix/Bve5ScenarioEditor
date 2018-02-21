@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Wf = System.Windows.Forms;
 using System.Windows;
 using System.Windows.Controls;
 
 using MahApps.Metro.Controls;
 using Bve5ScenarioEditor.ViewModels;
+using System.IO;
 
 namespace Bve5ScenarioEditor.Views
 {
@@ -28,6 +29,22 @@ namespace Bve5ScenarioEditor.Views
         ComboBox comboBox;
 
         #region EventHandler
+
+        /// <summary>
+        /// 参照ボタンをクリックした際、ディレクトリを選択するダイアログを表示します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void ReferenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new Wf.FolderBrowserDialog();
+            //ダイアログの初期ディレクトリ設定
+            if (!dataSource.InitialScenarioDirectory.Equals("") && Directory.Exists(dataSource.InitialScenarioDirectory))
+                dlg.SelectedPath = dataSource.InitialScenarioDirectory;
+
+            if (dlg.ShowDialog() == Wf.DialogResult.OK)
+                dataSource.InitialScenarioDirectory = dlg.SelectedPath;
+        }
 
         /// <summary>
         /// シナリオディレクトリの履歴を削除します。
