@@ -46,6 +46,8 @@ namespace Bve5ScenarioEditor.Views
                 comboBox.Items.Add(selectedItem);
                 comboBox.SelectedItem = selectedItem;
             }
+
+            MessageBox.Show("削除しました。");
         }
 
         /// <summary>

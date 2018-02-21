@@ -50,7 +50,7 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="ツール(_T)">
-                <MenuItem Name="menuItem_ShowParseError" IsEnabled="False" Header="パーサエラーの表示(_S)" Click="ShowParserErrorWindow"/>
+                <MenuItem Name="menuItem_ShowParseError" IsEnabled="False" Header="パースエラーの表示(_S)" Click="ShowParserErrorWindow"/>
                 <Separator />
                 <MenuItem Header="オプション(_O)" Click="Show_OptionWindow"/>
             </MenuItem>
