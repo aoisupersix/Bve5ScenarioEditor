@@ -662,6 +662,10 @@ namespace Bve5ScenarioEditor
         void ReferenceButton_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new Wf.FolderBrowserDialog();
+            //ダイアログの初期ディレクトリ設定
+            if (filePathComboBox.SelectedItem != null && Directory.Exists(filePathComboBox.SelectedItem.ToString()))
+                dlg.SelectedPath = filePathComboBox.SelectedItem.ToString();
+
             if (dlg.ShowDialog() == Wf.DialogResult.OK)
             {
                 int idx = filePathComboBox.Items.IndexOf(dlg.SelectedPath);
