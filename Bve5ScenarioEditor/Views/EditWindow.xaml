@@ -87,19 +87,20 @@
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.2*" MinWidth="120" />
-                        <ColumnDefinition Width="0.8*" />
+                        <ColumnDefinition Width="120*" MinWidth="120" />
+                        <ColumnDefinition Width="89*" />
+                        <ColumnDefinition Width="377*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">タイトル(Title):</TextBlock>
-                    <TextBox Name="titleTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
-                    <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">路線名(RouteTitle):</TextBlock>
-                    <TextBox Name="routeTitleTextBox" Grid.Row="1" Grid.Column="1" Text="{Binding RouteTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
-                    <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">車両名(VehicleTitle):</TextBlock>
-                    <TextBox Name="vehicleTitleTextBox" Grid.Row="2" Grid.Column="1" Text="{Binding VehicleTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
-                    <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">作者名(Author):</TextBlock>
-                    <TextBox Name="authorTextBox" Grid.Row="3" Grid.Column="1" Text="{Binding Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" />
-                    <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">コメント(Comment):</TextBlock>
-                    <TextBox Name="commentTextBox" Grid.Row="4" Grid.Column="1" Text="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" AcceptsReturn="True" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="23,7">タイトル(Title):</TextBlock>
+                    <TextBox Name="titleTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Grid.ColumnSpan="2" Controls:TextBoxHelper.Watermark="「シナリオの選択」ウィンドウに表示するシナリオタイトル" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="6,7">路線名(RouteTitle):</TextBlock>
+                    <TextBox Name="routeTitleTextBox" Grid.Row="1" Grid.Column="1" Text="{Binding RouteTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Grid.ColumnSpan="2" Controls:TextBoxHelper.Watermark="「シナリオの選択」ウィンドウに表示する路線名" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3,7,2,7">車両名(VehicleTitle):</TextBlock>
+                    <TextBox Name="vehicleTitleTextBox" Grid.Row="2" Grid.Column="1" Text="{Binding VehicleTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Grid.ColumnSpan="2" Controls:TextBoxHelper.Watermark="「シナリオの選択」ウィンドウに表示する車両名" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,7">作者名(Author):</TextBlock>
+                    <TextBox Name="authorTextBox" Grid.Row="3" Grid.Column="1" Text="{Binding Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" Grid.ColumnSpan="2" Controls:TextBoxHelper.Watermark="「シナリオの選択」ウィンドウに表示する路線および車両の作者" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="8,144,7,143">コメント(Comment):</TextBlock>
+                    <TextBox Name="commentTextBox" Grid.Row="4" Grid.Column="1" Text="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3" AcceptsReturn="False" TextWrapping="Wrap" Controls:TextBoxHelper.AutoWatermark="True" Controls:TextBoxHelper.Watermark="「シナリオの選択」ウィンドウに表示するシナリオの説明。" Grid.ColumnSpan="2" />
                 </Grid>
             </TabItem>
             <TabItem Name="fileReferenceTab" Header="ファイル参照">
