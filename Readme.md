@@ -9,6 +9,7 @@ It is software that supports the editing of BveTrainSim_5 scenario file.
 - Design compliant with original software.
 - Changes to the scenario file are applied when saving.
 - It is possible to edit multiple scenario files at once.
+- You can add file references by dragging and dropping.
 - Parsing errors can be displayed.
 
 **The [author](https://github.com/aoisupersix) assumes no responsibility for any damage caused by using this software.**
@@ -17,7 +18,7 @@ It is software that supports the editing of BveTrainSim_5 scenario file.
 - .NetFramework 4.6.1
 
 ## Installation
-1. Download the binary **Bve5ScenarioEditor.zip** of the deliverables from [here](https://github.com/aoisupersix/Bve5ScenarioEditor/releases/download/v0.1.6626.35232/Bve5ScenarioEditor.zip).
+1. Download the binary **Bve5ScenarioEditor-0.2.zip** of the deliverables from [here](https://github.com/aoisupersix/Bve5ScenarioEditor/releases/download/v0.2.6627.40020/Bve5ScenarioEditor-0.2.zip).
 2. Extract the file to a suitable directory.
 3. Lanch **Bve5ScenarioEditor.exe**.
 
