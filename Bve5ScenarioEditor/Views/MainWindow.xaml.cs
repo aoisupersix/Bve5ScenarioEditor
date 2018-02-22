@@ -478,6 +478,7 @@ namespace Bve5ScenarioEditor
                 statusProgressBar.Value = 100;
                 statusText.Text = dir + "に保存完了";
                 Mouse.SetCursor(Cursors.Arrow);
+                GroupingFor(groupIdx);
             }
             catch(Exception e)
             {
