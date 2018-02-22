@@ -263,10 +263,87 @@ namespace Bve5ScenarioEditor
         #region EventHandler
 
         /// <summary>
-        /// ファイル参照の選択確率を更新します。
+        /// ドラッグオーバーイベントをキャンセルします。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void TextBox_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// ファイルがドロップされた際にファイルパスをテキストボックスに適用します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
+        void TextBox_DragDrop(object sender, DragEventArgs e)
+        {
+            //ドロップされたファイルの一覧を取得
+            string[] fileName = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            if (fileName.Length <= 0)
+                return;
+
+            // ドロップ先のテキストボックスを取得
+            TextBox txtTarget = sender as TextBox;
+            if (txtTarget == null)
+                return;
+
+            //相対パスを適用
+            txtTarget.Text = GetRelativeFilePath(directoryPath + @"\", fileName[0]);
+        }
+
+        /// <summary>
+        /// リストビューにドロップされたファイルを参照に追加します。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+        void ListView_DragDrop(object sender, DragEventArgs e)
+        {
+            //ドロップされたファイルの一覧を取得
+            string[] fileName = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            if (fileName.Length <= 0)
+                return;
+            for(int i = 0; i < fileName.Length; i++)
+                fileName[i] = GetRelativeFilePath(directoryPath + @"\", fileName[i]);
+
+            // ドロップ先のリストビューに適用
+            ListView targetView = sender as ListView;
+            if (targetView.Equals(routeListView))
+            {
+                //路線ファイルを追加
+                foreach(var f in fileName)
+                {
+                    dataSource.RoutePathList.Add(new FileRef_ListViewItem
+                    {
+                        FilePath = f,
+                        Weight = "1",
+                        Probability = "1" //確率はバックパッチで当てる
+                    });
+                    UpdateFileReferenceProbability();
+                }
+            }
+            else if (targetView.Equals(vehicleListView))
+            {
+                //車両ファイル参照を追加
+                foreach(var f in fileName)
+                {
+                    dataSource.VehiclePathList.Add(new FileRef_ListViewItem
+                    {
+                        FilePath = f,
+                        Weight = "1",
+                        Probability = "1" //確率はバックパッチで当てる
+                    });
+                    UpdateFileReferenceProbability();
+                }
+            }
+        }
+
+        /// <summary>
+        /// ファイル参照の選択確率を更新します。
+        /// </summary>
+        /// <param name="sender">イベントのソース</param>
+        /// <param name="e">イベントのデータ</param>
         void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             UpdateFileReferenceProbability();
