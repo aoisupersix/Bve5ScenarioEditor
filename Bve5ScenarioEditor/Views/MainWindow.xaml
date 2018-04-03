@@ -13,6 +13,15 @@
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
         Title="Bve5 Scenario Editor" Height="640" Width="600" ContentRendered="Window_ContentRendered" Closed="MetroWindow_Closed">
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" Executed="Save_Executed" />
+        <CommandBinding Command="SaveAs" Executed="SaveAs_Executed" />
+        <CommandBinding Command="Close" Executed="Close_Executed" />
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+S" Command="Save" />
+        <KeyBinding Gesture="Shift+Ctrl+S" Command="SaveAs" />
+    </Window.InputBindings>
     <Grid Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -25,10 +34,10 @@
 
         <Menu Grid.Row="0" FontSize="12" FontFamily="{DynamicResource MaterialDesignFont}" >
             <MenuItem Header="ファイル(_F)" >
-                <MenuItem Name="menuItem_OverwriteSave" Header="シナリオを上書き保存(_S)" Click="OverwriteSaveMenuItem_Click" />
-                <MenuItem Name="menuItem_OtherDirSave" Header="シナリオを別ディレクトリに保存(_A)" Click="DirectorySaveMenuItem_Click" />
+                <MenuItem Name="menuItem_Save" Header="シナリオを上書き保存(_S)" InputGestureText="Ctrl+S" Command="Save" />
+                <MenuItem Name="menuItem_SaveAs" Header="シナリオを別ディレクトリに保存(_A)" InputGestureText="Shift+Ctrl+S" Command="SaveAs" />
                 <Separator />
-                <MenuItem Header="終了(_X)" Click="Exit_Program"/>
+                <MenuItem Header="終了(_X)" Command="Close"/>
             </MenuItem>
             <MenuItem Header="編集(_E)">
                 <MenuItem Header="新規シナリオを作成(_N)" Click="NewScenarioManuItem_Click" />

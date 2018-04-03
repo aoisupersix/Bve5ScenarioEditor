@@ -254,8 +254,8 @@ namespace Bve5ScenarioEditor
         async void LoadScenarios()
         {
             //バックアップ完了まで保存とパスの変更は不可にする
-            menuItem_OverwriteSave.IsEnabled = false;
-            menuItem_OtherDirSave.IsEnabled = false;
+            menuItem_Save.IsEnabled = false;
+            menuItem_SaveAs.IsEnabled = false;
             menuItem_ShowParseError.IsEnabled = false;
             filePathComboBox.IsEnabled = false;
             referenceButton.IsEnabled = false;
@@ -318,8 +318,8 @@ namespace Bve5ScenarioEditor
             await BackupScenarioAsync();
 
             //保存とパス変更の有効化
-            menuItem_OverwriteSave.IsEnabled = true;
-            menuItem_OtherDirSave.IsEnabled = true;
+            menuItem_Save.IsEnabled = true;
+            menuItem_SaveAs.IsEnabled = true;
             filePathComboBox.IsEnabled = true;
             referenceButton.IsEnabled = true;
         }
@@ -850,7 +850,7 @@ namespace Bve5ScenarioEditor
         /// </summary>
         /// <param name="sender">イベントのソース</param>
         /// <param name="e">イベントのデータ</param>
-        void OverwriteSaveMenuItem_Click(object sender, RoutedEventArgs e)
+        void Save_Executed(object sender, RoutedEventArgs e)
         {
             int count = scenarioManager.NewestSnapEditCount();
             if (count == 0)
@@ -868,7 +868,7 @@ namespace Bve5ScenarioEditor
         /// </summary>
         /// <param name="sender">イベントのソース</param>
         /// <param name="e">イベントのデータ</param>
-        void DirectorySaveMenuItem_Click(object sender, RoutedEventArgs e)
+        void SaveAs_Executed(object sender, RoutedEventArgs e)
         {
             var dlg = new Wf.FolderBrowserDialog();
             dlg.Description = "シナリオを保存するフォルダを選択してください。";
@@ -908,7 +908,7 @@ namespace Bve5ScenarioEditor
         /// </summary>
         /// <param name="sender">イベントのソース</param>
         /// <param name="e">イベントのデータ</param>
-        void Exit_Program(object sender, RoutedEventArgs e)
+        void Close_Executed(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
