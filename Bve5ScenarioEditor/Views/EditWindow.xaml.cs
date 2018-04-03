@@ -11,6 +11,8 @@ using System.Windows.Input;
 using MahApps.Metro.Controls;
 using Bve5_Parsing.ScenarioGrammar;
 using Bve5ScenarioEditor.ViewModels;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Bve5ScenarioEditor
 {
@@ -244,6 +246,17 @@ namespace Bve5ScenarioEditor
                 }
             }
         }
+        
+        //Win32API
+        [DllImport("shlwapi.dll",
+            CharSet = CharSet.Auto)]
+        private static extern bool PathRelativePathTo(
+             [Out] StringBuilder pszPath,
+             [In] string pszFrom,
+             [In] System.IO.FileAttributes dwAttrFrom,
+             [In] string pszTo,
+             [In] System.IO.FileAttributes dwAttrTo
+        );
 
         /// <summary>
         /// 絶対パスから相対パスを取得します。
@@ -253,11 +266,14 @@ namespace Bve5ScenarioEditor
         /// <returns></returns>
         string GetRelativeFilePath(string nowDirectoryPath, string absolutePath)
         {
-            Uri nowUri = new Uri(nowDirectoryPath);
-            Uri absoluteUri = new Uri(absolutePath);
-            Uri relativeUri = nowUri.MakeRelativeUri(absoluteUri);
+            StringBuilder sb = new StringBuilder(260);
+            bool res = PathRelativePathTo(sb,
+                nowDirectoryPath, FileAttributes.Directory,
+                absolutePath, FileAttributes.Normal);
+            if (!res)
+                throw new Exception("相対パスの取得に失敗しました。");
 
-            return relativeUri.ToString().Replace("/", @"\");
+            return sb.ToString();
         }
 
         #region EventHandler
